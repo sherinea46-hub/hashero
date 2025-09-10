@@ -3,365 +3,116 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HashtagFinder — Smart Hashtags for TikTok & Instagram</title>
-  <meta name="description" content="Find relevant, high-performing hashtags in seconds. Clean design, instant results, export with Pro." />
+  <title>HashHero — Hashtag Generator</title>
+  <meta name="description" content="Find relevant hashtags. Free tags + Pro demo toggle." />
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: "Plus Jakarta Sans", Inter, sans-serif; }
-    .btn-primary { background:#4f46e5; color:#fff; padding:.75rem 1.25rem; border-radius:.6rem; font-weight:600; box-shadow:0 1px 2px rgba(0,0,0,.06); transition:background .2s ease; }
-    .btn-primary:hover { background:#4338ca; }
-    .btn-secondary { background:#fff; color:#0f172a; padding:.6rem 1rem; border-radius:.6rem; border:1px solid #cbd5e1; font-weight:500; transition:background .2s ease; }
-    .btn-secondary:hover { background:#f8fafc; }
-    .tag { display:inline-flex; align-items:center; gap:.25rem; padding:.35rem .75rem; border-radius:999px; border:1px solid #e2e8f0; background:#fff; font-size:.9rem; }
-    .card { border:1px solid #e2e8f0; background:#fff; border-radius:1rem; padding:1.25rem; box-shadow:0 1px 2px rgba(0,0,0,.03); }
-    .gradient { background: radial-gradient(1200px 600px at 50% -50%, rgba(99,102,241,.2), transparent 60%), radial-gradient(1000px 500px at 120% 10%, rgba(16,185,129,.15), transparent 60%); }
-    .hidden{display:none;}
+    body { font-family: sans-serif; }
+    .btn-primary { background:#4f46e5; color:#fff; padding:.6rem 1rem; border-radius:.5rem; }
+    .btn-primary:hover{background:#4338ca;}
+    .btn-secondary { border:1px solid #cbd5e1; border-radius:.5rem; padding:.5rem .9rem; }
+    .tag { display:inline-block; padding:.3rem .7rem; border-radius:9999px; border:1px solid #e2e8f0; }
+    .card { border:1px solid #e2e8f0; border-radius:.75rem; padding:1rem; background:#fff; }
+    .hidden { display:none; }
   </style>
 </head>
-<body class="min-h-screen bg-white text-slate-900">
-  <!-- Header -->
-  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
-    <div class="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <div class="h-9 w-9 rounded-lg bg-indigo-600 text-white grid place-items-center font-bold">#</div>
-        <span class="text-lg font-extrabold tracking-tight">HashtagFinder</span>
-      </div>
-      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-        <a href="#how" class="hover:text-indigo-700">How it works</a>
-        <a href="#faq" class="hover:text-indigo-700">FAQ</a>
-        <button class="btn-secondary">Sign in</button>
-        <button class="btn-primary" id="proHeaderBtn">Get Pro</button>
-      </nav>
-      <button class="md:hidden btn-primary text-sm px-3 py-2" id="proHeaderBtnSm">Pro</button>
-    </div>
+<body class="bg-white text-slate-900">
+  <header class="p-4 border-b border-slate-200 flex justify-between">
+    <div class="font-bold"># HashHero</div>
+    <nav>
+      <button id="proHeaderBtn" class="btn-primary">Get Pro</button>
+    </nav>
   </header>
 
-  <!-- Hero -->
-  <section class="gradient border-b border-slate-200">
-    <div class="mx-auto max-w-3xl px-6 py-20 text-center">
-      <h1 class="text-4xl md:text-6xl font-extrabold leading-tight">Trending Hashtags Made Simple</h1>
-      <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">Find the hashtags that boost reach on TikTok & Instagram. Get <strong>10 free tags</strong> instantly — unlock full lists and pro tools for <strong>$3/month</strong>.</p>
+  <main class="p-6 max-w-3xl mx-auto">
+    <h1 class="text-3xl font-bold mb-4">Trending Hashtags Made Simple</h1>
+    <form id="searchForm" class="flex gap-2 mb-6">
+      <input id="keywordInput" type="text" placeholder="Enter keyword" class="flex-1 border px-3 py-2 rounded" required>
+      <button class="btn-primary">Find</button>
+    </form>
 
-      <form id="searchForm" class="mt-8 flex flex-col sm:flex-row items-stretch gap-3">
-        <input id="keywordInput" type="text" placeholder="Enter a keyword (e.g., coffee, fitness, travel)" class="flex-1 rounded-lg border border-slate-300 px-4 py-3 shadow-sm focus:ring-2 focus:ring-indigo-200" required />
-        <button type="submit" class="btn-primary">Find</button>
-      </form>
-
-      <div class="mt-5 text-sm text-slate-600">Popular: <button class="quick-key hover:underline" data-k="coffee">#coffee</button> · <button class="quick-key hover:underline" data-k="fitness">#fitness</button> · <button class="quick-key hover:underline" data-k="travel">#travel</button></div>
-    </div>
-  </section>
-
-  <!-- Results -->
-  <section id="resultsSection" class="hidden">
-    <div class="mx-auto max-w-5xl px-6 py-16">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <h2 class="text-2xl font-bold">Results for: <span id="queryText" class="text-indigo-700"></span></h2>
-        <div class="flex gap-3">
-          <button id="copyFreeBtn" class="btn-secondary">Copy 10</button>
-          <button id="newSearchBtn" class="btn-primary" style="background:#0f172a">New Search</button>
-        </div>
-      </div>
-
-      <div id="loading" class="mt-10 hidden text-center">
-        <div class="h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-indigo-600 mx-auto"></div>
-        <p class="mt-3 text-slate-600">Finding the best tags…</p>
-      </div>
-
-      <div id="freeTagsWrap" class="mt-10 hidden">
-        <h3 class="font-semibold mb-3">Top 10 Free Tags</h3>
+    <section id="resultsSection" class="hidden">
+      <h2 class="text-xl font-semibold mb-2">Results for <span id="queryText"></span></h2>
+      <div id="freeTagsWrap" class="mb-4 hidden">
+        <h3 class="font-semibold mb-2">Free Tags</h3>
         <div id="freeTags" class="flex flex-wrap gap-2"></div>
       </div>
 
-      <!-- Caption Helper -->
-      <div id="captionHelper" class="mt-10 hidden card">
+      <div id="captionHelper" class="hidden card mb-4">
         <h3 class="font-semibold mb-2">✨ Caption Helper</h3>
-        <p id="captionText" class="text-slate-700 text-sm">—</p>
-        <button id="copyCaptionBtn" class="btn-secondary mt-3">Copy Caption</button>
+        <p id="captionText"></p>
+        <button id="copyCaptionBtn" class="btn-secondary mt-2">Copy Caption</button>
       </div>
 
-      <!-- Pro Upsell -->
-      <div class="mt-12 grid md:grid-cols-5 gap-8">
-        <div class="md:col-span-3">
-          <div class="card">
-            <h4 class="font-semibold mb-1">Related topics</h4>
-            <p id="relatedTopics" class="text-slate-600 text-sm">—</p>
-          </div>
-        </div>
-        <aside class="md:col-span-2">
-          <div class="card" style="background:linear-gradient(145deg,#eef2ff, #ffffff)">
-            <h4 class="text-lg font-bold mb-2">Unlock <span class="text-indigo-700">50+ more</span> hashtags</h4>
-            <ul class="text-sm text-slate-700 space-y-1 mb-4">
-              <li>• Grouped by competition</li>
-              <li>• One-click export (CSV)</li>
-              <li>• Saved searches</li>
-              <li>• Ad-free</li>
-            </ul>
-            <div class="flex items-center justify-between">
-              <div class="text-2xl font-extrabold">$3<span class="text-sm font-medium">/mo</span></div>
-              <button id="proCTA" class="btn-primary">Get Pro →</button>
-            </div>
-          </div>
-        </aside>
+      <div id="proContent" class="hidden card">
+        <h3 class="font-semibold mb-2">Pro Tags (Demo)</h3>
+        <div id="proLow" class="flex flex-wrap gap-2 mb-2"></div>
+        <div id="proMed" class="flex flex-wrap gap-2 mb-2"></div>
+        <div id="proHigh" class="flex flex-wrap gap-2 mb-2"></div>
       </div>
-
-      <!-- Pro Content -->
-      <div id="proContent" class="mt-12 hidden">
-        <h3 class="font-semibold mb-4">Pro Tags</h3>
-        <div class="grid md:grid-cols-3 gap-6">
-          <div class="card"><div class="text-xs uppercase text-slate-500 mb-2">Low Competition</div><div id="proLow" class="flex flex-wrap gap-2"></div></div>
-          <div class="card"><div class="text-xs uppercase text-slate-500 mb-2">Medium</div><div id="proMed" class="flex flex-wrap gap-2"></div></div>
-          <div class="card"><div class="text-xs uppercase text-slate-500 mb-2">High Volume</div><div id="proHigh" class="flex flex-wrap gap-2"></div></div>
-        </div>
-        <div class="mt-4 flex gap-3">
-          <button id="copyAllBtn" class="btn-primary" style="background:#0f172a">Copy All</button>
-          <button id="copyBalancedBtn" class="btn-secondary">Copy Balanced 30</button>
-          <button id="exportCSVBtn" class="btn-secondary">Export CSV</button>
-        </div>
-
-        <!-- Daily Trending -->
-        <div id="dailyTrending" class="mt-10 card">
-          <h3 class="font-semibold mb-2">📅 Daily Trending Hashtags</h3>
-          <div class="flex flex-wrap gap-2 text-sm" id="dailyTags"></div>
-        </div>
-
-        <!-- Saved Sets -->
-        <div id="savedSets" class="mt-10 card">
-          <h3 class="font-semibold mb-2">⭐ Saved Sets</h3>
-          <ul class="text-sm text-slate-700 space-y-1 mb-3" id="savedList">
-            <li class="text-slate-500">(none yet)</li>
-          </ul>
-          <button id="saveCurrentBtn" class="btn-secondary">Save Current Set</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- How it works -->
-  <section id="how" class="bg-slate-50 border-y border-slate-200">
-    <div class="mx-auto max-w-5xl px-6 py-20">
-      <h2 class="text-2xl font-bold text-center">How it works</h2>
-      <div class="mt-10 grid md:grid-cols-3 gap-6">
-        <div class="card text-center"><div class="text-3xl">1️⃣</div><h3 class="mt-3 font-semibold">Enter a keyword</h3><p class="text-sm text-slate-600 mt-1">Try “coffee”, “study”, or “fashion”.</p></div>
-        <div class="card text-center"><div class="text-3xl">2️⃣</div><h3 class="mt-3 font-semibold">Get free tags</h3><p class="text-sm text-slate-600 mt-1">Copy 10 instantly, no login.</p></div>
-        <div class="card text-center"><div class="text-3xl">3️⃣</div><h3 class="mt-3 font-semibold">Upgrade to Pro</h3><p class="text-sm text-slate-600 mt-1">Unlock full lists, export & save searches.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section id="faq">
-    <div class="mx-auto max-w-4xl px-6 py-20">
-      <h2 class="text-2xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
-      <div class="space-y-6">
-        <details class="card">
-          <summary class="font-semibold cursor-pointer">Is this based on live trending data?</summary>
-          <p class="mt-2 text-sm text-slate-600">This MVP generates smart, relevant tags based on your keyword. Later you can connect a live trends API.</p>
-        </details>
-        <details class="card">
-          <summary class="font-semibold cursor-pointer">How does Pro work?</summary>
-          <p class="mt-2 text-sm text-slate-600">Pro unlocks bigger tag sets, export options, saved searches, daily trending suggestions, and caption helper.</p>
-        </details>
-        <details class="card">
-          <summary class="font-semibold cursor-pointer">Can I use these tags on TikTok and Instagram?</summary>
-          <p class="mt-2 text-sm text-slate-600">Yes. Copy them and paste into your caption or first comment to maximize reach.</p>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="border-t border-slate-200 bg-white">
-    <div class="mx-auto max-w-7xl px-6 py-10 flex flex-col md:flex-row items-center justify-between text-sm text-slate-600">
-      <p>© <span id="year"></span> HashtagFinder • All rights reserved</p>
-      <div class="flex gap-6 mt-4 md:mt-0">
-        <a href="#" class="hover:text-indigo-700">Privacy</a>
-        <a href="#" class="hover:text-indigo-700">Terms</a>
-        <a href="#" class="hover:text-indigo-700">Contact</a>
-      </div>
-    </div>
-  </footer>
+    </section>
+  </main>
 
   <script>
-    // Helpers
-    const q = (s) => document.querySelector(s);
-    const qa = (s) => Array.from(document.querySelectorAll(s));
+    const state = {pro:false, free:[], proLow:[], proMed:[], proHigh:[], lastKeyword:''};
+    const q=(s)=>document.querySelector(s);
 
-    // App state
-    const state = { pro: false, lastKeyword: '', free: [], proLow: [], proMed: [], proHigh: [] };
-
-    // Deterministic tag generator (MVP). Swap with API later without touching UI.
-    function generateTags(keyword){
-      const k = (keyword||'').trim().toLowerCase().replace(/\s+/g,'');
-      const base = [k, `${k}time`, `insta${k}`, `${k}lover`, `${k}life`, `${k}daily`, `${k}tips`, `${k}vibes`, `${k}2025`, `${k}challenge`, `${k}goals`, `${k}community`, `${k}tok`, `${k}hack`, `${k}aesthetic`];
-      const suffixes = ['love','hub','story','moment','magic','trend','reel','shorts','creator','journey','grind','motivation','aesthetic','club','zone','guide','pro','tips','hack'];
-      const prefixes = ['best','top','real','daily','morning','night','quick','pro','viral','trending','ultimate','mini'];
-      const words = ['vibes','guide','tips','community','life','hack','style','trends','daily','moments'];
-
-      const set = new Set();
-      const add = (t)=>{ if(t && t.length>1) set.add('#'+t.replace(/#/g,'')); };
-      base.forEach(add); suffixes.forEach(s=>add(`${k}${s}`)); prefixes.forEach(p=>add(`${p}${k}`)); words.forEach(w=>add(`${k}${w}`));
-      ['foryou','fyp','reels','tiktok','explore'].forEach(g=>add(`${k}${g}`));
-
-      const arr = [...set];
-      const seed = [...k].reduce((a,c)=>a+c.charCodeAt(0),0) || 1;
-      for(let i=arr.length-1;i>0;i--){ const j=Math.floor(((Math.sin(seed+i)+1)/2)*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
-
-      const free = arr.slice(0,10);
-      const pro = arr.slice(10,100);
-      const proLow = pro.filter((_,i)=> i%3===0).slice(0,30);
-      const proMed = pro.filter((_,i)=> i%3===1).slice(0,30);
-      const proHigh = pro.filter((_,i)=> i%3===2).slice(0,30);
-      const related = [`${keyword} tips`, `${keyword} tutorial`, `${keyword} tools`, `${keyword} beginner`, `${keyword} hacks`, `${keyword} gear`, `${keyword} ideas`];
-      return { free, proLow, proMed, proHigh, related };
+    function generateTags(k){
+      const tags=[...Array(30)].map((_,i)=>"#"+k+i);
+      return {
+        free:tags.slice(0,10),
+        proLow:tags.slice(10,20),
+        proMed:tags.slice(20,25),
+        proHigh:tags.slice(25)
+      };
     }
 
-    function renderTags(container, list){
-      if(!container) return; container.innerHTML='';
-      list.forEach(tag=>{
-        const b=document.createElement('button');
-        b.type='button'; b.className='tag'; b.textContent=tag;
-        b.addEventListener('click',()=>navigator.clipboard.writeText(tag));
-        container.appendChild(b);
+    function renderTags(c,l){
+      c.innerHTML='';
+      l.forEach(t=>{
+        const b=document.createElement('span');
+        b.className='tag';
+        b.textContent=t;
+        c.appendChild(b);
       });
     }
 
-    function notify(msg){
-      const n=document.createElement('div');
-      n.style.position='fixed'; n.style.bottom='16px'; n.style.left='50%'; n.style.transform='translateX(-50%)';
-      n.style.background='#000'; n.style.color='#fff'; n.style.padding='8px 12px'; n.style.borderRadius='999px'; n.style.fontSize='14px';
-      document.body.appendChild(n); n.textContent=msg; setTimeout(()=>n.remove(),1500);
-    }
-
-    function copyList(list){ navigator.clipboard.writeText(list.join(' ')).then(()=>notify('Copied')); }
-
-    function exportCSV(filename, groups){
-      const rows=[["group","tag"]];
-      Object.entries(groups).forEach(([g,arr])=>arr.forEach(t=>rows.push([g,t])));
-      const csv=rows.map(r=>r.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(',')).join('\n');
-      const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-      const url=URL.createObjectURL(blob);
-      const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url);
-    }
-
-    // Caption helper
-    function generateCaption(keyword, free){
-      const core = free.slice(0,4).join(' ');
-      const phrases=[`Morning ${keyword} vibes ☕✨`,`Quick ${keyword} break — who else?`,`Can’t start the day without ${keyword}`,`${keyword} goals today!`];
-      const line = phrases[(keyword.length + free.length) % phrases.length];
-      return `${line} ${core}`.trim();
-    }
-
-    // Daily trending (static rotation)
-    const WEEKLY_TREND = {
-      0:['#SelfCareSunday','#SundayFunday','#PlanWithMe'],
-      1:['#MotivationMonday','#MondayMood','#MorningRoutine'],
-      2:['#TipTuesday','#TransformationTuesday','#TeaserTuesday'],
-      3:['#WorkoutWednesday','#WednesdayWisdom','#WhatIWore'],
-      4:['#ThrowbackThursday','#ThursdayThoughts','#CreatorTips'],
-      5:['#FeatureFriday','#FridayFeeling','#FreshFinds'],
-      6:['#SmallBusinessSaturday','#WeekendVibes','#StudioSaturday']
-    };
-    function renderTrending(){ const d=(new Date()).getDay(); renderTags(q('#dailyTags'), WEEKLY_TREND[d]||[]); }
-
-    // Saved sets (localStorage)
-    const STORE_KEY='hf-saved-sets';
-    const getSaved=()=>{ try{ return JSON.parse(localStorage.getItem(STORE_KEY)||'[]'); }catch{return []} };
-    const setSaved=(v)=>localStorage.setItem(STORE_KEY, JSON.stringify(v));
-    function renderSaved(){
-      const ul=q('#savedList'); if(!ul) return; ul.innerHTML='';
-      const saved=getSaved();
-      if(saved.length===0){ ul.innerHTML='<li class="text-slate-500">(none yet)</li>'; return; }
-      saved.forEach((s,idx)=>{
-        const li=document.createElement('li');
-        const a=document.createElement('a'); a.href='#'; a.textContent=s.name;
-        a.addEventListener('click',(e)=>{e.preventDefault(); navigator.clipboard.writeText(s.tags.join(' ')); notify('Set copied');});
-        const del=document.createElement('button'); del.className='btn-secondary'; del.style.fontSize='12px'; del.style.padding='4px 8px'; del.style.marginLeft='8px'; del.textContent='Delete';
-        del.addEventListener('click',()=>{ const next=saved.filter((_,i)=>i!==idx); setSaved(next); renderSaved(); });
-        li.appendChild(a); li.appendChild(del); ul.appendChild(li);
-      });
-    }
-    function saveCurrentSet(){
-      const name=(state.lastKeyword||'set')+' '+new Date().toLocaleDateString();
-      const tags=[...state.free, ...state.proLow, ...state.proMed, ...state.proHigh];
-      const saved=getSaved(); saved.unshift({name,tags}); setSaved(saved.slice(0,50));
-      renderSaved(); notify('Saved');
-    }
-
-    // Results flow
-    function showResults(keyword){
+    function showResults(k){
       q('#resultsSection').classList.remove('hidden');
-      q('#queryText').textContent='"'+keyword+'"';
-      q('#loading').classList.remove('hidden');
-      q('#freeTagsWrap').classList.add('hidden');
-      q('#captionHelper').classList.add('hidden');
-      q('#proContent').classList.add('hidden');
-
-      setTimeout(()=>{
-        const {free, proLow, proMed, proHigh, related}=generateTags(keyword);
-        state.free=free; state.proLow=proLow; state.proMed=proMed; state.proHigh=proHigh;
-        renderTags(q('#freeTags'), free);
-        q('#relatedTopics').textContent=related.join(', ');
-        q('#loading').classList.add('hidden');
-        q('#freeTagsWrap').classList.remove('hidden');
-
-        // Caption
-        const cap=generateCaption(keyword, free);
-        q('#captionText').textContent=cap;
-        q('#captionHelper').classList.remove('hidden');
-
-        // Pro (demo toggle when clicking Get Pro)
-        if(state.pro){
-          renderTags(q('#proLow'), proLow);
-          renderTags(q('#proMed'), proMed);
-          renderTags(q('#proHigh'), proHigh);
-          q('#proContent').classList.remove('hidden');
-        }
-
-        // Extras
-        renderTrending(); renderSaved();
-      }, 400);
+      q('#queryText').textContent=k;
+      const {free,proLow,proMed,proHigh}=generateTags(k);
+      state.free=free;state.proLow=proLow;state.proMed=proMed;state.proHigh=proHigh;
+      renderTags(q('#freeTags'),free);
+      q('#freeTagsWrap').classList.remove('hidden');
+      q('#captionText').textContent=`${k} vibes with ${free.slice(0,3).join(' ')}`;
+      q('#captionHelper').classList.remove('hidden');
+      if(state.pro){
+        renderTags(q('#proLow'),proLow);
+        renderTags(q('#proMed'),proMed);
+        renderTags(q('#proHigh'),proHigh);
+        q('#proContent').classList.remove('hidden');
+      }
     }
 
-    // Boot
-    document.addEventListener('DOMContentLoaded', ()=>{
-      q('#year').textContent=new Date().getFullYear();
-
-      // Search
-      q('#searchForm').addEventListener('submit', (e)=>{
-        e.preventDefault();
-        const kw=q('#keywordInput').value.trim(); if(!kw) return;
-        state.lastKeyword=kw; showResults(kw);
-        window.scrollTo({ top:q('#resultsSection').offsetTop-60, behavior:'smooth' });
-      });
-      qa('.quick-key').forEach(btn=>{
-        btn.addEventListener('click',()=>{
-          q('#keywordInput').value=btn.dataset.k;
-          q('#searchForm').dispatchEvent(new Event('submit'));
-        });
-      });
-
-      // Free actions
-      q('#copyFreeBtn').addEventListener('click', ()=> copyList(state.free));
-      q('#newSearchBtn').addEventListener('click', ()=>{ q('#keywordInput').focus(); window.scrollTo({ top:0, behavior:'smooth' }); });
-      q('#copyCaptionBtn').addEventListener('click', ()=>{ navigator.clipboard.writeText(q('#captionText').textContent); notify('Caption copied'); });
-
-      // Pro demo enable (temporary)
-      const enablePro = ()=>{ state.pro=true; notify('Demo Pro activated'); if(state.lastKeyword){ renderTags(q('#proLow'), state.proLow); renderTags(q('#proMed'), state.proMed); renderTags(q('#proHigh'), state.proHigh); q('#proContent').classList.remove('hidden'); } };
-      q('#proHeaderBtn').addEventListener('click', enablePro);
-      q('#proHeaderBtnSm').addEventListener('click', enablePro);
-      q('#proCTA').addEventListener('click', enablePro);
-
-      // Pro actions
-      q('#copyAllBtn')?.addEventListener('click', ()=>{ const all=[...state.free, ...state.proLow, ...state.proMed, ...state.proHigh]; copyList(all); });
-      q('#copyBalancedBtn')?.addEventListener('click', ()=>{ const take=(arr,n)=>arr.slice(0,n); const mix=[...take(state.proHigh,10), ...take(state.proMed,10), ...take(state.proLow,10)]; copyList(mix); });
-      q('#exportCSVBtn')?.addEventListener('click', ()=>{ exportCSV(`${state.lastKeyword||'hashtags'}.csv`, {low:state.proLow, medium:state.proMed, high:state.proHigh}); });
-
-      // Saved sets
-      q('#saveCurrentBtn').addEventListener('click', saveCurrentSet);
+    q('#searchForm').addEventListener('submit',e=>{
+      e.preventDefault();
+      const kw=q('#keywordInput').value.trim();
+      if(!kw) return;
+      state.lastKeyword=kw;
+      showResults(kw);
     });
+
+    q('#copyCaptionBtn').addEventListener('click',()=>{
+      navigator.clipboard.writeText(q('#captionText').textContent);
+    });
+
+    function enablePro(){
+      state.pro=true;
+      if(state.lastKeyword){ showResults(state.lastKeyword); }
+      alert('Pro demo activated');
+    }
+
+    q('#proHeaderBtn').addEventListener('click',enablePro);
   </script>
 </body>
 </html>
