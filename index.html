@@ -3,12 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HashHero — Hashtag Generator for TikTok & Instagram</title>
-  <meta name="description" content="Find relevant, high‑performing hashtags in seconds. 10 free per search, unlock 50+ with Pro. Caption helper, daily trends, saved sets, CSV export." />
+  <title>HashHero — Free Hashtag Generator for TikTok & Instagram</title>
+  <meta name="description" content="Completely free hashtag generator with caption helper, daily trends, saved sets, and CSV export. No paywalls." />
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Google AdSense (Auto ads) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2871782660524281" crossorigin="anonymous"></script>
   <style>
     body { font-family: "Plus Jakarta Sans", Inter, ui-sans-serif, system-ui; background:#fff; color:#0f172a; }
     .btn-primary { background:#4f46e5; color:#fff; padding:.75rem 1.1rem; border-radius:.65rem; font-weight:600; box-shadow:0 1px 2px rgba(0,0,0,.06); transition:background .2s ease; }
@@ -32,18 +34,16 @@
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
         <a href="#how" class="hover:text-indigo-700">How it works</a>
         <a href="#faq" class="hover:text-indigo-700">FAQ</a>
-        <button class="btn-secondary" disabled title="Coming soon">Sign in</button>
-        <button id="proHeaderBtn" class="btn-primary">Get Pro</button>
+        <a href="privacy.html" class="hover:text-indigo-700">Privacy</a>
       </nav>
-      <button id="proHeaderBtnSm" class="md:hidden btn-primary text-sm px-3 py-2">Pro</button>
     </div>
   </header>
 
   <!-- Hero -->
   <section class="gradient border-b border-slate-200">
     <div class="mx-auto max-w-3xl px-6 py-20 text-center">
-      <h1 class="text-4xl md:text-6xl font-extrabold leading-tight">Trending Hashtags Made Simple</h1>
-      <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">Find the hashtags that boost reach on TikTok & Instagram. Get <strong>10 free tags</strong> instantly — unlock full lists and pro tools for <strong>$3/month</strong>.</p>
+      <h1 class="text-4xl md:text-6xl font-extrabold leading-tight">Trending Hashtags — 100% Free</h1>
+      <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">Get relevant hashtags that boost reach on TikTok & Instagram. Includes caption helper, daily trends, saved sets, and CSV export. <strong>No sign-up, no paywall.</strong></p>
 
       <form id="searchForm" class="mt-8 flex flex-col sm:flex-row items-stretch gap-3">
         <input id="keywordInput" type="text" placeholder="Enter a keyword (e.g., coffee, fitness, travel)" class="flex-1 rounded-lg border border-slate-300 px-4 py-3 shadow-sm focus:ring-2 focus:ring-indigo-200" required />
@@ -71,7 +71,7 @@
       </div>
 
       <div id="freeTagsWrap" class="mt-10 hidden">
-        <h3 class="font-semibold mb-3">Top 10 Free Tags</h3>
+        <h3 class="font-semibold mb-3">Top 10 Suggested Tags</h3>
         <div id="freeTags" class="flex flex-wrap gap-2"></div>
       </div>
 
@@ -82,7 +82,7 @@
         <button id="copyCaptionBtn" class="btn-secondary mt-3">Copy Caption</button>
       </div>
 
-      <!-- Pro Upsell -->
+      <!-- Related topics -->
       <div class="mt-12 grid md:grid-cols-5 gap-8">
         <div class="md:col-span-3">
           <div class="card">
@@ -91,25 +91,23 @@
           </div>
         </div>
         <aside class="md:col-span-2">
-          <div class="card" style="background:linear-gradient(145deg,#eef2ff, #ffffff)">
-            <h4 class="text-lg font-bold mb-2">Unlock <span class="text-indigo-700">50+ more</span> hashtags</h4>
-            <ul class="text-sm text-slate-700 space-y-1 mb-4">
-              <li>• Grouped by competition</li>
-              <li>• One-click export (CSV)</li>
+          <div class="card bg-gradient-to-br from-indigo-50 to-white">
+            <h4 class="text-lg font-bold mb-2">Everything is Free</h4>
+            <ul class="text-sm text-slate-700 space-y-1 mb-1">
+              <li>• 100 hashtags grouped by competition</li>
+              <li>• One-click CSV export</li>
               <li>• Saved searches</li>
-              <li>• Ad-free</li>
+              <li>• Caption helper</li>
+              <li>• Daily trending prompts</li>
             </ul>
-            <div class="flex items-center justify-between">
-              <div class="text-2xl font-extrabold">$3<span class="text-sm font-medium">/mo</span></div>
-              <button id="proCTA" class="btn-primary">Get Pro →</button>
-            </div>
+            <p class="text-xs text-slate-500">Tip: Bookmark your favorite searches with “Save Current Set”.</p>
           </div>
         </aside>
       </div>
 
-      <!-- Pro Content -->
-      <div id="proContent" class="mt-12 hidden">
-        <h3 class="font-semibold mb-4">Pro Tags</h3>
+      <!-- Full Tag Groups -->
+      <div id="proContent" class="mt-12">
+        <h3 class="font-semibold mb-4">Hashtag Groups</h3>
         <div class="grid md:grid-cols-3 gap-6">
           <div class="card"><div class="text-xs uppercase text-slate-500 mb-2">Low Competition</div><div id="proLow" class="flex flex-wrap gap-2"></div></div>
           <div class="card"><div class="text-xs uppercase text-slate-500 mb-2">Medium</div><div id="proMed" class="flex flex-wrap gap-2"></div></div>
@@ -145,8 +143,8 @@
       <h2 class="text-2xl font-bold text-center">How it works</h2>
       <div class="mt-10 grid md:grid-cols-3 gap-6">
         <div class="card text-center"><div class="text-3xl">1️⃣</div><h3 class="mt-3 font-semibold">Enter a keyword</h3><p class="text-sm text-slate-600 mt-1">Try “coffee”, “study”, or “fashion”.</p></div>
-        <div class="card text-center"><div class="text-3xl">2️⃣</div><h3 class="mt-3 font-semibold">Get free tags</h3><p class="text-sm text-slate-600 mt-1">Copy 10 instantly, no login.</p></div>
-        <div class="card text-center"><div class="text-3xl">3️⃣</div><h3 class="mt-3 font-semibold">Upgrade to Pro</h3><p class="text-sm text-slate-600 mt-1">Unlock full lists, export & save searches.</p></div>
+        <div class="card text-center"><div class="text-3xl">2️⃣</div><h3 class="mt-3 font-semibold">See hashtags & caption</h3><p class="text-sm text-slate-600 mt-1">100 grouped tags + one-click copy.</p></div>
+        <div class="card text-center"><div class="text-3xl">3️⃣</div><h3 class="mt-3 font-semibold">Export or save</h3><p class="text-sm text-slate-600 mt-1">Export CSV or save sets (local).</p></div>
       </div>
     </div>
   </section>
@@ -161,8 +159,8 @@
           <p class="mt-2 text-sm text-slate-600">This MVP generates smart, relevant tags based on your keyword. Later you can connect a live trends API.</p>
         </details>
         <details class="card">
-          <summary class="font-semibold cursor-pointer">How does Pro work?</summary>
-          <p class="mt-2 text-sm text-slate-600">Pro unlocks bigger tag sets, export options, saved searches, daily trending suggestions, and caption helper.</p>
+          <summary class="font-semibold cursor-pointer">Is everything really free?</summary>
+          <p class="mt-2 text-sm text-slate-600">Yes. All features on this page are free to use.</p>
         </details>
         <details class="card">
           <summary class="font-semibold cursor-pointer">Can I use these tags on TikTok and Instagram?</summary>
@@ -177,8 +175,8 @@
     <div class="mx-auto max-w-7xl px-6 py-10 flex flex-col md:flex-row items-center justify-between text-sm text-slate-600">
       <p>© <span id="year"></span> HashHero • All rights reserved</p>
       <div class="flex gap-6 mt-4 md:mt-0">
-        <a href="#" class="hover:text-indigo-700">Privacy</a>
-        <a href="#" class="hover:text-indigo-700">Terms</a>
+        <a href="privacy.html" class="hover:text-indigo-700">Privacy</a>
+        <a href="terms.html" class="hover:text-indigo-700">Terms</a>
         <a href="#" class="hover:text-indigo-700">Contact</a>
       </div>
     </div>
@@ -190,7 +188,7 @@
     const qa = (s) => Array.from(document.querySelectorAll(s));
 
     // App state
-    const state = { pro: false, lastKeyword: '', free: [], proLow: [], proMed: [], proHigh: [] };
+    const state = { lastKeyword: '', free: [], proLow: [], proMed: [], proHigh: [] };
 
     // Deterministic tag generator (MVP). Swap with API later.
     function generateTags(keyword){
@@ -210,10 +208,10 @@
       for(let i=arr.length-1;i>0;i--){ const j=Math.floor(((Math.sin(seed+i)+1)/2)*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
 
       const free = arr.slice(0,10);
-      const pro = arr.slice(10,100);
-      const proLow = pro.filter((_,i)=> i%3===0).slice(0,30);
-      const proMed = pro.filter((_,i)=> i%3===1).slice(0,30);
-      const proHigh = pro.filter((_,i)=> i%3===2).slice(0,30);
+      const pro = arr.slice(10,110);
+      const proLow = pro.filter((_,i)=> i%3===0).slice(0,34);
+      const proMed = pro.filter((_,i)=> i%3===1).slice(0,33);
+      const proHigh = pro.filter((_,i)=> i%3===2).slice(0,33);
       const related = [`${keyword} tips`, `${keyword} tutorial`, `${keyword} tools`, `${keyword} beginner`, `${keyword} hacks`, `${keyword} gear`, `${keyword} ideas`];
       return { free, proLow, proMed, proHigh, related };
     }
@@ -298,7 +296,6 @@
       q('#loading').classList.remove('hidden');
       q('#freeTagsWrap').classList.add('hidden');
       q('#captionHelper').classList.add('hidden');
-      q('#proContent').classList.add('hidden');
 
       setTimeout(()=>{
         const {free, proLow, proMed, proHigh, related}=generateTags(keyword);
@@ -313,17 +310,14 @@
         q('#captionText').textContent=cap;
         q('#captionHelper').classList.remove('hidden');
 
-        // Pro
-        if(state.pro){
-          renderTags(q('#proLow'), proLow);
-          renderTags(q('#proMed'), proMed);
-          renderTags(q('#proHigh'), proHigh);
-          q('#proContent').classList.remove('hidden');
-        }
+        // Full features (always on)
+        renderTags(q('#proLow'), proLow);
+        renderTags(q('#proMed'), proMed);
+        renderTags(q('#proHigh'), proHigh);
 
         // Extras
         renderTrending(); renderSaved();
-      }, 380);
+      }, 360);
     }
 
     // Boot
@@ -344,32 +338,15 @@
         });
       });
 
-      // Free actions
+      // Actions
       q('#copyFreeBtn').addEventListener('click', ()=> copyList(state.free));
       q('#newSearchBtn').addEventListener('click', ()=>{ q('#keywordInput').focus(); window.scrollTo({ top:0, behavior:'smooth' }); });
       q('#copyCaptionBtn').addEventListener('click', ()=>{ navigator.clipboard.writeText(q('#captionText').textContent); notify('Caption copied'); });
 
-      // === DEMO TOGGLE for PRO ===
-      function enablePro(){
-        state.pro=true;
-        const pc = q('#proContent');
-        pc && pc.classList.remove('hidden');
-        if(state.lastKeyword){ // if a search already ran, render pro groups immediately
-          renderTags(q('#proLow'), state.proLow);
-          renderTags(q('#proMed'), state.proMed);
-          renderTags(q('#proHigh'), state.proHigh);
-        }
-        notify('Pro demo activated');
-        pc && pc.scrollIntoView({behavior:'smooth', block:'start'});
-      }
-      ['#proHeaderBtn','#proHeaderBtnSm','#proCTA'].forEach(sel=>{ const el=q(sel); el && el.addEventListener('click', enablePro); });
+      q('#copyAllBtn').addEventListener('click', ()=>{ const all=[...state.free, ...state.proLow, ...state.proMed, ...state.proHigh]; copyList(all); });
+      q('#copyBalancedBtn').addEventListener('click', ()=>{ const take=(arr,n)=>arr.slice(0,n); const mix=[...take(state.proHigh,10), ...take(state.proMed,10), ...take(state.proLow,10)]; copyList(mix); });
+      q('#exportCSVBtn').addEventListener('click', ()=>{ exportCSV(`${state.lastKeyword||'hashtags'}.csv`, {low:state.proLow, medium:state.proMed, high:state.proHigh}); });
 
-      // Pro actions
-      q('#copyAllBtn')?.addEventListener('click', ()=>{ const all=[...state.free, ...state.proLow, ...state.proMed, ...state.proHigh]; copyList(all); });
-      q('#copyBalancedBtn')?.addEventListener('click', ()=>{ const take=(arr,n)=>arr.slice(0,n); const mix=[...take(state.proHigh,10), ...take(state.proMed,10), ...take(state.proLow,10)]; copyList(mix); });
-      q('#exportCSVBtn')?.addEventListener('click', ()=>{ exportCSV(`${state.lastKeyword||'hashtags'}.csv`, {low:state.proLow, medium:state.proMed, high:state.proHigh}); });
-
-      // Saved sets
       q('#saveCurrentBtn').addEventListener('click', saveCurrentSet);
     });
   </script>
