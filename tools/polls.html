@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Polls • HashHero</title>
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    :root { --bg:#0b0d10; --card:#12161c; --text:#e8eef6; --muted:#97a3b6; --accent:#6ad1ff; --line:#1c232d; }
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Segoe UI,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    .container{max-width:820px;margin:0 auto;padding:24px}
+    .nav{display:flex;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+    .nav a{color:var(--muted);text-decoration:none;font-weight:600}
+    .nav a.active,.nav a:hover{color:var(--text)}
+    h1{font-size:28px;margin:18px 0 10px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+    input, .btn{width:100%;background:#0f141a;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:12px}
+    .btn.primary{background:var(--accent);color:#001520;border-color:transparent}
+    .row{display:flex;gap:10px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="nav">
+      <a href="/" aria-label="Home">HashHero</a>
+      <span style="flex:1"></span>
+      <a href="/tools/qr.html">QR</a>
+      <a href="/tools/meme.html">Meme</a>
+      <a href="/tools/hashtags.html">Hashtags</a>
+      <a href="/tools/gif.html">GIF</a>
+      <a href="/tools/polls.html" class="active">Polls</a>
+    </nav>
+
+    <h1>Polls</h1>
+
+    <section class="card" id="create">
+      <label for="q">Question</label>
+      <input id="q" placeholder="What should I post next?"/>
+      <div id="opts" style="margin-top:10px"></div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn" id="add">Add option</button>
+        <button class="btn primary" id="share">Copy share link</button>
+      </div>
+      <p style="color:var(--muted);font-size:12px;margin-top:10px">When someone opens your link, they can vote and see results. (Demo stores votes per-device.)</p>
+    </section>
+
+    <section class="card" id="vote" style="display:none;margin-top:12px"></section>
+  </div>
+
+  <script>
+    const optsEl = document.getElementById('opts');
+    const qEl = document.getElementById('q');
+    const addBtn = document.getElementById('add');
+    const shareBtn = document.getElementById('share');
+    const createCard = document.getElementById('create');
+    const voteCard = document.getElementById('vote');
+
+    const optRow = (value='')=>{
+      const wrap=document.createElement('div'); wrap.className='row'; wrap.style.marginTop='6px';
+      const input=document.createElement('input'); input.value=value; input.placeholder='Option';
+      const del=document.createElement('button'); del.className='btn'; del.textContent='✕'; del.style.flex='0 0 56px';
+      wrap.appendChild(input); wrap.appendChild(del);
+      del.onclick=()=>wrap.remove();
+      return wrap;
+    };
+
+    optsEl.appendChild(optRow('Option 1'));
+    optsEl.appendChild(optRow('Option 2'));
+
+    addBtn.onclick = ()=> optsEl.appendChild(optRow(''));
+
+    function encodePoll(data){ return btoa(unescape(encodeURIComponent(JSON.stringify(data)))); }
+    function decodePoll(s){ try{ return JSON.parse(decodeURIComponent(escape(atob(s)))); }catch(e){ return null; } }
+
+    shareBtn.onclick = ()=>{
+      const options = [...optsEl.querySelectorAll('input')].map(i=>i.value.trim()).filter(Boolean).slice(0,10);
+      const q = (qEl.value||'My Poll').trim();
+      const enc = encodePoll({q, opts:options});
+      const url = `${location.origin}/tools/polls.html#poll=${enc}`;
+      navigator.clipboard.writeText(url).then(()=> alert('Shareable link copied!'));
+    };
+
+    function loadFromHash(){
+      const m = location.hash.match(/^#poll=(.+)$/);
+      if(!m) return;
+      const data = decodePoll(m[1]);
+      if(!data) return;
+      createCard.style.display='none';
+      voteCard.style.display='block';
+
+      const key = 'hh_votes_'+btoa(data.q);
+      const votes = JSON.parse(localStorage.getItem(key)||'{}');
+
+      voteCard.innerHTML = `<h3 style="margin-top:0">${data.q}</h3>`;
+      data.opts.forEach((opt, idx)=>{
+        const btn=document.createElement('button'); btn.className='btn'; btn.style.marginTop='8px'; btn.style.textAlign='left'; btn.textContent=`${opt}`;
+        const count=document.createElement('span'); count.style.float='right'; count.style.color='var(--muted)'; count.textContent = votes[idx]||0; btn.appendChild(count);
+        btn.onclick=()=>{ votes[idx]=(votes[idx]||0)+1; localStorage.setItem(key, JSON.stringify(votes)); count.textContent = votes[idx]; };
+        voteCard.appendChild(btn);
+      });
+    }
+    window.addEventListener('hashchange', loadFromHash);
+    loadFromHash();
+  </script>
+</body>
+</html>
