@@ -28,7 +28,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
 
-<script>(function(){var s=document.createElement("script");s.src="../assets/nav.js";s.defer=true;document.head.appendChild(s);}())</script>
+
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -114,24 +114,7 @@
 </main>
   <footer class="footer">© 2025 HashHero — Built for creators.</footer>
   
-<script>
-(function(){
-  function draw(text, size, margin, dark, light){
-    var c=document.getElementById('qrCanvas'), ctx=c.getContext('2d');
-    c.width=c.height=size; ctx.fillStyle=light; ctx.fillRect(0,0,size,size);
-    function h(t){for(var i=0,n=0;i<t.length;i++) n=(n*33 + t.charCodeAt(i))>>>0; return n;}
-    var seed=h(text), modules=29, cell=Math.floor((size - margin*2)/modules), off=margin;
-    for(var y=0;y<modules;y++) for(var x=0;x<modules;x++){ seed=(seed*1664525+1013904223)>>>0;
-      var isF=(x<7&&y<7)||(x>modules-8&&y<7)||(x<7&&y>modules-8);
-      if(((seed>>>24)&1)===1 || isF){ ctx.fillStyle=isF?dark:((seed&4)?dark:light); ctx.fillRect(off+x*cell, off+y*cell, cell, cell);}}
-  }
-  const E={data:document.getElementById('data'), fg:document.getElementById('fg'), bg:document.getElementById('bg'), size:document.getElementById('size'), margin:document.getElementById('margin'), prev:document.getElementById('preview'), dl:document.getElementById('download'), c:document.getElementById('qrCanvas')};
-  function render(){ const t=E.data.value.trim(); const s=parseInt(E.size.value)||512; const m=parseInt(E.margin.value)||4; if(!t){E.dl.disabled=true; E.c.getContext('2d').clearRect(0,0,E.c.width,E.c.height); return;} draw(t,s,m,E.fg.value,E.bg.value); E.dl.disabled=false; }
-  E.prev.addEventListener('click', render);
-  E.dl.addEventListener('click', ()=>{ const a=document.createElement('a'); a.download='hashhero-qr.png'; a.href=E.c.toDataURL('image/png'); a.click(); });
-  render();
-})();
-</script>
+
 
 </body>
 </html>

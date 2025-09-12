@@ -4,36 +4,24 @@
   ready(function(){
     const $ = (sel, ctx=document) => ctx.querySelector(sel);
     const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
-    const byId = (id) => document.getElementById(id);
-
-    // Prefer the input INSIDE the hero tool
-    const hero = $('.hero-tool') || document.body;
+    const hero = $('.hero-tool') || document;
     function findKw(){
-      return byId('kw')
-          || $('input#kw', hero)
-          || $('input[data-role="kw"]', hero)
-          || $('input[placeholder*="topic" i]', hero)
-          || $('input[placeholder*="keyword" i]', hero)
-          || $('input[type="search"]', hero)
-          || $('input[type="text"]', hero);
+      return hero.querySelector('#kw')
+          || hero.querySelector('[data-role="kw"]')
+          || hero.querySelector('input[placeholder*="topic" i]')
+          || hero.querySelector('input[placeholder*="keyword" i]')
+          || hero.querySelector('input[type="search"]')
+          || hero.querySelector('input[type="text"]');
     }
-    function findGenerate(){
-      return byId('generate')
-          || $('#generate', hero)
-          || $('button[data-role="generate"]', hero)
-          || $('button.btn', hero)
-          || $('button', hero);
-    }
-
-    const kw = findKw();
-    const genBtn = findGenerate();
-    const results = byId('results') || $('#results', hero) || $('#results');
-    const copyAllBtn = byId('copyAllBtn') || $('#copyAllBtn', hero) || $('#copyAllBtn');
+    const kw = findKw(); if(kw){ kw.setAttribute('data-role','kw'); }
+    const results = $('#results', hero) || document.getElementById('results');
+    const copyAllBtn = document.getElementById('copyAllBtn');
     const tabs = $$('.hh-tab');
-    const aiInclude = byId('aiInclude'), aiAvoid = byId('aiAvoid');
-    const lvIntensity = byId('lvIntensity'), lvTrend = byId('lvTrend'), lvNiche = byId('lvNiche');
-    const lvMax = byId('lvMax'), lvCase = byId('lvCase'), lvRegion = byId('lvRegion');
-    const lvShuffle = byId('lvShuffle'), lvSafe = byId('lvSafe');
+    const genBtn = document.getElementById('generate') || hero.querySelector('#generate') || hero.querySelector('button');
+    const aiInclude = document.getElementById('aiInclude'), aiAvoid = document.getElementById('aiAvoid');
+    const lvIntensity = document.getElementById('lvIntensity'), lvTrend = document.getElementById('lvTrend'), lvNiche = document.getElementById('lvNiche');
+    const lvMax = document.getElementById('lvMax'), lvCase = document.getElementById('lvCase'), lvRegion = document.getElementById('lvRegion');
+    const lvShuffle = document.getElementById('lvShuffle'), lvSafe = document.getElementById('lvSafe');
 
     if(!results){ return; }
 
@@ -57,12 +45,10 @@
     };
     let active = 'tiktok';
 
-    // Utils
     function debounce(fn, ms){ let t; return function(){ clearTimeout(t); const args=arguments; t=setTimeout(()=>fn.apply(null, args), ms); }; }
     function norm(s){ return (s||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim(); }
     function title(s){ return s.replace(/(^|\s)\S/g, t=>t.toUpperCase()); }
 
-    // NLP
     const STOP = new Set(("a an the and or of to in on for with from by is are was were be been at as that this it your you our we i me my mine his her their they them he she do does did not no yes too very just much many more most less few over under again only own same so than then once each both any some such own other into out up down off above below why how all can will should could would might must may".split(" ")));
     function extractKeywords(txt){
       const words = norm(txt).split(' ').filter(Boolean).filter(w=>!STOP.has(w));
@@ -70,7 +56,6 @@
       return Array.from(freq.entries()).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([w])=>w);
     }
     const SYN = {"video":["clip","shorts","reel"],"tips":["hacks","guide","howto","protips"],"travel":["wander","adventure","trip","journey"],"food":["recipe","cooking","kitchen","yum"],"fitness":["workout","gym","health","wellness","fit"],"beauty":["makeup","skincare","glow"],"money":["finance","investing","budget","wealth"],"fashion":["style","outfit","ootd","trend"],"music":["song","beat","remix","cover","instrumental"]};
-
     function expandIdeas(keys, intensity=40, niche=30){
       const out = new Set(keys);
       const more = Math.round( (intensity/100) * 12 );
@@ -231,7 +216,6 @@
     function doGenerate(){ const seed = (kw && kw.value)?kw.value.trim():''; if(seed){ render(buildPipeline(seed)); } }
     if(genBtn) genBtn.addEventListener('click', doGenerate);
     if(kw){
-      kw.setAttribute('data-role','kw'); // mark it so future scripts find the right one
       kw.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); doGenerate(); } });
       const autoRender = debounce(()=>{
         const seed = kw.value.trim();

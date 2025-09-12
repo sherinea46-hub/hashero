@@ -1,0 +1,38 @@
+:root{
+  --bg:#0b1020; --bg-2:#0e1430; --text:#eaf2ff; --muted:#b9c7e6;
+  --border:#20304d; --accent:#22d3ee; --accent-2:#a78bfa; --accent-3:#f59e0b;
+  --glow: rgba(34,211,238,.35);
+}
+html,body{
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(167,139,250,.22), transparent 60%),
+    radial-gradient(1000px 500px at -10% 10%, rgba(34,211,238,.18), transparent 60%),
+    linear-gradient(180deg, var(--bg), var(--bg-2)) !important;
+  color: var(--text) !important;
+}
+h1,h2,h3,h4,h5,h6{ color:#fff !important; }
+p, label, small, span { color: var(--text) !important; opacity:.92; }
+a{ color: var(--accent) !important; text-decoration: none; }
+.card, .panel, .box, .container, .tool, .widget, .grid > div, .grid .card, section .card {
+  background: rgba(255,255,255,.04) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 6px 30px rgba(0,0,0,.18) !important;
+  color: var(--text) !important;
+}
+input, select, textarea {
+  background: rgba(255,255,255,.06) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  border-radius: 12px !important;
+}
+button {
+  background: rgba(255,255,255,.04) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  border-radius: 12px !important;
+}
+button:hover { border-color: var(--accent) !important; box-shadow: 0 8px 40px var(--glow) !important; }
+.results, .output, .rows, .list { background: rgba(255,255,255,.02) !important; border: 1px solid var(--border) !important; border-radius:12px !important; }
+tr, .row, .hh-row { border-bottom: 1px solid var(--border) !important; }
+.nav, header.nav { background: rgba(11,16,32,.8) !important; border-bottom: 1px solid var(--border) !important; }

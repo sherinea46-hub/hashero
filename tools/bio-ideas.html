@@ -13,7 +13,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://hashhero.app/tools/bio-ideas.html" />
   <link rel="stylesheet" href="../assets/hashhero.css" />
-<script>(function(){var s=document.createElement("script");s.src="../assets/nav.js";s.defer=true;document.head.appendChild(s);}())</script>
+
 </head>
 <body>
   <div id="site-nav"></div>
@@ -35,15 +35,6 @@
 
   <footer class="footer">© 2025 HashHero — Built for creators.</footer>
 
-  <script>
-  (function(){
-    const vibe=document.getElementById('vibe'), btn=document.getElementById('gen'), list=document.getElementById('list'), copyAll=document.getElementById('copyAll');
-    const ideas={ aesthetic:["soft mornings ☕✨","romanticizing the little things","chaotic good, color graded","neon nights + ideas","documenting this season of life"], funny:["low effort, high vibes","professional overthinker","posting until I go viral","camera roll archivist","talent: pressing upload"], edgy:["wifi for the soul","batteries at 1%, still running","debugging life in public","pixels & plot twists","offline is a myth"], pro:["creator • editor • storyteller","short-form growth strategist","helping brands show up online","new video every week","DM for collabs"] };
-    btn.addEventListener('click', ()=>{ const arr=ideas[vibe.value]||[]; list.innerHTML=''; let all=[];
-      arr.forEach(t=>{ const item=document.createElement('div'); item.className='row'; const p=document.createElement('span'); p.style.display='inline-flex'; p.style.padding='8px 10px'; p.style.border='1px solid var(--line)'; p.style.borderRadius='999px'; p.textContent=t; const b=document.createElement('button'); b.className='btn'; b.textContent='Copy'; b.onclick=()=>navigator.clipboard.writeText(t).then(()=>{b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy',900);}); item.appendChild(p); item.appendChild(b); list.appendChild(item); all.push(t); });
-      copyAll.disabled=arr.length===0; copyAll.onclick=()=>navigator.clipboard.writeText(all.join('\n')).then(()=>{copyAll.textContent='Copied!'; setTimeout(()=>copyAll.textContent='Copy All',900);});
-    });
-  })();
-  </script>
+  
 </body>
 </html>

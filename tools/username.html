@@ -13,7 +13,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://hashhero.app/tools/username.html" />
   <link rel="stylesheet" href="../assets/hashhero.css" />
-<script>(function(){var s=document.createElement("script");s.src="../assets/nav.js";s.defer=true;document.head.appendChild(s);}())</script>
+
 </head>
 <body>
   <div id="site-nav"></div>
@@ -54,37 +54,6 @@
 
   <footer class="footer">© 2025 HashHero — Built for creators.</footer>
 
-  <script>
-  (function(){
-    const kw = document.getElementById('kw'), vibe=document.getElementById('vibe'), count=document.getElementById('count');
-    const btn=document.getElementById('gen'), list=document.getElementById('list'), copyAll=document.getElementById('copyAll');
-    const suffix={'aesthetic':['studio','lab','vibes','cloud','atelier','nova','works','aura','pixel','bloom','haze','zen'], 'edgy':['x','_hq','404','void','shift','prime','grim','raw','arc','flux','zero'], 'cute':['kitty','bun','sparkle','star','angel','berry','bubbles','sprout','puff','peach'], 'pro':['media','digital','creative','studio','official','hq','labs','group','works']};
-    const prefix={'aesthetic':['neo','ultra','meta','astro','lunar','glow','aero','micro','macro','hyper'], 'edgy':['drk','neo','void','hex','vanta','riot','grim','null'], 'cute':['lil','mini','baby','soft','sweet','tiny','pastel'], 'pro':['get','try','go','join','the','team']};
-    function norm(s){return s.toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();}
-    function cap(s){return s.replace(/(^|\s)\S/g,t=>t.toUpperCase());}
-    function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
-    function genOne(base, style){
-      const baseN = base.replace(/\s+/g,'');
-      switch(style){
-        case 'aesthetic': return [baseN+pick(suffix.aesthetic), pick(prefix.aesthetic)+cap(baseN), baseN+'.studio', baseN+'hub', baseN+'works'];
-        case 'edgy': return [baseN+pick(suffix.edgy), pick(prefix.edgy)+baseN, baseN+'_x', baseN+'-dev', baseN+'0'];
-        case 'cute': return [baseN+pick(suffix.cute), 'its'+cap(baseN), 'hey'+cap(baseN), baseN+'_cutie', cap(baseN)+'BFF'];
-        case 'pro': return [baseN+pick(suffix.pro), pick(prefix.pro)+cap(baseN), cap(baseN)+'Official', 'use'+cap(baseN), baseN+'app'];
-      }
-    }
-    function unique(arr){return [...new Set(arr)];}
-    btn.addEventListener('click', ()=>{
-      const k=norm(kw.value||'creator'); const vibeV=vibe.value; constn=parseInt(count.value)||24;
-      let out=[];
-      for(let i=0;i<constn;i++){ out.push(...genOne(k, vibeV)); }
-      out = unique(out).slice(0,constn);
-      list.innerHTML='';
-      const frag=document.createDocumentFragment();
-      out.forEach(name=>{ const item=document.createElement('div'); item.className='row'; const pill=document.createElement('span'); pill.style.display='inline-flex'; pill.style.padding='8px 10px'; pill.style.border='1px solid var(--line)'; pill.style.borderRadius='999px'; pill.textContent=name; const b=document.createElement('button'); b.className='btn'; b.textContent='Copy'; b.onclick=()=>navigator.clipboard.writeText(name).then(()=>{b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy',900);}); item.appendChild(pill); item.appendChild(b); frag.appendChild(item); });
-      list.appendChild(frag);
-      copyAll.disabled=false; copyAll.onclick=()=>{ navigator.clipboard.writeText(out.join('\n')).then(()=>{copyAll.textContent='Copied!'; setTimeout(()=>copyAll.textContent='Copy All',900);}); };
-    });
-  })();
-  </script>
+  
 </body>
 </html>

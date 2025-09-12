@@ -14,7 +14,7 @@
   <meta property="og:url" content="https://hashhero.app/tools/aesthetic-text.html" />
   <link rel="canonical" href="https://hashhero.app/tools/aesthetic-text.html"/>
   <link rel="stylesheet" href="../assets/hashhero.css" />
-<script>(function(){var s=document.createElement("script");s.src="../assets/nav.js";s.defer=true;document.head.appendChild(s);}())</script>
+
 </head>
 <body>
   <div id="site-nav"></div>
@@ -87,46 +87,6 @@
   })();
   </script>
 
-  <script>
-  (function(){
-    const src = document.getElementById('src');
-    const gen = document.getElementById('gen');
-    const copyAll = document.getElementById('copyAll');
-    const preview = document.getElementById('preview');
-    const results = document.getElementById('results');
-    const normalizeSel = document.getElementById('normalize');
-    const filterSel = document.getElementById('filter');
-
-    const base={lower:'abcdefghijklmnopqrstuvwxyz', upper:'ABCDEFGHIJKLMNOPQRSTUVWXYZ', digits:'0123456789'};
-    const styles={'Bold':{u:'𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙',l:'𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳',d:'𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗'},
-                  'Italic':{u:'𝐴𝐵𝐶𝐷𝐸𝐹𝐺𝐻𝐼𝐽𝐾𝐿𝑀𝑁𝑂𝑃𝑄𝑅𝑆𝑇𝑈𝑉𝑊𝑋𝑌𝑍',l:'𝑎𝑏𝑐𝑑𝑒𝑓𝑔ℎ𝑖𝑗𝑘𝑙𝑚𝑛𝑜𝑝𝑞𝑟𝑠𝑡𝑢𝑣𝑤𝑥𝑦𝑧'},
-                  'Bold Italic':{u:'𝑨𝑩𝑪𝑫𝑬𝑭𝑮𝑯𝑰𝑱𝑲𝑳𝑴𝑵𝑶𝑷𝑸𝑹𝑺𝑻𝑼𝑽𝑾𝑿𝒀𝒁',l:'𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛'},
-                  'Script':{u:'𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵',l:'𝒶𝒷𝒸𝒹ℯ𝒻ℊ𝒽𝒾𝒿𝓀𝓁𝓂𝓃ℴ𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏'},
-                  'Fraktur':{u:'𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔎𝔏𝔐𝔑𝔒𝔓𝔔ℜ𝔖𝔗𝔘𝔙𝔚𝔛𝔜ℨ',l:'𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔵𝔶𝔷'},
-                  'Monospace':{u:'𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉',l:'𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚗𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣',d:'𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿'},
-                  'Double Struck':{u:'𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ',l:'𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫',d:'𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡'},
-                  'Small Caps':{u:'ABCDEFGHIJKLMNOPQRSTUVWXYZ',l:'ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ'}};
-    const basic=new Set(['Bold','Italic','Bold Italic','Monospace','Small Caps']);
-
-    function map(ch, st){
-      const s=styles[st]; const iu=base.upper.indexOf(ch), il=base.lower.indexOf(ch), id=base.digits.indexOf(ch);
-      if(iu!=-1) return s.u?.[iu]||ch; if(il!=-1) return s.l?.[il]||ch; if(id!=-1) return s.d?.[id]||ch; return ch;
-    }
-    function trans(text, st, mode){
-      let out=''; for(const ch of text){ if(mode==='letters' && !(/[A-Za-z]/.test(ch))) {out+=ch; continue;} out+=map(ch,st);} return out;
-    }
-    function render(){
-      const text=src.value||''; preview.textContent=text; results.innerHTML=''; const chosen=(filterSel.value==='basic')?[...basic]:Object.keys(styles); let all=[];
-      for(const name of chosen){ const t=trans(text,name,normalizeSel.value);
-        const card=document.createElement('div'); card.className='card'; const h=document.createElement('h3'); h.textContent=name; card.appendChild(h);
-        const p=document.createElement('p'); p.textContent=t; p.style.whiteSpace='pre-wrap'; card.appendChild(p);
-        const b=document.createElement('button'); b.className='btn'; b.textContent='Copy'; b.onclick=()=>navigator.clipboard.writeText(t).then(()=>{b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy',900);}); card.appendChild(b);
-        results.appendChild(card); all.push(name+': '+t); }
-      copyAll.disabled=chosen.length===0; copyAll.onclick=()=>navigator.clipboard.writeText(all.join('\n')).then(()=>{copyAll.textContent='Copied!'; setTimeout(()=>copyAll.textContent='Copy All',900);});
-    }
-    gen.addEventListener('click', render);
-    src.addEventListener('input', ()=> preview.textContent=src.value);
-  })();
-  </script>
+  
 </body>
 </html>
