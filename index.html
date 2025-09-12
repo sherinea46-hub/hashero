@@ -1,203 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>HashHero — Hashtags First</title>
-<style>
-/* === Bright Vibrant Theme (fixed, single‑file) === */
-:root {
-  --bg: #0b1020;
-  --bg-2: #0e1430;
-  --text: #eaf2ff;
-  --muted: #b9c7e6;
-  --border: #20304d;
-  --accent: #22d3ee;        /* cyan */
-  --accent-2: #a78bfa;      /* violet */
-  --accent-3: #f59e0b;      /* amber */
-  --glow: rgba(34, 211, 238, 0.35);
-  --radius: 16px;
-  --shadow: 0 6px 30px rgba(0,0,0,0.18);
-}
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial;
-  line-height: 1.4;
-  background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(167,139,250,.22), transparent 60%),
-    radial-gradient(1000px 500px at -10% 10%, rgba(34,211,238,.18), transparent 60%),
-    linear-gradient(180deg, var(--bg), var(--bg-2));
-  color: var(--text);
-}
-
-/* Header */
-.nav { position: sticky; top: 0; z-index: 10; background: rgba(11,16,32,.8); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
-.nav-inner { max-width: 1200px; margin: 0 auto; padding: 14px 18px; display: flex; align-items: center; gap: 16px; }
-.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .2px; color: var(--text); text-decoration: none; }
-.brand-badge { display:inline-block; padding:4px 8px; border-radius: 999px; font-size: 12px; background: rgba(34,211,238,.20); color: var(--accent); font-weight:700; }
-.filler { margin-left: auto; }
-.small { opacity:.8; font-size: 14px; }
-
-/* Main layout */
-.main { max-width: 1200px; margin: 0 auto; padding: 18px; }
-.primary-hero { margin-top: 16px; }
-.hero-inner { display:grid; grid-template-columns: 1.1fr 1.4fr; gap:22px; align-items:flex-start; }
-@media (max-width: 980px){ .hero-inner { grid-template-columns: 1fr; } }
-.hero-copy .hero-title { font-size: clamp(28px, 5vw, 40px); margin: 4px 0 8px; }
-.hero-copy .hero-sub { opacity: .9; margin-bottom: 12px; }
-.hero-points { margin: 0 0 10px 18px; padding: 0; opacity: .85; }
-.hero-points li { margin: 4px 0; }
-
-.hero-tool { background: rgba(255,255,255,0.05); border:1px solid var(--border); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); }
-.tool-body .label { display:block; margin-bottom:6px; font-weight:600; color: var(--text); }
-.row { display:flex; gap:8px; }
-.row input { flex: 1; padding: 12px 12px; border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.02); color: var(--text); }
-.btn { padding: 12px 14px; border-radius: 12px; border:1px solid var(--border); background: transparent; color: var(--text); cursor:pointer; }
-.btn:hover { border-color: var(--accent); color: var(--accent); }
-
-/* Tabs */
-.hh-tabs { display:flex; gap:8px; flex-wrap:wrap; margin:16px 0 8px; }
-.hh-tab { border:1px solid var(--border); padding:8px 12px; border-radius:999px; cursor:pointer; user-select:none; }
-.hh-tab.active { background: rgba(34,211,238,.16); color: var(--accent); border-color: var(--accent); }
-
-/* AI panels */
-.ai-assist, .ai-levers { margin-top: 14px; border:1px dashed var(--border); border-radius:12px; padding:12px; background: rgba(255,255,255,0.03); }
-.ai-assist h4, .ai-levers h4 { margin: 0 0 8px; }
-.ai-assist textarea { width:100%; min-height: 110px; border-radius:10px; border:1px solid var(--border); background: transparent; color: inherit; padding:10px; }
-.ai-row { display:flex; gap:10px; flex-wrap:wrap; margin-top: 8px; }
-.ai-row input, .ai-row select { flex:1 1 220px; padding:8px 10px; border-radius:10px; border:1px solid var(--border); background: transparent; color: inherit; }
-.ai-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top: 8px; }
-.ai-actions .btn { padding: 10px 12px; }
-
-.hh-topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:8px 0 16px; }
-.hh-note { font-size: 12px; opacity: 0.7; margin-top: 8px; }
-.copy-all { padding:10px 14px; border-radius:10px; border:1px solid var(--border); cursor:pointer; background: transparent; color: var(--text); }
-.copy-all:hover { border-color: var(--accent); color: var(--accent); }
-
-/* Results */
-.results { border:1px solid var(--border); border-radius: 12px; overflow: hidden; }
-.hh-row { display:grid; grid-template-columns: 1fr auto auto; gap:10px; align-items:center; padding:10px 12px; border-bottom:1px solid var(--border); }
-.hh-tag { font-weight:600; }
-.hh-metric { font-variant-numeric: tabular-nums; opacity:0.85; }
-.hh-copy { border:1px solid var(--border); padding:6px 10px; border-radius:8px; cursor:pointer; background: transparent; color: var(--text); }
-.hh-copy:hover { border-color: var(--accent); color: var(--accent); }
-
-/* Add‑on tools grid */
-.addons { margin-top: 18px; }
-.addons-title { margin: 8px 0 14px; font-size: 22px; opacity: .95; }
-.grid { display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-@media (max-width: 980px){ .grid { grid-template-columns: 1fr; } }
-.card {
-  display:block;
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:16px;
-  background: rgba(255,255,255,0.04);
-  box-shadow: var(--shadow);
-  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-}
-.card:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 8px 40px var(--glow); }
-.card h3 { margin: 0 0 6px; color: #ffffff; }
-.card p  { color: var(--muted); margin: 0; }
-.card a { color: inherit; text-decoration: none; }
-
-.footer { max-width: 1200px; margin: 28px auto 40px; padding: 0 18px; opacity: .7; }
-.brand-badge { padding: 4px 8px; border-radius: 999px; background: rgba(34,211,238,.20); color: var(--accent); font-weight:700; font-size: 12px; }
-</style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>HashHero — Hashtag Generator</title>
+  <link rel="stylesheet" href="assets/hashhero.css">
+  <script>
+    // load header + unified theme if nav.js exists
+    (function(){var s=document.createElement('script');s.src='assets/nav.js?v=min';s.defer=true;document.head.appendChild(s);}());
+  </script>
+  <style>
+    /* tiny fallback in case site css is missing */
+    body{font-family:Inter,system-ui,Arial,sans-serif;margin:0;background:#0b1020;color:#eaf2ff}
+    main{max-width:1200px;margin:48px auto;padding:0 16px}
+    .hero{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:start}
+    .tool.card{background:rgba(255,255,255,.04);border:1px solid #20304d;border-radius:16px;padding:20px}
+    .grid.two{display:grid;grid-template-columns:1fr auto;gap:12px}
+    input#kw{padding:14px 16px;border-radius:12px;border:1px solid #20304d;background:rgba(255,255,255,.06);color:#eaf2ff}
+    .btn{padding:12px 16px;border-radius:12px;border:1px solid #20304d;background:rgba(255,255,255,.04);color:#eaf2ff;cursor:pointer}
+    .btn.ghost{background:transparent}
+    .results{margin-top:16px;border:1px solid #20304d;border-radius:12px;background:rgba(255,255,255,.02)}
+    .hh-row{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #20304d}
+    .hh-row:last-child{border-bottom:0}
+    .hh-tag{font-weight:600}
+    .addons .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .cardLink{display:block;padding:16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid #20304d;text-decoration:none;color:inherit}
+    @media(max-width:900px){.hero{grid-template-columns:1fr}.addons .grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  </style>
 </head>
 <body>
   <div id="site-nav"></div>
+  <main>
+    <section class="hero">
+      <div>
+        <h1 style="font-size:48px;line-height:1.1;margin:0 0 12px">Hashtag Generator</h1>
+        <p style="opacity:.9;margin:0 0 18px">Type a topic and get a clean set of hashtags you can copy individually or all at once.</p>
+        <ul style="opacity:.8;margin:0 0 10px 20px">
+          <li>No AI levers or platform tabs — just fast, clean tags.</li>
+          <li>Copy per tag or copy the whole set.</li>
+        </ul>
+      </div>
 
-  <main class="main">
-    <section class="hero primary-hero">
-      <div class="hero-inner">
-        <div class="hero-copy">
-          <h1 class="hero-title">Hashtag Generator</h1>
-          <p class="hero-sub">Smart, platform‑tuned hashtags with AI help. Copy one tag or the whole set.</p>
-          <ul class="hero-points">
-            <li>Tabs for TikTok, Instagram, Facebook, X, YouTube</li>
-            <li>AI Assist + extra levers (trend boost, niche depth, region, case)</li>
-            <li>Per‑tag <em>Copy</em> and <em>Copy All</em> in one click</li>
-          </ul>
+      <div class="tool card hero-tool">
+        <div class="grid two">
+          <input id="kw" type="text" placeholder="e.g., travel vlog europe" />
+          <button id="generate" class="btn">Generate</button>
         </div>
-        <div class="hero-tool">
-          <div class="tool-body">
-            <label for="kw" class="label">Topic or keywords</label>
-            <div class="row">
-              <input id="kw" placeholder="e.g., travel vlog Europe" />
-              <button id="generate" class="btn">Generate</button>
-            </div>
-          </div>
-
-          <div class="hh-tabs" id="platformTabs" role="tablist" aria-label="Platforms">
-            <div class="hh-tab active" data-platform="tiktok" role="tab" aria-selected="true" tabindex="0">TikTok</div>
-            <div class="hh-tab" data-platform="instagram" role="tab" aria-selected="false" tabindex="-1">Instagram</div>
-            <div class="hh-tab" data-platform="facebook" role="tab" aria-selected="false" tabindex="-1">Facebook</div>
-            <div class="hh-tab" data-platform="x" role="tab" aria-selected="false" tabindex="-1">X</div>
-            <div class="hh-tab" data-platform="youtube" role="tab" aria-selected="false" tabindex="-1">YouTube</div>
-          </div>
-
-          <div class="ai-assist">
-            <h4>AI Assist (optional)</h4>
-            <textarea id="aiCaption" placeholder="Paste caption/description/transcript to extract ideas…"></textarea>
-            <div class="ai-row">
-              <input id="aiInclude" placeholder="Always include (brand/handle), e.g., #HashHero" />
-              <input id="aiAvoid" placeholder="Avoid words/tags (comma-separated)" />
-            </div>
-            <div class="ai-actions">
-              <button id="aiExtract" class="btn">Extract Keywords</button>
-              <button id="aiExpand" class="btn">AI Assist: Expand Ideas</button>
-              <button id="aiGenerate" class="btn">Generate Hashtags from Caption</button>
-            </div>
-          </div>
-
-          <div class="ai-levers">
-            <h4>AI Levers</h4>
-            <div class="ai-row">
-              <label class="ai-field"><span>Intensity</span><input id="lvIntensity" type="range" min="0" max="100" value="40" /></label>
-              <label class="ai-field"><span>Trend Boost</span><input id="lvTrend" type="range" min="0" max="100" value="50" /></label>
-              <label class="ai-field"><span>Niche Depth</span><input id="lvNiche" type="range" min="0" max="100" value="30" /></label>
-              <label class="ai-field"><span>Max per set</span><input id="lvMax" type="range" min="0" max="30" value="0" /><small class="ai-help">0 = platform default</small></label>
-            </div>
-            <div class="ai-row">
-              <label class="ai-field"><span>Case</span><select id="lvCase"><option value="lower">lowercase</option><option value="camel">CamelCase</option></select></label>
-              <label class="ai-field"><span>Region / Locale</span><input id="lvRegion" placeholder="e.g., Canada, Toronto" /></label>
-              <label class="ai-field"><span>Randomize</span><input id="lvShuffle" type="checkbox" /></label>
-              <label class="ai-field"><span>Safe Mode</span><input id="lvSafe" type="checkbox" checked /></label>
-            </div>
-          </div>
-
-          <div class="hh-topbar">
-            <div class="hh-note">Platform limits are automatic. Popularity is an estimate.</div>
-            <button class="copy-all" id="copyAllBtn">Copy All</button>
-          </div>
-
-          <div id="results" class="results"></div>
+        <div class="actions" style="text-align:right;margin-top:12px">
+          <button id="copyAllBtn" class="btn ghost">Copy All</button>
         </div>
+        <div id="results" class="results"></div>
       </div>
     </section>
 
-    <section class="addons">
-      <h2 class="addons-title">Add‑on Tools</h2>
-      
-<div class="grid">
-  <a class="card" href="tools/captions.html"><h3>Caption Generator</h3><p>Instant hooks & captions by tone.</p></a>
-  <a class="card" href="tools/username.html"><h3>Username Ideas</h3><p>Trendy names by vibe — one‑click copy.</p></a>
-  <a class="card" href="tools/thumbnail.html"><h3>YouTube Thumbnail</h3><p>Big title overlay with outline & shadow.</p></a>
-  <a class="card" href="tools/meme.html"><h3>Meme Maker</h3><p>Top/bottom text PNG — no watermark.</p></a>
-  <a class="card" href="tools/emoji-combos.html"><h3>Emoji Combos</h3><p>Aesthetic emoji strings for bios & captions.</p></a>
-  <a class="card" href="tools/engagement.html"><h3>Engagement Calculator</h3><p>ER by Followers & Views.</p></a>
-</div>
-
+    <section class="addons" style="margin-top:40px">
+      <h2 style="margin:0 0 12px">Add‑on Tools</h2>
+      <div class="grid">
+        <a class="cardLink" href="tools/captions.html"><strong>Caption Generator</strong><br><span style="opacity:.85">Instant hooks & captions by tone.</span></a>
+        <a class="cardLink" href="tools/username.html"><strong>Username Ideas</strong><br><span style="opacity:.85">Trendy names by vibe — one‑click copy.</span></a>
+        <a class="cardLink" href="tools/thumbnail.html"><strong>YouTube Thumbnail</strong><br><span style="opacity:.85">Big title overlay with outline & shadow.</span></a>
+        <a class="cardLink" href="tools/meme.html"><strong>Meme Maker</strong><br><span style="opacity:.85">Top/bottom text PNG — no watermark.</span></a>
+        <a class="cardLink" href="tools/emoji-combos.html"><strong>Emoji Combos</strong><br><span style="opacity:.85">Aesthetic emoji strings for bios & captions.</span></a>
+        <a class="cardLink" href="tools/engagement.html"><strong>Engagement Calculator</strong><br><span style="opacity:.85">ER by Followers & Views.</span></a>
+      </div>
     </section>
   </main>
 
-  <footer class="footer">© 2025 HashHero — Built for creators.</footer>
-
-
-
-
-<script src="assets/generator.v2.js?v=kwbind" defer></script>
+  <script src="assets/generator.simple.js?v=basic" defer></script>
 </body>
 </html>
