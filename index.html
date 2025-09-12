@@ -1,17 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
-
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>HashHero — Hashtags First</title>
-<link rel="stylesheet" href="assets/hashhero.css?v=20250912a">
+<style>
+/* === Bright Vibrant Theme (fixed, single‑file) === */
+:root {
+  --bg: #0b1020;
+  --bg-2: #0e1430;
+  --text: #eaf2ff;
+  --muted: #b9c7e6;
+  --border: #20304d;
+  --accent: #22d3ee;        /* cyan */
+  --accent-2: #a78bfa;      /* violet */
+  --accent-3: #f59e0b;      /* amber */
+  --glow: rgba(34, 211, 238, 0.35);
+  --radius: 16px;
+  --shadow: 0 6px 30px rgba(0,0,0,0.18);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial;
+  line-height: 1.4;
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(167,139,250,.22), transparent 60%),
+    radial-gradient(1000px 500px at -10% 10%, rgba(34,211,238,.18), transparent 60%),
+    linear-gradient(180deg, var(--bg), var(--bg-2));
+  color: var(--text);
+}
+
+/* Header */
+.nav { position: sticky; top: 0; z-index: 10; background: rgba(11,16,32,.8); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+.nav-inner { max-width: 1200px; margin: 0 auto; padding: 14px 18px; display: flex; align-items: center; gap: 16px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .2px; color: var(--text); text-decoration: none; }
+.brand-badge { display:inline-block; padding:4px 8px; border-radius: 999px; font-size: 12px; background: rgba(34,211,238,.20); color: var(--accent); font-weight:700; }
+.filler { margin-left: auto; }
+.small { opacity:.8; font-size: 14px; }
+
+/* Main layout */
+.main { max-width: 1200px; margin: 0 auto; padding: 18px; }
+.primary-hero { margin-top: 16px; }
+.hero-inner { display:grid; grid-template-columns: 1.1fr 1.4fr; gap:22px; align-items:flex-start; }
+@media (max-width: 980px){ .hero-inner { grid-template-columns: 1fr; } }
+.hero-copy .hero-title { font-size: clamp(28px, 5vw, 40px); margin: 4px 0 8px; }
+.hero-copy .hero-sub { opacity: .9; margin-bottom: 12px; }
+.hero-points { margin: 0 0 10px 18px; padding: 0; opacity: .85; }
+.hero-points li { margin: 4px 0; }
+
+.hero-tool { background: rgba(255,255,255,0.05); border:1px solid var(--border); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); }
+.tool-body .label { display:block; margin-bottom:6px; font-weight:600; color: var(--text); }
+.row { display:flex; gap:8px; }
+.row input { flex: 1; padding: 12px 12px; border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.02); color: var(--text); }
+.btn { padding: 12px 14px; border-radius: 12px; border:1px solid var(--border); background: transparent; color: var(--text); cursor:pointer; }
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Tabs */
+.hh-tabs { display:flex; gap:8px; flex-wrap:wrap; margin:16px 0 8px; }
+.hh-tab { border:1px solid var(--border); padding:8px 12px; border-radius:999px; cursor:pointer; user-select:none; }
+.hh-tab.active { background: rgba(34,211,238,.16); color: var(--accent); border-color: var(--accent); }
+
+/* AI panels */
+.ai-assist, .ai-levers { margin-top: 14px; border:1px dashed var(--border); border-radius:12px; padding:12px; background: rgba(255,255,255,0.03); }
+.ai-assist h4, .ai-levers h4 { margin: 0 0 8px; }
+.ai-assist textarea { width:100%; min-height: 110px; border-radius:10px; border:1px solid var(--border); background: transparent; color: inherit; padding:10px; }
+.ai-row { display:flex; gap:10px; flex-wrap:wrap; margin-top: 8px; }
+.ai-row input, .ai-row select { flex:1 1 220px; padding:8px 10px; border-radius:10px; border:1px solid var(--border); background: transparent; color: inherit; }
+.ai-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top: 8px; }
+.ai-actions .btn { padding: 10px 12px; }
+
+.hh-topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:8px 0 16px; }
+.hh-note { font-size: 12px; opacity: 0.7; margin-top: 8px; }
+.copy-all { padding:10px 14px; border-radius:10px; border:1px solid var(--border); cursor:pointer; background: transparent; color: var(--text); }
+.copy-all:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Results */
+.results { border:1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.hh-row { display:grid; grid-template-columns: 1fr auto auto; gap:10px; align-items:center; padding:10px 12px; border-bottom:1px solid var(--border); }
+.hh-tag { font-weight:600; }
+.hh-metric { font-variant-numeric: tabular-nums; opacity:0.85; }
+.hh-copy { border:1px solid var(--border); padding:6px 10px; border-radius:8px; cursor:pointer; background: transparent; color: var(--text); }
+.hh-copy:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Add‑on tools grid */
+.addons { margin-top: 18px; }
+.addons-title { margin: 8px 0 14px; font-size: 22px; opacity: .95; }
+.grid { display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 980px){ .grid { grid-template-columns: 1fr; } }
+.card {
+  display:block;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px;
+  background: rgba(255,255,255,0.04);
+  box-shadow: var(--shadow);
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.card:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 8px 40px var(--glow); }
+.card h3 { margin: 0 0 6px; color: #ffffff; }
+.card p  { color: var(--muted); margin: 0; }
+.card a { color: inherit; text-decoration: none; }
+
+.footer { max-width: 1200px; margin: 28px auto 40px; padding: 0 18px; opacity: .7; }
+.brand-badge { padding: 4px 8px; border-radius: 999px; background: rgba(34,211,238,.20); color: var(--accent); font-weight:700; font-size: 12px; }
+</style>
 </head>
 <body>
-  <div id="site-nav"></div>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="#"><span>HashHero</span></a>
+      <span class="brand-badge">Hashtags First</span>
+      <div class="filler small">Add‑on tools for creators</div>
+    </div>
+  </nav>
 
   <main class="main">
     <section class="hero primary-hero">
@@ -48,7 +150,6 @@
             <div class="ai-row">
               <input id="aiInclude" placeholder="Always include (brand/handle), e.g., #HashHero" />
               <input id="aiAvoid" placeholder="Avoid words/tags (comma-separated)" />
-              <input id="aiLang" placeholder="Language (en)" value="en" />
             </div>
             <div class="ai-actions">
               <button id="aiExtract" class="btn">Extract Keywords</button>
@@ -103,138 +204,16 @@
 
   <footer class="footer">© 2025 HashHero — Built for creators.</footer>
 
-  <script>(function(){var s=document.createElement('script');s.src='assets/nav.js?v=20250912a';s.defer=true;document.head.appendChild(s);})();</script>
-  <script>(function(){var s=document.createElement("script");s.src="../assets/nav.js";s.defer=true;document.head.appendChild(s);}())</script>
-</head>
-<body>
-  <a href="#main" class="skip-link">Skip to content</a>
-  
-  
-  
-  
-  <div id="site-nav"></div>
-  <script>
-    (function() {
-      // Dropdown logic
-      var menu = document.querySelector('.tools-menu');
-      var toolsBtn = document.getElementById('toolsToggle');
-      var dd = menu ? menu.querySelector('.tools-dropdown') : null;
-      function closeMenu(){ if(menu){ menu.classList.remove('open'); } if(toolsBtn){ toolsBtn.setAttribute('aria-expanded','false'); } }
-      if(toolsBtn && dd){
-        toolsBtn.addEventListener('click', function(e){
-          e.stopPropagation();
-          var open = menu.classList.toggle('open');
-          toolsBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        });
-        document.addEventListener('click', function(e){
-          if(menu && !menu.contains(e.target)) closeMenu();
-        });
-        document.addEventListener('keydown', function(e){
-          if(e.key === 'Escape') closeMenu();
-        });
-      }
-      // Theme toggle
-      var root = document.documentElement;
-      var tbtn = document.getElementById('themeToggle');
-      function setTheme(t) {
-        if(t === 'light') {
-          root.setAttribute('data-theme','light');
-          localStorage.setItem('hh_theme','light');
-          if(tbtn) tbtn.textContent='☀️';
-        } else {
-          root.setAttribute('data-theme','dark');
-          localStorage.setItem('hh_theme','dark');
-          if(tbtn) tbtn.textContent='🌙';
-        }
-      }
-      var saved = localStorage.getItem('hh_theme');
-      if(saved){ setTheme(saved); }
-      else {
-        var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-        setTheme(prefersLight ? 'light' : 'dark');
-      }
-      if(tbtn){
-        tbtn.addEventListener('click', function() {
-          var current = root.getAttribute('data-theme') || 'dark';
-          setTheme(current === 'dark' ? 'light' : 'dark');
-        });
-      }
-    })();
-  </script>
-
 <script>
-    (function() {
-      var btn = document.querySelector('.tools-button');
-      var dd = document.querySelector('.tools-dropdown');
-      if(btn && dd) {
-        btn.addEventListener('click', function() {
-          dd.style.display = (dd.style.display === 'flex') ? 'none' : 'flex';
-        });
-        document.addEventListener('click', function(e) {
-          if(!dd.contains(e.target) && !btn.contains(e.target)) dd.style.display = 'none';
-        });
-      }
-    })();
-  </script>
-<main id="main" class="page">
-<section><h1>Hashtag Generator</h1><p class="lead">Enter a niche and get ready-to-use sets. One-click copy.</p></section>
-<div class="row" style="margin-top:14px;">
-  <section class="form" style="flex:1.2">
-    <label>Your niche</label><input id="kw" type="text" placeholder="fitness, travel vlog, study tips"/>
-    <div class="row" style="margin-top:12px"><button id="gen" class="btn primary">Generate</button><button id="copy" class="btn" disabled>Copy All</button></div>
-
-<div class="hh-tabs" id="platformTabs" role="tablist" aria-label="Platforms">
-  <div class="hh-tab active" data-platform="tiktok" role="tab" aria-selected="true" tabindex="0">TikTok</div>
-  <div class="hh-tab" data-platform="instagram" role="tab" aria-selected="false" tabindex="-1">Instagram</div>
-  <div class="hh-tab" data-platform="facebook" role="tab" aria-selected="false" tabindex="-1">Facebook</div>
-  <div class="hh-tab" data-platform="x" role="tab" aria-selected="false" tabindex="-1">X</div>
-  <div class="hh-tab" data-platform="youtube" role="tab" aria-selected="false" tabindex="-1">YouTube</div>
-</div>
-<div class="ai-assist">
-  <h4>AI Assist (local)</h4>
-  <textarea id="aiCaption" placeholder="Paste your caption, description, or transcript here..."></textarea>
-  <div class="ai-row">
-    <input id="aiInclude" placeholder="Always include (brand/handle), e.g., #HashHero" />
-    <input id="aiAvoid" placeholder="Avoid words/tags (comma-separated)" />
-    <input id="aiLang" placeholder="Language (en)" value="en" />
-  </div>
-  <div class="ai-actions">
-    <button id="aiExtract">Extract Keywords</button>
-    <button id="aiExpand">AI Assist: Expand Ideas</button>
-    <button id="aiGenerate">Generate Hashtags from Caption</button>
-  </div>
-  <div class="hh-note">This on-page AI uses smart heuristics offline. You can wire a real API later without changing the UI.</div>
-</div>
-<div class="hh-topbar">
-  <div class="hh-note">Platform-specific limits are applied automatically. Popularity numbers are estimates.</div>
-  <button class="copy-all" id="copyAllBtn">Copy All</button>
-</div>
-
-  </section>
-</div>
-<section class="section"><div class="grid" id="results"></div></section>
-</main>
-  <footer class="footer">© 2025 HashHero — Built for creators.</footer>
-  
-
-<script>
+// === Exact same generator logic used on the tool page (self‑contained) ===
 (function(){
-  const kw = document.getElementById('kw');
-  const gen = document.getElementById('generate');
-  const copyAllBtn = document.getElementById('copyAllBtn');
-  const results = document.getElementById('results');
+  const $ = (id)=>document.getElementById(id);
+  const kw = $('kw');
+  const gen = $('generate');
+  const copyAllBtn = $('copyAllBtn');
+  const results = $('results');
   const tabs = Array.from(document.querySelectorAll('.hh-tab'));
 
-  // AI Assist fields
-  const aiCaption = document.getElementById('aiCaption');
-  const aiInclude = document.getElementById('aiInclude');
-  const aiAvoid = document.getElementById('aiAvoid');
-  const aiLang = document.getElementById('aiLang');
-  const aiExtract = document.getElementById('aiExtract');
-  const aiExpand = document.getElementById('aiExpand');
-  const aiGenerate = document.getElementById('aiGenerate');
-
-  // Popularity seed (illustrative)
   const POP = { "fyp":950000000,"viral":880000000,"trending":740000000,"love":2200000000,"instagood":1500000000,"fashion":900000000,"youtube":600000000,"shorts":700000000,"tiktok":1300000000 };
   const STOP = new Set(("a an the and or of to in on for with from by is are was were be been at as that this it your you our we i me my mine his her their they them he she do does did not no yes too very just much many more most less few over under again only own same so than then once each both any some such own other into out up down off above below why how all can will should could would might must may".split(" ")));
 
@@ -256,31 +235,29 @@
   let active = "tiktok";
 
   tabs.forEach(tab => {
-    tab.addEventListener('click', () => setActive(tab.dataset.platform, tab));
-    tab.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' ') { e.preventDefault(); setActive(tab.dataset.platform, tab); } });
+    tab.addEventListener('click', () => setActive(tab.textContent.trim().toLowerCase(), tab));
+    tab.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' ') { e.preventDefault(); setActive(tab.textContent.trim().toLowerCase(), tab); } });
   });
   function setActive(p, el){
-    active = p;
+    active = (p==='youtube'?'youtube':p);
     tabs.forEach(t=>{ t.classList.toggle('active', t===el); t.setAttribute('aria-selected', t===el?'true':'false'); t.tabIndex = t===el?0:-1; });
-    if(results.dataset.lastKw){ render(build(results.dataset.lastKw)); }
+    if(results.dataset.lastKw){ render(buildPipeline(results.dataset.lastKw)); }
   }
 
   const buckets = [
     { name:'Core', mix:['#%k','%k','%kTips','%kHacks','%kGuide','%kIdeas','%kPro'] },
     { name:'Context', mix:['%kForBeginners','%kForCreators','%k2025','%kDaily','%kNow'] },
     { name:'Trending', mix:['viral','fyp','trending','explore','reels','shorts'] },
-    { name:'Niche', mix:['%kCommunity','%kLife','%kJourney','%kVibes'] },
+    { name:'Niche', mix:['%kCommunity','%kLife','%kJourney','%kVibes','%kHub','%kNation','%kClub'] },
     { name:'Platform', mix:['TikTok','InstaReels','YouTubeShorts','Shorts'] }
   ];
 
-  function norm(s){ return (s||'').toLowerCase().replace(/[^a-z0-9\\s]/g,' ').replace(/\\s+/g,' ').trim(); }
-  function title(s){ return s.replace(/(^|\\s)\\S/g, t=>t.toUpperCase()); }
+  function norm(s){ return (s||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim(); }
+  function title(s){ return s.replace(/(^|\s)\S/g, t=>t.toUpperCase()); }
 
   function extractKeywords(txt){
     const words = norm(txt).split(' ').filter(Boolean).filter(w=>!STOP.has(w));
-    // basic dedupe + weight by frequency
-    const freq = new Map();
-    words.forEach(w=>freq.set(w, 1 + (freq.get(w)||0)));
+    const freq = new Map(); words.forEach(w=>freq.set(w, 1 + (freq.get(w)||0)));
     return Array.from(freq.entries()).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([w])=>w);
   }
 
@@ -296,58 +273,118 @@
     "music":["song","beat","remix","cover","instrumental"]
   };
 
-  function expandIdeas(keys){
+  function expandIdeas(keys, intensity=40, niche=30){
     const out = new Set(keys);
+    const more = Math.round( (intensity/100) * 12 );
     keys.forEach(k=>{
-      const list = SYN[k] || SYN[k.replace(/s$/,'')] || [];
-      list.forEach(v=> out.add(v));
-      if(k.length>3){ out.add(k+'tips'); out.add(k+'hacks'); }
+      const base = k.toLowerCase();
+      (SYN[base] || SYN[base.replace(/s$/,'')] || []).forEach(v=> out.add(v));
+      if(base.length>3){ out.add(base+'tips'); out.add(base+'hacks'); }
     });
-    return Array.from(out).slice(0,12);
+    const suffixes = ['life','vibes','journey','daily','zone','hub','nation','club','community'];
+    for (let i=0;i<Math.round((niche/100)*suffixes.length);i++){
+      keys.forEach(k=> out.add(k+suffixes[i]));
+    }
+    return Array.from(out).slice(0, Math.max(8, more));
   }
 
-  function buildFromKeywords(keywords){
-    const K = title(keywords.join(' ')).split(' ').join('');
-    const set = new Set();
-    buckets.forEach(b=>{
-      b.mix.forEach(m=>{ set.add('#' + m.replace(/%k/g, K).replace(/[^A-Za-z0-9]/g,'')); });
-    });
-    set.add('#' + K.toLowerCase());
-    return Array.from(set);
+  function caseStyle(tag, mode){
+    if(mode==='camel'){
+      return tag.replace(/^#?/, '#').replace(/#?([a-z0-9]+)/i, (m)=>{
+        const core = m.replace(/^#/,'');
+        return '#'+core.replace(/(^|[\\s_\\-])\\w/g, s=>s.replace(/[^a-z0-9]/i,'').toUpperCase());
+      });
+    }
+    return tag.toLowerCase().startsWith('#') ? tag.toLowerCase() : '#'+tag.toLowerCase();
   }
 
-  function build(k){
+  function buildBaseFromKeyword(k){
     const base = norm(k);
     if(!base) return [];
     const key = base.replace(/\\s+/g,'');
     const K = title(base).split(' ').join('');
     const set = new Set();
-    buckets.forEach(b=>{
-      b.mix.forEach(m=>{
-        const raw = m.replace(/%k/g, K);
-        const tag = '#' + raw.replace(/[^A-Za-z0-9]/g,'');
-        set.add(tag);
-      });
-    });
+    buckets.forEach(b=> b.mix.forEach(m=> set.add('#' + m.replace(/%k/g, K).replace(/[^A-Za-z0-9]/g,'')) ));
     set.add('#' + key);
     set.add('#' + K);
-    const arr = Array.from(set);
-    const rule = RULES[active];
-    return rule.style(arr).slice(0, rule.maxTags);
+    return Array.from(set);
   }
 
+  function addRegion(tags, regionRaw){
+    const region = (regionRaw||'').trim();
+    if(!region) return tags;
+    const parts = region.split(',').map(s=>norm(s)).filter(Boolean);
+    const out = new Set(tags);
+    parts.forEach(p=> out.add('#'+p.replace(/\\s+/g,'')));
+    if(parts.length>=2){ out.add('#'+parts.map(p=>p.replace(/\\s+/g,'')).join('')); }
+    return Array.from(out);
+  }
+
+  function applyTrendBoost(tags, boost=50){
+    const trending = ['#viral','#fyp','#trending','#explore','#reels','#shorts'];
+    if(boost<=0) return tags;
+    const n = Math.round((boost/100)*trending.length);
+    const set = new Set(tags);
+    trending.slice(0,n).forEach(t=> set.add(t));
+    return Array.from(set);
+  }
+
+  const BAN = new Set(['#followforfollow','#likeforlike','#sub4sub','#spam','#nsfw','#adult']);
+  function safeFilter(tags){ return tags.filter(t=> !BAN.has(t.toLowerCase())); }
+
   function applyGuidance(tags){
-    const inc = (aiInclude.value||'').trim();
-    const avoid = (aiAvoid.value||'').toLowerCase().split(',').map(s=>s.trim()).filter(Boolean);
-    const added = [];
+    const inc = (document.getElementById('aiInclude').value||'').trim();
+    const avoid = (document.getElementById('aiAvoid').value||'').toLowerCase().split(',').map(s=>s.trim()).filter(Boolean);
     let list = tags.filter(t=>!avoid.some(a=>t.toLowerCase().includes(a)));
     if(inc){
       let t = inc.startsWith('#')?inc:('#'+inc.replace(/[^a-z0-9]/gi,''));
-      if(!list.includes(t)) { list.unshift(t); added.push(t); }
+      if(!list.includes(t)) list.unshift(t);
     }
-    // enforce platform limits
+    return list;
+  }
+
+  function rankOrShuffle(tags){
+    const lvShuffle = document.getElementById('lvShuffle');
+    if(lvShuffle && lvShuffle.checked){
+      const a = tags.slice();
+      for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+      return a;
+    }
+    return tags.slice().sort((a,b)=> estPopularity(b, active) - estPopularity(a, active));
+  }
+
+  function applyCase(tags){
+    const mode = (document.getElementById('lvCase') && document.getElementById('lvCase').value) || 'lower';
+    return tags.map(t=> caseStyle(t.replace(/^#/,'').replace(/[^A-Za-z0-9]/g,''), mode));
+  }
+
+  function capToMax(tags){
     const rule = RULES[active];
-    return list.slice(0, rule.maxTags);
+    const slider = parseInt((document.getElementById('lvMax') && document.getElementById('lvMax').value) || '0', 10);
+    const hardCap = slider>0 ? Math.min(slider, rule.maxTags) : rule.maxTags;
+    return tags.slice(0, hardCap);
+  }
+
+  function buildPipeline(seed){
+    let tags = buildBaseFromKeyword(seed);
+    const keys = extractKeywords(seed);
+    const intensity = parseInt((document.getElementById('lvIntensity')||{value:'40'}).value,10);
+    const niche     = parseInt((document.getElementById('lvNiche')||{value:'30'}).value,10);
+    const expanded = expandIdeas(keys.concat((kw.value||'').split(' ')).filter(Boolean), intensity, niche);
+    const boosted = buildBaseFromKeyword(expanded.join(' '));
+    tags = Array.from(new Set(tags.concat(boosted)));
+    tags = addRegion(tags, (document.getElementById('lvRegion')||{value:''}).value);
+    const trend = parseInt((document.getElementById('lvTrend')||{value:'50'}).value,10);
+    tags = applyTrendBoost(tags, trend);
+    const lvSafe = document.getElementById('lvSafe');
+    if(lvSafe && lvSafe.checked){ tags = safeFilter(tags); }
+    tags = applyGuidance(tags);
+    tags = applyCase(tags);
+    tags = rankOrShuffle(tags);
+    const rule = RULES[active];
+    tags = rule.style(tags);
+    tags = capToMax(tags);
+    return tags;
   }
 
   function copyText(txt){
@@ -379,26 +416,26 @@
     results.dataset.lastKw = kw.value || '';
   }
 
-  gen.addEventListener('click', ()=> render(applyGuidance(build(kw.value||''))));
-  kw.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); render(applyGuidance(build(kw.value||''))); } });
+  function currentPlatform(){ return document.querySelector('.hh-tab.active')?.textContent.trim().toLowerCase() || 'tiktok'; }
 
-  aiExtract.addEventListener('click', ()=>{
-    const keys = extractKeywords(aiCaption.value||'');
-    kw.value = keys.join(' ');
-  });
-  aiExpand.addEventListener('click', ()=>{
-    const keys = extractKeywords(aiCaption.value||'').concat((kw.value||'').split(' ')).filter(Boolean);
-    const exp = expandIdeas(keys.map(k=>k.toLowerCase()));
-    kw.value = Array.from(new Set(exp)).join(' ');
-  });
-  aiGenerate.addEventListener('click', ()=>{
-    const keys = extractKeywords(aiCaption.value||'');
-    const expanded = expandIdeas(keys);
-    const tags = applyGuidance(buildFromKeywords(expanded));
-    render(tags);
+  document.querySelectorAll('.hh-tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      setActive(tab.textContent.trim().toLowerCase(), tab);
+    });
   });
 
-  setActive('tiktok', tabs[0]);
+  gen.addEventListener('click', ()=> render(buildPipeline(kw.value||'')));
+  kw.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); render(buildPipeline(kw.value||'')); } });
+
+  // Live update when levers change
+  ['lvIntensity','lvTrend','lvNiche','lvMax','lvCase','lvRegion','lvShuffle','lvSafe'].forEach(id=>{
+    const el = document.getElementById(id); if(!el) return;
+    el.addEventListener('input', ()=>{ if(results.dataset.lastKw){ render(buildPipeline(results.dataset.lastKw)); } });
+    el.addEventListener('change', ()=>{ if(results.dataset.lastKw){ render(buildPipeline(results.dataset.lastKw)); } });
+  });
+
+  // Init
+  setActive('tiktok', document.querySelector('.hh-tab.active'));
 })();
 </script>
 </body>
