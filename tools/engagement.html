@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Engagement Rate Calculator • HashHero</title>
+  <meta name="description" content="Free engagement calculator for TikTok, Instagram, and YouTube. Compute engagement rate by followers or by views with likes, comments, shares, and saves." />
+  <link rel="icon" href="/favicon.ico" />
+  <meta property="og:title" content="Engagement Rate Calculator • HashHero" />
+  <meta property="og:description" content="Free engagement calculator for TikTok, Instagram, and YouTube. Compute engagement rate by followers or by views." />
+  <meta property="og:image" content="/og-tools.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://hashhero.app/tools/engagement.html" />
+  <link rel="stylesheet" href="/assets/hashhero.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="/">
+        <img src="/assets/logo.svg" alt="HashHero logo" />
+        <span>HashHero</span>
+      </a>
+      <nav class="nav-links">
+        <a href="/tools/qr.html">QR</a>
+        <a href="/tools/meme.html">Meme</a>
+        <a href="/tools/hashtags.html">Hashtags</a>
+        <a href="/tools/gif.html">GIF</a>
+        <a href="/tools/polls.html">Polls</a>
+        <a href="/tools/engagement.html" class="active">Engagement</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <section>
+      <h1>Free Engagement Rate Calculator</h1>
+      <p class="lead">
+        Calculate engagement rate for TikTok, Instagram, and YouTube in seconds.
+        Enter likes, comments, shares, saves, and either followers or views.
+        Get both ER by Followers and ER by Views along with a quick quality grade.
+      </p>
+    </section>
+
+    <div class="row" style="margin-top:14px;">
+      <section class="form" style="flex:1.2">
+        <div class="row">
+          <div style="flex:1">
+            <label for="platform">Platform</label>
+            <select id="platform">
+              <option value="TikTok">TikTok</option>
+              <option value="Instagram">Instagram</option>
+              <option value="YouTube">YouTube</option>
+            </select>
+          </div>
+          <div style="flex:1">
+            <label for="followers">Followers (optional)</label>
+            <input id="followers" type="number" placeholder="e.g., 15000" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="flex:1">
+            <label for="views">Views (optional)</label>
+            <input id="views" type="number" placeholder="e.g., 32000" />
+          </div>
+          <div style="flex:1">
+            <label for="likes">Likes</label>
+            <input id="likes" type="number" placeholder="e.g., 1200" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="flex:1">
+            <label for="comments">Comments</label>
+            <input id="comments" type="number" placeholder="e.g., 140" />
+          </div>
+          <div style="flex:1">
+            <label for="shares">Shares</label>
+            <input id="shares" type="number" placeholder="e.g., 80" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="flex:1">
+            <label for="saves">Saves</label>
+            <input id="saves" type="number" placeholder="e.g., 60" />
+          </div>
+          <div style="flex:1">
+            <label for="weighting">Weighting preset</label>
+            <select id="weighting">
+              <option value="balanced" selected>Balanced (L=1, C=2, S=2, Save=2)</option>
+              <option value="comments">Comment-Heavy (L=1, C=3, S=2, Save=2)</option>
+              <option value="shares">Share-Heavy (L=1, C=2, S=3, Save=2)</option>
+              <option value="saves">Save-Heavy (L=1, C=2, S=2, Save=3)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <button class="btn primary" id="calc">Calculate</button>
+          <button class="btn" id="copy" disabled>Copy Result</button>
+        </div>
+        <p class="lead" style="font-size:12px">Tip: Leave either Followers or Views blank if you only want one type of ER.</p>
+      </section>
+
+      <section class="area" style="flex:1">
+        <div class="card" id="out" style="width:100%">
+          <h3 style="margin-top:0">Results</h3>
+          <div id="erFollowers">ER (by Followers): —</div>
+          <div id="erViews" style="margin-top:6px">ER (by Views): —</div>
+          <div id="grade" style="margin-top:10px; color: var(--muted)">Grade: —</div>
+        </div>
+      </section>
+    </div>
+
+    <section class="section">
+      <div class="card">
+        <h3 style="margin-top:0">How we calculate</h3>
+        <p style="color:var(--muted)">
+          Weighted engagement = Likes × L + Comments × C + Shares × S + Saves × Save. 
+          ER by Followers = Weighted ÷ Followers × 100. ER by Views = Weighted ÷ Views × 100.
+          Presets are simple multipliers to reflect relative effort (comments/shares/saves are often stronger signals).
+          This is a guidance tool — platforms use proprietary formulas.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">© 2025 HashHero — Built for creators.</footer>
+
+  <script>
+    const els = {
+      platform: document.getElementById('platform'),
+      followers: document.getElementById('followers'),
+      views: document.getElementById('views'),
+      likes: document.getElementById('likes'),
+      comments: document.getElementById('comments'),
+      shares: document.getElementById('shares'),
+      saves: document.getElementById('saves'),
+      weighting: document.getElementById('weighting'),
+      calc: document.getElementById('calc'),
+      copy: document.getElementById('copy'),
+      erF: document.getElementById('erFollowers'),
+      erV: document.getElementById('erViews'),
+      grade: document.getElementById('grade'),
+    };
+
+    function weights(preset){
+      switch(preset){
+        case 'comments': return {L:1, C:3, S:2, Sv:2};
+        case 'shares': return {L:1, C:2, S:3, Sv:2};
+        case 'saves': return {L:1, C:2, S:2, Sv:3};
+        default: return {L:1, C:2, S:2, Sv:2};
+      }
+    }
+
+    function fmt(x){ return isFinite(x) ? (Math.round(x*100)/100).toFixed(2) : '—'; }
+
+    function grade(er){
+      if(!isFinite(er)) return '—';
+      if(er >= 10) return 'A+ (viral)';
+      if(er >= 6) return 'A (excellent)';
+      if(er >= 3) return 'B (good)';
+      if(er >= 1.5) return 'C (ok)';
+      if(er > 0) return 'D (low)';
+      return '—';
+    }
+
+    els.calc.addEventListener('click', ()=>{
+      const L = parseFloat(els.likes.value)||0;
+      const C = parseFloat(els.comments.value)||0;
+      const S = parseFloat(els.shares.value)||0;
+      const Sv = parseFloat(els.saves.value)||0;
+      const F = parseFloat(els.followers.value);
+      const V = parseFloat(els.views.value);
+      const w = weights(els.weighting.value);
+
+      const weighted = L*w.L + C*w.C + S*w.S + Sv*w.Sv;
+
+      let erF = NaN, erV = NaN;
+      if(F && F>0) erF = (weighted / F) * 100;
+      if(V && V>0) erV = (weighted / V) * 100;
+
+      els.erF.textContent = 'ER (by Followers): ' + (isFinite(erF) ? fmt(erF) + '%':'—');
+      els.erV.textContent = 'ER (by Views): ' + (isFinite(erV) ? fmt(erV) + '%':'—');
+      const g = isFinite(erV) ? grade(erV) : grade(erF);
+      els.grade.textContent = 'Grade: ' + g;
+
+      const summary = `Engagement for ${els.platform.value}: ER by Followers ${isFinite(erF)?fmt(erF)+'%':'—'}, ER by Views ${isFinite(erV)?fmt(erV)+'%':'—'} (Weighted: Likes×${w.L}, Comments×${w.C}, Shares×${w.S}, Saves×${w.Sv})`;
+      els.copy.disabled = false;
+      els.copy.onclick = ()=> navigator.clipboard.writeText(summary).then(()=>{
+        els.copy.textContent='Copied!'; setTimeout(()=> els.copy.textContent='Copy Result', 1000);
+      });
+    });
+  </script>
+</body>
+</html>
