@@ -157,7 +157,76 @@ body::before {
     })();
   </script>
 
-  <main id="main" class="container">
+  <main class="main">
+<section class="hero primary-hero">
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <h1 class="hero-title">Hashtag Generator</h1>
+      <p class="hero-sub">Smart, platform‑tuned hashtags with AI help. Copy one tag or the whole set.</p>
+      <ul class="hero-points">
+        <li>Tabs for TikTok, Instagram, Facebook, X, YouTube</li>
+        <li>AI Assist + extra levers (trend boost, niche depth, region, case)</li>
+        <li>Per‑tag <em>Copy</em> and <em>Copy All</em> in one click</li>
+      </ul>
+    </div>
+    <div class="hero-tool">
+      <div class="tool-body">
+        <label for="kw" class="label">Topic or keywords</label>
+        <div class="row">
+          <input id="kw" placeholder="e.g., travel vlog Europe" />
+          <button id="generate" class="btn">Generate</button>
+        </div>
+      </div>
+
+      <div class="hh-tabs" id="platformTabs" role="tablist" aria-label="Platforms">
+        <div class="hh-tab active" data-platform="tiktok" role="tab" aria-selected="true" tabindex="0">TikTok</div>
+        <div class="hh-tab" data-platform="instagram" role="tab" aria-selected="false" tabindex="-1">Instagram</div>
+        <div class="hh-tab" data-platform="facebook" role="tab" aria-selected="false" tabindex="-1">Facebook</div>
+        <div class="hh-tab" data-platform="x" role="tab" aria-selected="false" tabindex="-1">X</div>
+        <div class="hh-tab" data-platform="youtube" role="tab" aria-selected="false" tabindex="-1">YouTube</div>
+      </div>
+
+      <div class="ai-assist">
+        <h4>AI Assist (optional)</h4>
+        <textarea id="aiCaption" placeholder="Paste caption/description/transcript to extract ideas…"></textarea>
+        <div class="ai-row">
+          <input id="aiInclude" placeholder="Always include (brand/handle), e.g., #HashHero" />
+          <input id="aiAvoid" placeholder="Avoid words/tags (comma-separated)" />
+          <input id="aiLang" placeholder="Language (en)" value="en" />
+        </div>
+        <div class="ai-actions">
+          <button id="aiExtract">Extract Keywords</button>
+          <button id="aiExpand">AI Assist: Expand Ideas</button>
+          <button id="aiGenerate">Generate Hashtags from Caption</button>
+        </div>
+      </div>
+
+      <div class="ai-levers">
+        <h4>AI Levers</h4>
+        <div class="ai-row">
+          <label class="ai-field"><span>Intensity</span><input id="lvIntensity" type="range" min="0" max="100" value="40" /></label>
+          <label class="ai-field"><span>Trend Boost</span><input id="lvTrend" type="range" min="0" max="100" value="50" /></label>
+          <label class="ai-field"><span>Niche Depth</span><input id="lvNiche" type="range" min="0" max="100" value="30" /></label>
+          <label class="ai-field"><span>Max per set</span><input id="lvMax" type="range" min="0" max="30" value="0" /><small class="ai-help">0 = platform default</small></label>
+        </div>
+        <div class="ai-row">
+          <label class="ai-field"><span>Case</span><select id="lvCase"><option value="lower">lowercase</option><option value="camel">CamelCase</option></select></label>
+          <label class="ai-field"><span>Region / Locale</span><input id="lvRegion" placeholder="e.g., Canada, Toronto" /></label>
+          <label class="ai-field"><span>Randomize</span><input id="lvShuffle" type="checkbox" /></label>
+          <label class="ai-field"><span>Safe Mode</span><input id="lvSafe" type="checkbox" checked /></label>
+        </div>
+      </div>
+
+      <div class="hh-topbar">
+        <div class="hh-note">Platform limits are automatic. Popularity is an estimate.</div>
+        <button class="copy-all" id="copyAllBtn">Copy All</button>
+      </div>
+
+      <div id="results"></div>
+    </div>
+  </div>
+</section>
+
     <section class="backdrop-panel hero-center">
       <h1 class="hero-title">Free Creator Toolkit</h1>
       <p class="hero-sub">Make content that stands out—memes, captions, hashtags, thumbnails and more. No logins, no paywalls, just fast tools in your browser.</p>
@@ -167,7 +236,7 @@ body::before {
       </div>
     </section>
     <section id="browse" class="backdrop-panel section-wrap">
-      <h2 class="section-title">🎥 Content Tools</h2>
+      <h2>Add‑on Tools</h2>
       <div class="grid">
         <a class="card" href="tools/meme.html"><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h10M7 13h6"/></svg> Meme Maker</h3><p>Top/bottom text PNG — no watermark.</p></a>
         <a class="card" href="tools/aesthetic-text.html"><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-11 6 11M6 15h8"/></svg> Aesthetic Text</h3><p>Stylish Unicode fonts for bios & captions.</p></a>
@@ -182,7 +251,7 @@ body::before {
     <section class="backdrop-panel section-wrap">
       <h2 class="section-title">📊 Growth Tools</h2>
       <div class="grid">
-        <a class="card featured" href="tools/hashtags.html"><span class="badge">Featured</span><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9h14M3 15h14M7 3l-2 18M17 3l-2 18"/></svg> Hashtag Ideas</h3><p>Keyword-based sets — one‑click copy.</p></a>
+        
         <a class="card" href="tools/engagement.html"><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l6-6 4 4 7-7"/><path d="M21 10v7H3v-5"/></svg> Engagement Calculator</h3><p>ER by Followers & Views.</p></a>
         <a class="card" href="tools/polls.html"><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 19V7M12 19V5M18 19v-8"/></svg> Polls</h3><p>Create & share quick polls.</p></a>
         <a class="card" href="tools/pfp.html"><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg> Profile Pic Maker</h3><p>Circle crop + border + export.</p></a>
@@ -197,5 +266,302 @@ body::before {
   </main>
 
   <footer class="footer">© 2025 HashHero — Built for creators.</footer>
+<script>(function(){var s=document.createElement("script");s.src="../assets/nav.js";s.defer=true;document.head.appendChild(s);}())</script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+  
+  
+  
+  
+  <div id="site-nav"></div>
+  <script>
+    (function() {
+      // Dropdown logic
+      var menu = document.querySelector('.tools-menu');
+      var toolsBtn = document.getElementById('toolsToggle');
+      var dd = menu ? menu.querySelector('.tools-dropdown') : null;
+      function closeMenu(){ if(menu){ menu.classList.remove('open'); } if(toolsBtn){ toolsBtn.setAttribute('aria-expanded','false'); } }
+      if(toolsBtn && dd){
+        toolsBtn.addEventListener('click', function(e){
+          e.stopPropagation();
+          var open = menu.classList.toggle('open');
+          toolsBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        document.addEventListener('click', function(e){
+          if(menu && !menu.contains(e.target)) closeMenu();
+        });
+        document.addEventListener('keydown', function(e){
+          if(e.key === 'Escape') closeMenu();
+        });
+      }
+      // Theme toggle
+      var root = document.documentElement;
+      var tbtn = document.getElementById('themeToggle');
+      function setTheme(t) {
+        if(t === 'light') {
+          root.setAttribute('data-theme','light');
+          localStorage.setItem('hh_theme','light');
+          if(tbtn) tbtn.textContent='☀️';
+        } else {
+          root.setAttribute('data-theme','dark');
+          localStorage.setItem('hh_theme','dark');
+          if(tbtn) tbtn.textContent='🌙';
+        }
+      }
+      var saved = localStorage.getItem('hh_theme');
+      if(saved){ setTheme(saved); }
+      else {
+        var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        setTheme(prefersLight ? 'light' : 'dark');
+      }
+      if(tbtn){
+        tbtn.addEventListener('click', function() {
+          var current = root.getAttribute('data-theme') || 'dark';
+          setTheme(current === 'dark' ? 'light' : 'dark');
+        });
+      }
+    })();
+  </script>
+
+<script>
+    (function() {
+      var btn = document.querySelector('.tools-button');
+      var dd = document.querySelector('.tools-dropdown');
+      if(btn && dd) {
+        btn.addEventListener('click', function() {
+          dd.style.display = (dd.style.display === 'flex') ? 'none' : 'flex';
+        });
+        document.addEventListener('click', function(e) {
+          if(!dd.contains(e.target) && !btn.contains(e.target)) dd.style.display = 'none';
+        });
+      }
+    })();
+  </script>
+<main id="main" class="page">
+<section><h1>Hashtag Generator</h1><p class="lead">Enter a niche and get ready-to-use sets. One-click copy.</p></section>
+<div class="row" style="margin-top:14px;">
+  <section class="form" style="flex:1.2">
+    <label>Your niche</label><input id="kw" type="text" placeholder="fitness, travel vlog, study tips"/>
+    <div class="row" style="margin-top:12px"><button id="gen" class="btn primary">Generate</button><button id="copy" class="btn" disabled>Copy All</button></div>
+
+<div class="hh-tabs" id="platformTabs" role="tablist" aria-label="Platforms">
+  <div class="hh-tab active" data-platform="tiktok" role="tab" aria-selected="true" tabindex="0">TikTok</div>
+  <div class="hh-tab" data-platform="instagram" role="tab" aria-selected="false" tabindex="-1">Instagram</div>
+  <div class="hh-tab" data-platform="facebook" role="tab" aria-selected="false" tabindex="-1">Facebook</div>
+  <div class="hh-tab" data-platform="x" role="tab" aria-selected="false" tabindex="-1">X</div>
+  <div class="hh-tab" data-platform="youtube" role="tab" aria-selected="false" tabindex="-1">YouTube</div>
+</div>
+<div class="ai-assist">
+  <h4>AI Assist (local)</h4>
+  <textarea id="aiCaption" placeholder="Paste your caption, description, or transcript here..."></textarea>
+  <div class="ai-row">
+    <input id="aiInclude" placeholder="Always include (brand/handle), e.g., #HashHero" />
+    <input id="aiAvoid" placeholder="Avoid words/tags (comma-separated)" />
+    <input id="aiLang" placeholder="Language (en)" value="en" />
+  </div>
+  <div class="ai-actions">
+    <button id="aiExtract">Extract Keywords</button>
+    <button id="aiExpand">AI Assist: Expand Ideas</button>
+    <button id="aiGenerate">Generate Hashtags from Caption</button>
+  </div>
+  <div class="hh-note">This on-page AI uses smart heuristics offline. You can wire a real API later without changing the UI.</div>
+</div>
+<div class="hh-topbar">
+  <div class="hh-note">Platform-specific limits are applied automatically. Popularity numbers are estimates.</div>
+  <button class="copy-all" id="copyAllBtn">Copy All</button>
+</div>
+
+  </section>
+</div>
+<section class="section"><div class="grid" id="results"></div></section>
+</main>
+  <footer class="footer">© 2025 HashHero — Built for creators.</footer>
+  
+
+<script>
+(function(){
+  const kw = document.getElementById('kw');
+  const gen = document.getElementById('generate');
+  const copyAllBtn = document.getElementById('copyAllBtn');
+  const results = document.getElementById('results');
+  const tabs = Array.from(document.querySelectorAll('.hh-tab'));
+
+  // AI Assist fields
+  const aiCaption = document.getElementById('aiCaption');
+  const aiInclude = document.getElementById('aiInclude');
+  const aiAvoid = document.getElementById('aiAvoid');
+  const aiLang = document.getElementById('aiLang');
+  const aiExtract = document.getElementById('aiExtract');
+  const aiExpand = document.getElementById('aiExpand');
+  const aiGenerate = document.getElementById('aiGenerate');
+
+  // Popularity seed (illustrative)
+  const POP = { "fyp":950000000,"viral":880000000,"trending":740000000,"love":2200000000,"instagood":1500000000,"fashion":900000000,"youtube":600000000,"shorts":700000000,"tiktok":1300000000 };
+  const STOP = new Set(("a an the and or of to in on for with from by is are was were be been at as that this it your you our we i me my mine his her their they them he she do does did not no yes too very just much many more most less few over under again only own same so than then once each both any some such own other into out up down off above below why how all can will should could would might must may".split(" ")));
+
+  function estPopularity(tag, platform){
+    const key = tag.replace(/^#/,'').toLowerCase();
+    const base = POP[key] || (Math.max(1, 12 - Math.min(key.length, 12)) * 1e6);
+    const w = { tiktok:1.2, instagram:1.1, facebook:0.8, x:0.7, youtube:0.9 }[platform] || 1;
+    return Math.round(base * w);
+  }
+  function nf(n){ return n.toLocaleString('en-US'); }
+
+  const RULES = {
+    tiktok:    { label:"TikTok",    maxTags: 5,  style: (t)=>t.map(x=>x.toLowerCase()) },
+    instagram: { label:"Instagram", maxTags: 30, style: (t)=>t },
+    facebook:  { label:"Facebook",  maxTags: 3,  style: (t)=>t },
+    x:         { label:"X",         maxTags: 2,  style: (t)=>t.map(x=>x.replace(/[^a-z0-9#]/gi,'')) },
+    youtube:   { label:"YouTube",   maxTags: 3,  style: (t)=>t }
+  };
+  let active = "tiktok";
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => setActive(tab.dataset.platform, tab));
+    tab.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' ') { e.preventDefault(); setActive(tab.dataset.platform, tab); } });
+  });
+  function setActive(p, el){
+    active = p;
+    tabs.forEach(t=>{ t.classList.toggle('active', t===el); t.setAttribute('aria-selected', t===el?'true':'false'); t.tabIndex = t===el?0:-1; });
+    if(results.dataset.lastKw){ render(build(results.dataset.lastKw)); }
+  }
+
+  const buckets = [
+    { name:'Core', mix:['#%k','%k','%kTips','%kHacks','%kGuide','%kIdeas','%kPro'] },
+    { name:'Context', mix:['%kForBeginners','%kForCreators','%k2025','%kDaily','%kNow'] },
+    { name:'Trending', mix:['viral','fyp','trending','explore','reels','shorts'] },
+    { name:'Niche', mix:['%kCommunity','%kLife','%kJourney','%kVibes'] },
+    { name:'Platform', mix:['TikTok','InstaReels','YouTubeShorts','Shorts'] }
+  ];
+
+  function norm(s){ return (s||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim(); }
+  function title(s){ return s.replace(/(^|\s)\S/g, t=>t.toUpperCase()); }
+
+  function extractKeywords(txt){
+    const words = norm(txt).split(' ').filter(Boolean).filter(w=>!STOP.has(w));
+    // basic dedupe + weight by frequency
+    const freq = new Map();
+    words.forEach(w=>freq.set(w, 1 + (freq.get(w)||0)));
+    return Array.from(freq.entries()).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([w])=>w);
+  }
+
+  const SYN = {
+    "video":["clip","shorts","reel"],
+    "tips":["hacks","guide","howto","protips"],
+    "travel":["wander","adventure","trip","journey"],
+    "food":["recipe","cooking","kitchen","yum"],
+    "fitness":["workout","gym","health","wellness","fit"],
+    "beauty":["makeup","skincare","glow"],
+    "money":["finance","investing","budget","wealth"],
+    "fashion":["style","outfit","ootd","trend"],
+    "music":["song","beat","remix","cover","instrumental"]
+  };
+
+  function expandIdeas(keys){
+    const out = new Set(keys);
+    keys.forEach(k=>{
+      const list = SYN[k] || SYN[k.replace(/s$/,'')] || [];
+      list.forEach(v=> out.add(v));
+      if(k.length>3){ out.add(k+'tips'); out.add(k+'hacks'); }
+    });
+    return Array.from(out).slice(0,12);
+  }
+
+  function buildFromKeywords(keywords){
+    const K = title(keywords.join(' ')).split(' ').join('');
+    const set = new Set();
+    buckets.forEach(b=>{
+      b.mix.forEach(m=>{ set.add('#' + m.replace(/%k/g, K).replace(/[^A-Za-z0-9]/g,'')); });
+    });
+    set.add('#' + K.toLowerCase());
+    return Array.from(set);
+  }
+
+  function build(k){
+    const base = norm(k);
+    if(!base) return [];
+    const key = base.replace(/\s+/g,'');
+    const K = title(base).split(' ').join('');
+    const set = new Set();
+    buckets.forEach(b=>{
+      b.mix.forEach(m=>{
+        const raw = m.replace(/%k/g, K);
+        const tag = '#' + raw.replace(/[^A-Za-z0-9]/g,'');
+        set.add(tag);
+      });
+    });
+    set.add('#' + key);
+    set.add('#' + K);
+    const arr = Array.from(set);
+    const rule = RULES[active];
+    return rule.style(arr).slice(0, rule.maxTags);
+  }
+
+  function applyGuidance(tags){
+    const inc = (aiInclude.value||'').trim();
+    const avoid = (aiAvoid.value||'').toLowerCase().split(',').map(s=>s.trim()).filter(Boolean);
+    const added = [];
+    let list = tags.filter(t=>!avoid.some(a=>t.toLowerCase().includes(a)));
+    if(inc){
+      let t = inc.startsWith('#')?inc:('#'+inc.replace(/[^a-z0-9]/gi,''));
+      if(!list.includes(t)) { list.unshift(t); added.push(t); }
+    }
+    // enforce platform limits
+    const rule = RULES[active];
+    return list.slice(0, rule.maxTags);
+  }
+
+  function copyText(txt){
+    return navigator.clipboard?.writeText(txt).catch(()=>{
+      const ta = document.createElement('textarea');
+      ta.value = txt; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } finally { document.body.removeChild(ta); }
+    });
+  }
+
+  function render(tags){
+    results.innerHTML = '';
+    const wrap = document.createElement('div');
+    const rows = document.createElement('div'); rows.setAttribute('role','table');
+    tags.forEach(tag=>{
+      const row = document.createElement('div'); row.className='hh-row'; row.setAttribute('role','row');
+      const tcell = document.createElement('div'); tcell.className='hh-tag'; tcell.textContent = tag; row.appendChild(tcell);
+      const metric = document.createElement('div'); metric.className='hh-metric';
+      metric.textContent = 'Popularity (est.): ' + nf(estPopularity(tag, active));
+      row.appendChild(metric);
+      const cbtn = document.createElement('button'); cbtn.className='hh-copy'; cbtn.textContent='Copy';
+      cbtn.addEventListener('click', async ()=>{ await copyText(tag); const old=cbtn.textContent; cbtn.textContent='Copied!'; setTimeout(()=>cbtn.textContent=old, 900); });
+      row.appendChild(cbtn);
+      rows.appendChild(row);
+    });
+    wrap.appendChild(rows);
+    results.appendChild(wrap);
+    copyAllBtn.onclick = async ()=>{ const blob = tags.join(' '); await copyText(blob); const old=copyAllBtn.textContent; copyAllBtn.textContent='Copied All!'; setTimeout(()=>copyAllBtn.textContent=old, 1000); };
+    results.dataset.lastKw = kw.value || '';
+  }
+
+  gen.addEventListener('click', ()=> render(applyGuidance(build(kw.value||''))));
+  kw.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); render(applyGuidance(build(kw.value||''))); } });
+
+  aiExtract.addEventListener('click', ()=>{
+    const keys = extractKeywords(aiCaption.value||'');
+    kw.value = keys.join(' ');
+  });
+  aiExpand.addEventListener('click', ()=>{
+    const keys = extractKeywords(aiCaption.value||'').concat((kw.value||'').split(' ')).filter(Boolean);
+    const exp = expandIdeas(keys.map(k=>k.toLowerCase()));
+    kw.value = Array.from(new Set(exp)).join(' ');
+  });
+  aiGenerate.addEventListener('click', ()=>{
+    const keys = extractKeywords(aiCaption.value||'');
+    const expanded = expandIdeas(keys);
+    const tags = applyGuidance(buildFromKeywords(expanded));
+    render(tags);
+  });
+
+  setActive('tiktok', tabs[0]);
+})();
+</script>
 </body>
 </html>

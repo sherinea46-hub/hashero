@@ -289,3 +289,18 @@ body::before {
 /* Shared nav active and primary states */
 .tools-dropdown a.active { background: rgba(255,255,255,0.06); }
 .tools-dropdown a.is-primary { background: var(--accent-weak, rgba(25,230,140,0.14)); color: var(--accent,#19e68c); font-weight:700; border-radius:8px; }
+
+
+/* === Home: Hashtag-first hero === */
+.primary-hero { margin-top: 16px; }
+.hero-inner { display:grid; grid-template-columns: 1.1fr 1.4fr; gap:22px; align-items:flex-start; }
+@media (max-width: 980px){ .hero-inner { grid-template-columns: 1fr; } }
+.hero-copy .hero-title { font-size: clamp(28px, 5vw, 40px); margin: 4px 0 8px; }
+.hero-copy .hero-sub { opacity: .9; margin-bottom: 12px; }
+.hero-points { margin: 0; padding-left: 18px; opacity: .85; }
+.hero-tool { background: rgba(255,255,255,0.03); border:1px solid var(--border,#1e2633); border-radius: 16px; padding: 14px; box-shadow: 0 6px 30px rgba(0,0,0,0.18); }
+.hero .row { display:flex; gap:8px; }
+.hero .row input { flex: 1; }
+.hero .btn { padding: 10px 14px; border-radius: 10px; border:1px solid var(--border,#1e2633); cursor:pointer; }
+.hero .btn:hover { border-color: var(--accent,#19e68c); color: var(--accent,#19e68c); }
+.subdued { opacity: .8; }
