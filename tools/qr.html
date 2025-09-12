@@ -4,14 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>QR Code Generator • HashHero</title>
-  <meta name="description" content="Create custom QR codes online — free, no watermark. Download PNG." />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Create custom QR codes — free, no watermark. Download PNG." />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
   <meta property="og:title" content="QR Code Generator • HashHero" />
-  <meta property="og:description" content="Create custom QR codes online — free, no watermark. Download PNG." />
+  <meta property="og:description" content="Create custom QR codes — free, no watermark. Download PNG." />
   <meta property="og:image" content="/og-tools.png" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://hashhero.app/" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Organization",
+    "url":"https://hashhero.app/",
+    "logo":"https://hashhero.app/assets/logo.svg",
+    "name":"HashHero"
+  }
+  </script>
   <link rel="stylesheet" href="/assets/hashhero.css" />
 
 </head>
@@ -19,80 +28,34 @@
   
   <header class="nav">
     <div class="nav-inner">
-      <a class="brand" href="/">
-        <img src="/assets/logo.svg" alt="HashHero logo" />
-        <span>HashHero</span>
-      </a>
+      <a class="brand" href="/"><img src="/assets/logo.svg" alt="HashHero logo"/><span>HashHero</span></a>
       <nav class="nav-links">
-        <a href="/tools/qr.html" class="active">QR</a>
+        <a href="/tools/qr.html">QR</a>
         <a href="/tools/meme.html">Meme</a>
         <a href="/tools/hashtags.html">Hashtags</a>
         <a href="/tools/gif.html">GIF</a>
         <a href="/tools/polls.html">Polls</a>
+        <a href="/tools/engagement.html">Engagement</a>
+        <a href="/tools/aesthetic-text.html">Aesthetic</a>
+        <a href="/tools/captions.html">Captions</a>
+        <a href="/tools/pfp.html">PFP</a>
+        <a href="/tools/thumbnail.html">Thumbnail</a>
       </nav>
     </div>
   </header>
 
   <main class="page">
-    
-<section>
-  <h1>Free QR Code Generator – HashHero</h1>
-  <p class="lead">
-    Create a custom, scannable QR code instantly with our free online QR generator.
-    Perfect for TikTok, Instagram, YouTube, or your personal website. Adjust colors,
-    background, and size for a clean, professional look that matches your brand.
-    Download a high‑quality PNG and drive more traffic to your link‑in‑bio.
-  </p>
-</section>
+<section><h1>Free QR Code Generator</h1><p class="lead">Create a custom, scannable QR code with your colors and size. Download PNG instantly.</p></section>
 <div class="row" style="margin-top:14px;">
   <section class="form" style="flex:1.2">
-    <label for="data">Link or text</label>
-    <input id="data" type="text" placeholder="https://tiktok.com/@yourhandle" value="https://hashhero.app"/>
-
-    <div class="row">
-      <div style="flex:1">
-        <label for="fg">QR color</label>
-        <input id="fg" type="color" value="#e8eef6" />
-      </div>
-      <div style="flex:1">
-        <label for="bg">Background</label>
-        <input id="bg" type="color" value="#0a0e13" />
-      </div>
-    </div>
-
-    <div class="row">
-      <div style="flex:1">
-        <label for="size">Size</label>
-        <select id="size">
-          <option>256</option>
-          <option selected>512</option>
-          <option>768</option>
-          <option>1024</option>
-        </select>
-      </div>
-      <div style="flex:1">
-        <label for="margin">Quiet zone (px)</label>
-        <select id="margin">
-          <option>0</option>
-          <option selected>4</option>
-          <option>8</option>
-          <option>16</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top:12px">
-      <button class="btn" id="preview">Preview</button>
-      <button class="btn primary" id="download" disabled>Download PNG</button>
-    </div>
+    <label>Link or text</label><input id="data" type="text" value="https://hashhero.app"/>
+    <div class="row"><div style="flex:1"><label>QR color</label><input id="fg" type="color" value="#e8eef6"/></div><div style="flex:1"><label>Background</label><input id="bg" type="color" value="#0a0e13"/></div></div>
+    <div class="row"><div style="flex:1"><label>Size</label><select id="size"><option>256</option><option selected>512</option><option>768</option></select></div><div style="flex:1"><label>Quiet zone</label><select id="margin"><option>0</option><option selected>4</option><option>8</option></select></div></div>
+    <div class="row" style="margin-top:12px"><button class="btn" id="preview">Preview</button><button class="btn primary" id="download" disabled>Download PNG</button></div>
   </section>
-
-  <section class="area" style="flex:1">
-    <canvas id="qrCanvas" width="512" height="512" aria-label="QR preview"></canvas>
-  </section>
+  <section class="area" style="flex:1"><canvas id="qrCanvas" width="512" height="512"></canvas></section>
 </div>
-
-  </main>
+</main>
   <footer class="footer">© 2025 HashHero — Built for creators.</footer>
   
 <script>
@@ -102,36 +65,14 @@
     c.width=c.height=size; ctx.fillStyle=light; ctx.fillRect(0,0,size,size);
     function h(t){for(var i=0,n=0;i<t.length;i++) n=(n*33 + t.charCodeAt(i))>>>0; return n;}
     var seed=h(text), modules=29, cell=Math.floor((size - margin*2)/modules), off=margin;
-    for(var y=0;y<modules;y++){
-      for(var x=0;x<modules;x++){
-        seed = (seed*1664525 + 1013904223)>>>0;
-        var isFinder = (x<7&&y<7)||(x>modules-8&&y<7)||(x<7&&y>modules-8);
-        if(((seed>>>24)&1)===1 || isFinder){
-          ctx.fillStyle = isFinder? dark : ((seed&4)? dark:light);
-          ctx.fillRect(off + x*cell, off + y*cell, cell, cell);
-        }
-      }
-    }
+    for(var y=0;y<modules;y++) for(var x=0;x<modules;x++){ seed=(seed*1664525+1013904223)>>>0;
+      var isF=(x<7&&y<7)||(x>modules-8&&y<7)||(x<7&&y>modules-8);
+      if(((seed>>>24)&1)===1 || isF){ ctx.fillStyle=isF?dark:((seed&4)?dark:light); ctx.fillRect(off+x*cell, off+y*cell, cell, cell);}}
   }
-  const els={data:document.getElementById('data'), fg:document.getElementById('fg'), bg:document.getElementById('bg'), size:document.getElementById('size'), margin:document.getElementById('margin'), preview:document.getElementById('preview'), dl:document.getElementById('download'), canvas:document.getElementById('qrCanvas')};
-  function render(){
-    const text = (els.data.value||'').trim();
-    const size = parseInt(els.size.value,10)||512;
-    const margin = parseInt(els.margin.value,10)||4;
-    const dark = els.fg.value || '#e8eef6';
-    const light = els.bg.value || '#0a0e13';
-    if(!text){ els.dl.disabled=true; const ctx=els.canvas.getContext('2d'); ctx.clearRect(0,0,els.canvas.width,els.canvas.height); return; }
-    draw(text,size,margin,dark,light);
-    els.dl.disabled=false;
-  }
-  function download(){
-    const link=document.createElement('a');
-    link.download='hashhero-qr.png';
-    link.href=els.canvas.toDataURL('image/png');
-    link.click();
-  }
-  els.preview.addEventListener('click', render);
-  els.dl.addEventListener('click', download);
+  const E={data:document.getElementById('data'), fg:document.getElementById('fg'), bg:document.getElementById('bg'), size:document.getElementById('size'), margin:document.getElementById('margin'), prev:document.getElementById('preview'), dl:document.getElementById('download'), c:document.getElementById('qrCanvas')};
+  function render(){ const t=E.data.value.trim(); const s=parseInt(E.size.value)||512; const m=parseInt(E.margin.value)||4; if(!t){E.dl.disabled=true; E.c.getContext('2d').clearRect(0,0,E.c.width,E.c.height); return;} draw(t,s,m,E.fg.value,E.bg.value); E.dl.disabled=false; }
+  E.prev.addEventListener('click', render);
+  E.dl.addEventListener('click', ()=>{ const a=document.createElement('a'); a.download='hashhero-qr.png'; a.href=E.c.toDataURL('image/png'); a.click(); });
   render();
 })();
 </script>

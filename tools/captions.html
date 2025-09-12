@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Caption Generator • HashHero</title>
+  <meta name="description" content="Instant TikTok/IG caption ideas in different tones." />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
+  <meta property="og:title" content="Caption Generator • HashHero" />
+  <meta property="og:description" content="Instant TikTok/IG caption ideas in different tones." />
+  <meta property="og:image" content="/og-tools.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://hashhero.app/" />
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Organization",
+    "url":"https://hashhero.app/",
+    "logo":"https://hashhero.app/assets/logo.svg",
+    "name":"HashHero"
+  }
+  </script>
+  <link rel="stylesheet" href="/assets/hashhero.css" />
+
+</head>
+<body>
+  
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="/"><img src="/assets/logo.svg" alt="HashHero logo"/><span>HashHero</span></a>
+      <nav class="nav-links">
+        <a href="/tools/qr.html">QR</a>
+        <a href="/tools/meme.html">Meme</a>
+        <a href="/tools/hashtags.html">Hashtags</a>
+        <a href="/tools/gif.html">GIF</a>
+        <a href="/tools/polls.html">Polls</a>
+        <a href="/tools/engagement.html">Engagement</a>
+        <a href="/tools/aesthetic-text.html">Aesthetic</a>
+        <a href="/tools/captions.html">Captions</a>
+        <a href="/tools/pfp.html">PFP</a>
+        <a href="/tools/thumbnail.html">Thumbnail</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+<section><h1>Caption Generator</h1><p class="lead">Instant hooks and captions for TikTok, IG, and Shorts. Choose a tone, add a topic, and copy.</p></section>
+<div class="row" style="margin-top:14px;">
+  <section class="form" style="flex:1.2">
+    <div class="row">
+      <div style="flex:1"><label>Tone</label><select id="tone"><option value="viral">Viral/Hooky</option><option value="funny">Funny</option><option value="educational">Educational</option><option value="motivational">Motivational</option><option value="aesthetic">Aesthetic</option></select></div>
+      <div style="flex:1"><label>Topic / Niche</label><input id="topic" type="text" placeholder="e.g., fitness, travel vlog, study tips"/></div>
+    </div>
+    <label>Optional keywords (comma separated)</label><input id="keywords" type="text" placeholder="e.g., morning routine, healthy habits"/>
+    <div class="row" style="margin-top:12px"><button class="btn primary" id="make">Generate</button><button class="btn" id="copyCaptions" disabled>Copy All</button></div>
+  </section>
+  <section class="area" style="flex:1"><div class="card" id="capWrap" style="width:100%"><h3 style="margin-top:0">Results</h3><div id="caps"></div></div></section>
+</div>
+</main>
+  <footer class="footer">© 2025 HashHero — Built for creators.</footer>
+  
+<script>
+const tone=tone, topic=topic, keywords=keywords, make=make, list=caps, copyBtn=copyCaptions;
+const templates={
+  viral:[
+    "Nobody tells you this about {topic}…",
+    "POV: you finally master {topic} 😤",
+    "If you’re into {topic}, try this today 👇",
+    "3 {topic} hacks I wish I knew sooner",
+    "{topic} in 20 seconds or less ⏱️"
+  ],
+  funny:[
+    "Me trying {topic} vs. reality 😂",
+    "If {topic} was a person…",
+    "POV: you say ‘one more round’ of {topic}",
+    "BRB becoming the main character of {topic}",
+    "Tag someone who needs this {topic} chaos"
+  ],
+  educational:[
+    "Quick guide to {topic}:",
+    "Stop doing this in {topic} → do this instead:",
+    "Beginner to pro {topic} in 3 steps",
+    "Ranking the best tools for {topic}:",
+    "Mistakes to avoid in {topic}:"
+  ],
+  motivational:[
+    "Small steps > zero steps. {topic} today 💪",
+    "Don’t wait for perfect. Start with {topic} now.",
+    "Dream big, start small — {topic} edition.",
+    "Your future self will thank you for {topic}.",
+    "This is your sign to start {topic}."
+  ],
+  aesthetic:[
+    "soft mornings + {topic} + espresso ☕✨",
+    "romanticizing {topic} today",
+    "save this for your {topic} moodboard 🌸",
+    "just vibes and {topic}",
+    "neon nights & {topic}"
+  ]
+};
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function build(t, top, keys){const k=keys? ' ' + keys.split(',').slice(0,3).map(s=>('#'+s.trim().replace(/\s+/g,'').replace(/[^a-z0-9]/ig,'').slice(0,20))).join(' ') : ''; const out=[]; for(let i=0;i<5;i++){const base=pick(templates[t]); out.push(base.replaceAll('{topic}', top)+k);} return out;}
+make.addEventListener('click', ()=>{const t=tone.value, top=(topic.value||'your niche'); const ks=keywords.value||''; const caps=build(t, top, ks); list.innerHTML=''; caps.forEach(c=>{const item=document.createElement('div'); item.className='card'; const p=document.createElement('p'); p.textContent=c; item.appendChild(p); const b=document.createElement('button'); b.className='btn'; b.textContent='Copy'; b.onclick=()=>navigator.clipboard.writeText(c).then(()=>{b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy',900);}); item.appendChild(b); list.appendChild(item);}); copyBtn.disabled=false; copyBtn.onclick=()=>navigator.clipboard.writeText(caps.join('\n')).then(()=>{copyBtn.textContent='Copied!'; setTimeout(()=>copyBtn.textContent='Copy All',900);});});
+</script>
+
+</body>
+</html>

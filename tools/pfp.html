@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profile Pic Maker • HashHero</title>
+  <meta name="description" content="Make a perfect circular profile picture with a custom border and background color. Export as PNG—free and fast." />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
+  <meta property="og:title" content="Profile Pic Maker • HashHero" />
+  <meta property="og:description" content="Circular crop + colored border + export as PNG. Free, no watermark." />
+  <meta property="og:image" content="/og-tools.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://hashhero.app/tools/pfp.html" />
+  <link rel="stylesheet" href="/assets/hashhero.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="/"><img src="/assets/logo.svg" alt="HashHero logo" /><span>HashHero</span></a>
+      <nav class="nav-links">
+        <a href="/tools/qr.html">QR</a>
+        <a href="/tools/meme.html">Meme</a>
+        <a href="/tools/hashtags.html">Hashtags</a>
+        <a href="/tools/gif.html">GIF</a>
+        <a href="/tools/polls.html">Polls</a>
+        <a href="/tools/engagement.html">Engagement</a>
+        <a href="/tools/aesthetic-text.html">Aesthetic</a>
+        <a href="/tools/captions.html">Captions</a>
+        <a href="/tools/pfp.html" class="active">PFP</a>
+        <a href="/tools/thumbnail.html">Thumbnail</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <section>
+      <h1>Profile Pic Maker</h1>
+      <p class="lead">Upload your image, adjust the crop, pick a border color and thickness, and download a clean circular PNG.</p>
+    </section>
+
+    <div class="row" style="margin-top:14px;">
+      <section class="form" style="flex:1.2">
+        <label>Upload image</label><input id="file" type="file" accept="image/*" />
+        <div class="row">
+          <div style="flex:1"><label>Canvas size</label><select id="size"><option>256</option><option selected>512</option><option>768</option></select></div>
+          <div style="flex:1"><label>Border color</label><input id="borderColor" type="color" value="#6ad1ff" /></div>
+        </div>
+        <div class="row">
+          <div style="flex:1"><label>Border width (px)</label><input id="borderWidth" type="number" value="12" /></div>
+          <div style="flex:1"><label>Background</label><input id="bgColor" type="color" value="#0a0e13" /></div>
+        </div>
+        <div class="row">
+          <div style="flex:1"><label>Zoom</label><input id="zoom" type="range" min="50" max="200" value="100" /></div>
+          <div style="flex:1"><label>Offset</label><input id="offset" type="range" min="-100" max="100" value="0" /></div>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button id="preview" class="btn">Preview</button>
+          <button id="download" class="btn primary" disabled>Download PNG</button>
+        </div>
+      </section>
+
+      <section class="area" style="flex:1">
+        <canvas id="pfp" width="512" height="512" aria-label="PFP preview"></canvas>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">© 2025 HashHero — Built for creators.</footer>
+
+  <script>
+  const els={file:document.getElementById('file'), size:document.getElementById('size'), borderColor:borderColor, borderWidth:borderWidth, bg:bgColor, zoom:zoom, offset:offset, preview:preview, dl:download, canvas:document.getElementById('pfp')};
+  let img=new Image();
+  els.file.addEventListener('change', e=>{ const f=e.target.files?.[0]; if(!f) return; img.src=URL.createObjectURL(f); els.dl.disabled=false; });
+  img.onload = ()=> draw();
+  function draw(){
+    const c=els.canvas, ctx=c.getContext('2d');
+    const S=parseInt(els.size.value)||512; c.width=c.height=S;
+    const bw=parseInt(els.borderWidth.value)||0;
+    const zoomVal=parseInt(els.zoom.value)/100;
+    const off=parseInt(els.offset.value)||0;
+
+    ctx.fillStyle=els.bg.value; ctx.fillRect(0,0,S,S);
+    // Clip circle
+    ctx.save(); ctx.beginPath(); ctx.arc(S/2, S/2, S/2 - Math.max(1,bw), 0, Math.PI*2); ctx.closePath(); ctx.clip();
+
+    if(img.width){
+      const ir=img.width/img.height;
+      const dw=S*zoomVal, dh=dw/ir;
+      ctx.drawImage(img, (S-dw)/2 + off, (S-dh)/2, dw, dh);
+    }
+    ctx.restore();
+
+    if(bw>0){
+      ctx.beginPath(); ctx.arc(S/2,S/2,S/2 - bw/2,0,Math.PI*2); ctx.lineWidth=bw; ctx.strokeStyle=els.borderColor.value; ctx.stroke();
+    }
+  }
+  els.preview.addEventListener('click', draw);
+  els.dl.addEventListener('click', ()=>{ const a=document.createElement('a'); a.download='hashhero-pfp.png'; a.href=els.canvas.toDataURL('image/png'); a.click(); });
+  </script>
+</body>
+</html>

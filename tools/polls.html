@@ -4,14 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Polls • HashHero</title>
-  <meta name="description" content="Create quick, shareable polls online — no login needed." />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Create quick, shareable polls — no login needed." />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
   <meta property="og:title" content="Polls • HashHero" />
-  <meta property="og:description" content="Create quick, shareable polls online — no login needed." />
+  <meta property="og:description" content="Create quick, shareable polls — no login needed." />
   <meta property="og:image" content="/og-tools.png" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://hashhero.app/" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Organization",
+    "url":"https://hashhero.app/",
+    "logo":"https://hashhero.app/assets/logo.svg",
+    "name":"HashHero"
+  }
+  </script>
   <link rel="stylesheet" href="/assets/hashhero.css" />
 
 </head>
@@ -19,99 +28,45 @@
   
   <header class="nav">
     <div class="nav-inner">
-      <a class="brand" href="/">
-        <img src="/assets/logo.svg" alt="HashHero logo" />
-        <span>HashHero</span>
-      </a>
+      <a class="brand" href="/"><img src="/assets/logo.svg" alt="HashHero logo"/><span>HashHero</span></a>
       <nav class="nav-links">
         <a href="/tools/qr.html">QR</a>
         <a href="/tools/meme.html">Meme</a>
         <a href="/tools/hashtags.html">Hashtags</a>
         <a href="/tools/gif.html">GIF</a>
-        <a href="/tools/polls.html" class="active">Polls</a>
+        <a href="/tools/polls.html">Polls</a>
+        <a href="/tools/engagement.html">Engagement</a>
+        <a href="/tools/aesthetic-text.html">Aesthetic</a>
+        <a href="/tools/captions.html">Captions</a>
+        <a href="/tools/pfp.html">PFP</a>
+        <a href="/tools/thumbnail.html">Thumbnail</a>
       </nav>
     </div>
   </header>
 
   <main class="page">
-    
-<section>
-  <h1>Create Free Online Polls – HashHero</h1>
-  <p class="lead">
-    Make a quick poll, share a link, and collect votes instantly — no login needed. Great for creators and communities.
-  </p>
-</section>
+<section><h1>Create Free Polls</h1><p class="lead">Ask a question, share a link, collect votes instantly.</p></section>
 <div class="row" style="margin-top:14px;">
   <section class="form" style="flex:1.2">
-    <label for="q">Question</label>
-    <input id="q" placeholder="What should I post next?"/>
+    <label>Question</label><input id="q" placeholder="What should I post next?"/>
     <div id="opts" style="margin-top:10px"></div>
-    <div class="row" style="margin-top:10px">
-      <button class="btn" id="add">Add option</button>
-      <button class="btn primary" id="share">Copy share link</button>
-    </div>
-    <p class="lead" style="font-size:12px">When someone opens your link, they can vote and see results. (Demo stores votes per-device.)</p>
+    <div class="row" style="margin-top:10px"><button class="btn" id="add">Add option</button><button class="btn primary" id="share">Copy share link</button></div>
   </section>
-
-  <section class="area" style="flex:1">
-    <div class="card" id="vote" style="width:100%"></div>
-  </section>
+  <section class="area" style="flex:1"><div class="card" id="vote" style="width:100%"></div></section>
 </div>
-
-  </main>
+</main>
   <footer class="footer">© 2025 HashHero — Built for creators.</footer>
   
 <script>
-  const optsEl = document.getElementById('opts');
-  const qEl = document.getElementById('q');
-  const addBtn = document.getElementById('add');
-  const shareBtn = document.getElementById('share');
-  const voteCard = document.getElementById('vote');
-
-  const optRow = (value='')=>{
-    const wrap=document.createElement('div'); wrap.className='row'; wrap.style.marginTop='6px';
-    const input=document.createElement('input'); input.value=value; input.placeholder='Option';
-    const del=document.createElement('button'); del.className='btn'; del.textContent='✕'; del.style.flex='0 0 56px';
-    wrap.appendChild(input); wrap.appendChild(del);
-    del.onclick=()=>wrap.remove();
-    return wrap;
-  };
-
-  optsEl.appendChild(optRow('Option 1'));
-  optsEl.appendChild(optRow('Option 2'));
-  addBtn.onclick = ()=> optsEl.appendChild(optRow(''));
-
-  function encodePoll(data){ return btoa(unescape(encodeURIComponent(JSON.stringify(data)))); }
-  function decodePoll(s){ try{ return JSON.parse(decodeURIComponent(escape(atob(s)))); }catch(e){ return null; } }
-
-  shareBtn.onclick = ()=>{
-    const options = [...optsEl.querySelectorAll('input')].map(i=>i.value.trim()).filter(Boolean).slice(0,10);
-    const q = (qEl.value||'My Poll').trim();
-    const enc = encodePoll({q, opts:options});
-    const url = `${location.origin}/tools/polls.html#poll=${enc}`;
-    navigator.clipboard.writeText(url).then(()=> alert('Shareable link copied!'));
-  };
-
-  function loadFromHash(){
-    const m = location.hash.match(/^#poll=(.+)$/);
-    if(!m) return;
-    const data = decodePoll(m[1]);
-    if(!data) return;
-
-    voteCard.innerHTML = `<h3 style="margin-top:0">${data.q}</h3>`;
-
-    const key = 'hh_votes_'+btoa(data.q);
-    const votes = JSON.parse(localStorage.getItem(key)||'{}');
-
-    data.opts.forEach((opt, idx)=>{
-      const btn=document.createElement('button'); btn.className='btn'; btn.style.marginTop='8px'; btn.style.textAlign='left'; btn.textContent=`${opt}`;
-      const count=document.createElement('span'); count.style.float='right'; count.style.color='var(--muted)'; count.textContent = votes[idx]||0; btn.appendChild(count);
-      btn.onclick=()=>{ votes[idx]=(votes[idx]||0)+1; localStorage.setItem(key, JSON.stringify(votes)); count.textContent = votes[idx]; };
-      voteCard.appendChild(btn);
-    });
-  }
-  window.addEventListener('hashchange', loadFromHash);
-  loadFromHash();
+const optsEl=opts, qEl=q, addBtn=add, shareBtn=share, voteCard=vote;
+const row=(v='')=>{const w=document.createElement('div'); w.className='row'; w.style.marginTop='6px'; const i=document.createElement('input'); i.value=v; i.placeholder='Option'; const d=document.createElement('button'); d.className='btn'; d.textContent='✕'; d.style.flex='0 0 56px'; d.onclick=()=>w.remove(); w.appendChild(i); w.appendChild(d); return w;};
+optsEl.appendChild(row('Option 1')); optsEl.appendChild(row('Option 2'));
+addBtn.onclick=()=>optsEl.appendChild(row(''));
+function enc(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o))));}
+function dec(s){try{return JSON.parse(decodeURIComponent(escape(atob(s))));}catch(e){return null;}}
+shareBtn.onclick=()=>{const options=[...optsEl.querySelectorAll('input')].map(i=>i.value.trim()).filter(Boolean).slice(0,10); const qq=(qEl.value||'My Poll').trim(); const url=`${location.origin}/tools/polls.html#poll=${enc({q:qq,opts:options})}`; navigator.clipboard.writeText(url).then(()=>alert('Shareable link copied!'));};
+function load(){const m=location.hash.match(/^#poll=(.+)$/); if(!m) return; const data=dec(m[1]); if(!data) return; voteCard.innerHTML=`<h3 style="margin-top:0">${data.q}</h3>`; const key='hh_votes_'+btoa(data.q); const votes=JSON.parse(localStorage.getItem(key)||'{}'); data.opts.forEach((opt,idx)=>{const b=document.createElement('button'); b.className='btn'; b.style.marginTop='8px'; b.textContent=opt; const c=document.createElement('span'); c.style.float='right'; c.style.color='var(--muted)'; c.textContent=votes[idx]||0; b.appendChild(c); b.onclick=()=>{votes[idx]=(votes[idx]||0)+1; localStorage.setItem(key, JSON.stringify(votes)); c.textContent=votes[idx];}; voteCard.appendChild(b);});}
+window.addEventListener('hashchange', load); load();
 </script>
 
 </body>

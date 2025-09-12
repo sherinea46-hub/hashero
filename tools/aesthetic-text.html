@@ -4,22 +4,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Aesthetic Text Generator • HashHero</title>
-  <meta name="description" content="Free cool text generator for TikTok, Instagram, and YouTube. Convert text into fancy Unicode styles like bold, italic, cursive, monospace, fraktur, and more — copy with one click." />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Stylish Unicode text for bios and captions." />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
   <meta property="og:title" content="Aesthetic Text Generator • HashHero" />
-  <meta property="og:description" content="Convert your caption or bio into cool Unicode styles — bold, italic, cursive, monospace, fraktur, small caps. Copy instantly." />
+  <meta property="og:description" content="Stylish Unicode text for bios and captions." />
   <meta property="og:image" content="/og-tools.png" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://hashhero.app/tools/aesthetic-text.html" />
+  <meta property="og:url" content="https://hashhero.app/" />
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Organization",
+    "url":"https://hashhero.app/",
+    "logo":"https://hashhero.app/assets/logo.svg",
+    "name":"HashHero"
+  }
+  </script>
   <link rel="stylesheet" href="/assets/hashhero.css" />
+
 </head>
 <body>
+  
   <header class="nav">
     <div class="nav-inner">
-      <a class="brand" href="/">
-        <img src="/assets/logo.svg" alt="HashHero logo" />
-        <span>HashHero</span>
-      </a>
+      <a class="brand" href="/"><img src="/assets/logo.svg" alt="HashHero logo"/><span>HashHero</span></a>
       <nav class="nav-links">
         <a href="/tools/qr.html">QR</a>
         <a href="/tools/meme.html">Meme</a>
@@ -27,138 +36,39 @@
         <a href="/tools/gif.html">GIF</a>
         <a href="/tools/polls.html">Polls</a>
         <a href="/tools/engagement.html">Engagement</a>
-        <a href="/tools/aesthetic-text.html" class="active">Aesthetic Text</a>
+        <a href="/tools/aesthetic-text.html">Aesthetic</a>
+        <a href="/tools/captions.html">Captions</a>
+        <a href="/tools/pfp.html">PFP</a>
+        <a href="/tools/thumbnail.html">Thumbnail</a>
       </nav>
     </div>
   </header>
 
   <main class="page">
-    <section>
-      <h1>Free Aesthetic Text Generator</h1>
-      <p class="lead">
-        Make your captions and bios pop with stylish Unicode text. Type once, then copy dozens of styles:
-        <em>bold</em>, <em>italic</em>, <em>bold italic</em>, cursive/script, fraktur, monospace, double‑struck, and small caps.
-      </p>
-    </section>
-
-    <div class="row" style="margin-top:14px;">
-      <section class="form" style="flex:1.2">
-        <label for="src">Your text</label>
-        <input id="src" type="text" placeholder="Type your caption or bio..." />
-
-        <div class="row">
-          <div style="flex:1">
-            <label for="normalize">Normalization</label>
-            <select id="normalize">
-              <option value="keep" selected>Keep case & symbols</option>
-              <option value="letters">Letters only (A–Z, a–z)</option>
-            </select>
-          </div>
-          <div style="flex:1">
-            <label for="filter">Platform safety</label>
-            <select id="filter">
-              <option value="none" selected>Show all styles</option>
-              <option value="basic">Basic styles (safer)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="row" style="margin-top:12px">
-          <button id="gen" class="btn primary">Generate</button>
-          <button id="copyAll" class="btn" disabled>Copy All</button>
-        </div>
-        <p class="lead" style="font-size:12px">Note: Some platforms may replace/strip certain characters. Use “Basic styles” if any issues.</p>
-      </section>
-
-      <section class="area" style="flex:1">
-        <div class="card" style="width:100%">
-          <h3 style="margin-top:0">Preview</h3>
-          <div id="preview" style="white-space:pre-wrap; word-break:break-word;"></div>
-        </div>
-      </section>
-    </div>
-
-    <section class="section">
-      <div id="results" class="grid"></div>
-    </section>
-  </main>
-
+<section><h1>Aesthetic Text Generator</h1><p class="lead">Convert your caption into bold, italic, script, fraktur, monospace, double‑struck, or small caps. Copy with one click.</p></section>
+<div class="row" style="margin-top:14px;">
+  <section class="form" style="flex:1.2">
+    <label>Your text</label><input id="src" type="text" placeholder="Type your caption or bio..."/>
+    <div class="row"><div style="flex:1"><label>Normalization</label><select id="normalize"><option value="keep" selected>Keep case & symbols</option><option value="letters">Letters only</option></select></div><div style="flex:1"><label>Platform safety</label><select id="filter"><option value="none" selected>Show all</option><option value="basic">Basic styles</option></select></div></div>
+    <div class="row" style="margin-top:12px"><button id="gen" class="btn primary">Generate</button><button id="copyAll" class="btn" disabled>Copy All</button></div>
+  </section>
+  <section class="area" style="flex:1"><div class="card" style="width:100%"><h3 style="margin-top:0">Preview</h3><div id="preview" style="white-space:pre-wrap; word-break:break-word;"></div></div></section>
+</div>
+<section class="section"><div id="results" class="grid"></div></section>
+</main>
   <footer class="footer">© 2025 HashHero — Built for creators.</footer>
+  
+<script>
+const src=src, gen=gen, copyAll=copyAll, preview=preview, results=results, normalizeSel=normalize, filterSel=filter;
+const base={lower:'abcdefghijklmnopqrstuvwxyz', upper:'ABCDEFGHIJKLMNOPQRSTUVWXYZ', digits:'0123456789'};
+const styles={'Bold':{u:'𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙',l:'𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳',d:'𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗'},'Italic':{u:'𝐴𝐵𝐶𝐷𝐸𝐹𝐺𝐻𝐼𝐽𝐾𝐿𝑀𝑁𝑂𝑃𝑄𝑅𝑆𝑇𝑈𝑉𝑊𝑋𝑌𝑍',l:'𝑎𝑏𝑐𝑑𝑒𝑓𝑔ℎ𝑖𝑗𝑘𝑙𝑚𝑛𝑜𝑝𝑞𝑟𝑠𝑡𝑢𝑣𝑤𝑥𝑦𝑧'},'Bold Italic':{u:'𝑨𝑩𝑪𝑫𝑬𝑭𝑮𝑯𝑰𝑱𝑲𝑳𝑴𝑵𝑶𝑷𝑸𝑹𝑺𝑻𝑼𝑽𝑾𝑿𝒀𝒁',l:'𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛'},'Script':{u:'𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵',l:'𝒶𝒷𝒸𝒹ℯ𝒻ℊ𝒽𝒾𝒿𝓀𝓁𝓂𝓃ℴ𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏'},'Fraktur':{u:'𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔎𝔏𝔐𝔑𝔒𝔓𝔔ℜ𝔖𝔗𝔘𝔙𝔚𝔛𝔜ℨ',l:'𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷'},'Monospace':{u:'𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉',l:'𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣',d:'𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿'},'Double Struck':{u:'𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ',l:'𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫',d:'𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡'},'Small Caps':{u:'ABCDEFGHIJKLMNOPQRSTUVWXYZ',l:'ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ'}};
+const basic=new Set(['Bold','Italic','Bold Italic','Monospace','Small Caps']);
+function map(ch, st){const s=styles[st]; const iu=base.upper.indexOf(ch), il=base.lower.indexOf(ch), id=base.digits.indexOf(ch);
+ if(iu!=-1) return s.u?.[iu]||ch; if(il!=-1) return s.l?.[il]||ch; if(id!=-1) return s.d?.[id]||ch; return ch;}
+function trans(text, st, mode){let out=''; for(const ch of text){ if(mode==='letters' && !(/[A-Za-z]/.test(ch))) {{out+=ch; continue;}} out+=map(ch,st);} return out;}
+function render(){const text=src.value||''; preview.textContent=text; results.innerHTML=''; const chosen=(filterSel.value==='basic')?[...basic]:Object.keys(styles); let all=[]; for(const name of chosen){const t=trans(text,name,normalizeSel.value); all.push(`${name}: ${t}`); const card=document.createElement('div'); card.className='card'; const h=document.createElement('h3'); h.textContent=name; card.appendChild(h); const p=document.createElement('p'); p.textContent=t; p.style.whiteSpace='pre-wrap'; card.appendChild(p); const b=document.createElement('button'); b.className='btn'; b.textContent='Copy'; b.onclick=()=>navigator.clipboard.writeText(t).then(()=>{{b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy',900);}}); card.appendChild(b); results.appendChild(card);} copyAll.disabled=chosen.length===0; copyAll.onclick=()=>navigator.clipboard.writeText(all.join('\n')).then(()=>{{copyAll.textContent='Copied!'; setTimeout(()=>copyAll.textContent='Copy All',900);}});}
+gen.addEventListener('click', render); src.addEventListener('input', ()=> preview.textContent=src.value);
+</script>
 
-  <script>
-    const src = document.getElementById('src');
-    const gen = document.getElementById('gen');
-    const copyAll = document.getElementById('copyAll');
-    const preview = document.getElementById('preview');
-    const results = document.getElementById('results');
-    const normalizeSel = document.getElementById('normalize');
-    const filterSel = document.getElementById('filter');
-
-    const base = {
-      lower: 'abcdefghijklmnopqrstuvwxyz',
-      upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-      digits: '0123456789'
-    };
-
-    // Unicode style maps (A–Z, a–z, digits where available)
-    const styles = {
-      'Bold': { u:'𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙', l:'𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳', d:'𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗' },
-      'Italic': { u:'𝐴𝐵𝐶𝐷𝐸𝐹𝐺𝐻𝐼𝐽𝐾𝐿𝑀𝑁𝑂𝑃𝑄𝑅𝑆𝑇𝑈𝑉𝑊𝑋𝑌𝑍', l:'𝑎𝑏𝑐𝑑𝑒𝑓𝑔ℎ𝑖𝑗𝑘𝑙𝑚𝑛𝑜𝑝𝑞𝑟𝑠𝑡𝑢𝑣𝑤𝑥𝑦𝑧' },
-      'Bold Italic': { u:'𝑨𝑩𝑪𝑫𝑬𝑭𝑮𝑯𝑰𝑱𝑲𝑳𝑴𝑵𝑶𝑷𝑸𝑹𝑺𝑻𝑼𝑽𝑾𝑿𝒀𝒁', l:'𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛' },
-      'Script': { u:'𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵', l:'𝒶𝒷𝒸𝒹ℯ𝒻ℊ𝒽𝒾𝒿𝓀𝓁𝓂𝓃ℴ𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏' },
-      'Fraktur': { u:'𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔎𝔏𝔐𝔑𝔒𝔓𝔔ℜ𝔖𝔗𝔘𝔙𝔚𝔛𝔜ℨ', l:'𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷' },
-      'Monospace': { u:'𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉', l:'𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣', d:'𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿' },
-      'Double Struck': { u:'𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ', l:'𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫', d:'𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡' },
-      'Small Caps': { u:'ABCDEFGHIJKLMNOPQRSTUVWXYZ', l:'ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ' }
-    };
-
-    const basicSet = new Set(['Bold','Italic','Bold Italic','Monospace','Small Caps']);
-
-    function mapChar(ch, style){
-      const s = styles[style];
-      const idxU = base.upper.indexOf(ch);
-      const idxL = base.lower.indexOf(ch);
-      const idxD = base.digits.indexOf(ch);
-      if(idxU !== -1) return s.u?.[idxU] || ch;
-      if(idxL !== -1) return s.l?.[idxL] || ch;
-      if(idxD !== -1) return s.d?.[idxD] || ch;
-      return ch;
-    }
-
-    function transform(text, style, mode){
-      let out='';
-      for(const ch of text){
-        if(mode === 'letters' && !(/[A-Za-z]/.test(ch))) { out += ch; continue; }
-        out += mapChar(ch, style);
-      }
-      return out;
-    }
-
-    function render(){
-      const text = src.value || '';
-      preview.textContent = text;
-      results.innerHTML='';
-      const chosen = (filterSel.value==='basic') ? [...basicSet] : Object.keys(styles);
-      let clipboard = [];
-      for(const name of chosen){
-        const t = transform(text, name, normalizeSel.value);
-        clipboard.push(`${name}: ${t}`);
-        const card = document.createElement('div');
-        card.className='card';
-        const h = document.createElement('h3'); h.textContent=name; card.appendChild(h);
-        const p = document.createElement('p'); p.style.whiteSpace='pre-wrap'; p.style.wordBreak='break-word'; p.textContent=t; card.appendChild(p);
-        const btn = document.createElement('button'); btn.className='btn'; btn.textContent='Copy'; btn.style.marginTop='8px';
-        btn.onclick = ()=>{ navigator.clipboard.writeText(t).then(()=>{ btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy',900); }); };
-        card.appendChild(btn);
-        results.appendChild(card);
-      }
-      copyAll.disabled = chosen.length===0;
-      copyAll.onclick = ()=> navigator.clipboard.writeText(clipboard.join('\n')).then(()=>{ copyAll.textContent='Copied!'; setTimeout(()=>copyAll.textContent='Copy All', 900); });
-    }
-
-    gen.addEventListener('click', render);
-    // Live preview
-    src.addEventListener('input', ()=>{ preview.textContent = src.value; });
-  </script>
 </body>
 </html>

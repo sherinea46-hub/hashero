@@ -4,14 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GIF Maker • HashHero</title>
-  <meta name="description" content="Make GIFs from photos online — free, fast, and simple." />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Make GIFs from photos — fast & simple." />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
   <meta property="og:title" content="GIF Maker • HashHero" />
-  <meta property="og:description" content="Make GIFs from photos online — free, fast, and simple." />
+  <meta property="og:description" content="Make GIFs from photos — fast & simple." />
   <meta property="og:image" content="/og-tools.png" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://hashhero.app/" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Organization",
+    "url":"https://hashhero.app/",
+    "logo":"https://hashhero.app/assets/logo.svg",
+    "name":"HashHero"
+  }
+  </script>
   <link rel="stylesheet" href="/assets/hashhero.css" />
 
 </head>
@@ -19,114 +28,42 @@
   
   <header class="nav">
     <div class="nav-inner">
-      <a class="brand" href="/">
-        <img src="/assets/logo.svg" alt="HashHero logo" />
-        <span>HashHero</span>
-      </a>
+      <a class="brand" href="/"><img src="/assets/logo.svg" alt="HashHero logo"/><span>HashHero</span></a>
       <nav class="nav-links">
         <a href="/tools/qr.html">QR</a>
         <a href="/tools/meme.html">Meme</a>
         <a href="/tools/hashtags.html">Hashtags</a>
-        <a href="/tools/gif.html" class="active">GIF</a>
+        <a href="/tools/gif.html">GIF</a>
         <a href="/tools/polls.html">Polls</a>
+        <a href="/tools/engagement.html">Engagement</a>
+        <a href="/tools/aesthetic-text.html">Aesthetic</a>
+        <a href="/tools/captions.html">Captions</a>
+        <a href="/tools/pfp.html">PFP</a>
+        <a href="/tools/thumbnail.html">Thumbnail</a>
       </nav>
     </div>
   </header>
 
   <main class="page">
-    
-<section>
-  <h1>Free Online GIF Maker from Images</h1>
-  <p class="lead">
-    Upload multiple images, set frame delay and size, and generate a looping GIF in seconds.
-    No software. Works right in your browser.
-  </p>
-</section>
+<section><h1>GIF Maker</h1><p class="lead">Upload multiple images, set frame delay & size, and create a looping GIF.</p></section>
 <div class="row" style="margin-top:14px;">
   <section class="form" style="flex:1.2">
-    <label>Upload images</label>
-    <input id="files" type="file" accept="image/*" multiple />
-
-    <div class="row">
-      <div style="flex:1">
-        <label for="delay">Frame delay (ms)</label>
-        <input id="delay" type="number" value="120" />
-      </div>
-      <div style="flex:1">
-        <label for="size">Size</label>
-        <select id="size">
-          <option>256</option>
-          <option>384</option>
-          <option selected>512</option>
-          <option>768</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top:12px">
-      <button class="btn primary" id="make">Create GIF</button>
-      <button class="btn" id="download" disabled>Download</button>
-    </div>
-    <p class="lead" style="font-size:12px">Tip: Use burst photos or exported frames. Webcam/video support can be added next.</p>
+    <label>Upload images</label><input id="files" type="file" accept="image/*" multiple/>
+    <div class="row"><div style="flex:1"><label>Delay (ms)</label><input id="delay" type="number" value="120"/></div><div style="flex:1"><label>Size</label><select id="size"><option>256</option><option selected>512</option><option>768</option></select></div></div>
+    <div class="row" style="margin-top:12px"><button class="btn primary" id="make">Create GIF</button><button class="btn" id="download" disabled>Download</button></div>
   </section>
-
-  <section class="area" style="flex:1">
-    <div class="card" style="width:100%">
-      <h3 style="margin-top:0">Frames <span id="count">(0)</span></h3>
-      <div class="row" id="thumbs" style="flex-wrap:wrap; gap:10px"></div>
-      <div id="result" style="margin-top:12px"></div>
-    </div>
-  </section>
+  <section class="area" style="flex:1"><div class="card" style="width:100%"><h3 style="margin-top:0">Frames <span id="count">(0)</span></h3><div class="row" id="thumbs" style="flex-wrap:wrap; gap:10px"></div><div id="result" style="margin-top:12px"></div></div></section>
 </div>
-
-  </main>
+</main>
   <footer class="footer">© 2025 HashHero — Built for creators.</footer>
   
 <script src="https://unpkg.com/gifshot@0.4.5/build/gifshot.min.js"></script>
 <script>
-  const filesEl = document.getElementById('files');
-  const delayEl = document.getElementById('delay');
-  const sizeEl = document.getElementById('size');
-  const makeBtn = document.getElementById('make');
-  const dlBtn = document.getElementById('download');
-  const thumbs = document.getElementById('thumbs');
-  const result = document.getElementById('result');
-  const count = document.getElementById('count');
-
-  let frames = [];
-
-  filesEl.addEventListener('change', (e)=>{
-    const fs = Array.from(e.target.files||[]);
-    frames = fs.map(f=> URL.createObjectURL(f));
-    thumbs.innerHTML = '';
-    frames.forEach(u=>{
-      const img = document.createElement('img'); img.src=u;
-      img.style.width='96px'; img.style.height='96px'; img.style.objectFit='cover'; img.style.borderRadius='10px'; img.style.border='1px solid var(--line)';
-      thumbs.appendChild(img);
-    });
-    count.textContent = `({len(frames)})`;
-  });
-
-  makeBtn.addEventListener('click', ()=>{
-    if(!frames.length) return alert('Add at least one image.');
-    result.innerHTML = '<div class="card">Generating…</div>';
-    gifshot.createGIF({
-      images: frames,
-      gifWidth: parseInt(sizeEl.value,10),
-      gifHeight: parseInt(sizeEl.value,10),
-      interval: Math.max(0.02, (parseInt(delayEl.value,10)||120)/1000),
-      numFrames: frames.length,
-      sampleInterval: 10,
-      numWorkers: 2,
-    }, (obj)=>{
-      if(obj.error){ result.innerHTML='<div class="card">Failed to create GIF</div>'; return; }
-      const wrap = document.createElement('div'); wrap.className='card';
-      const img = document.createElement('img'); img.src = obj.image; img.style.maxWidth='100%'; img.style.border='1px solid var(--line)'; img.style.borderRadius='10px';
-      wrap.appendChild(img);
-      result.innerHTML=''; result.appendChild(wrap);
-      dlBtn.disabled=false; dlBtn.onclick=()=>{ const a=document.createElement('a'); a.href=obj.image; a.download='hashhero.gif'; a.click(); };
-    });
-  });
+const filesEl=files, delayEl=delay, sizeEl=size, makeBtn=make, dlBtn=download, thumbs=document.getElementById('thumbs'), result=document.getElementById('result'), count=document.getElementById('count');
+let frames=[];
+filesEl.addEventListener('change', e=>{const fs=[...e.target.files||[]]; frames=fs.map(f=>URL.createObjectURL(f)); thumbs.innerHTML=''; frames.forEach(u=>{const img=document.createElement('img'); img.src=u; img.style.width='96px'; img.style.height='96px'; img.style.objectFit='cover'; img.style.borderRadius='10px'; img.style.border='1px solid var(--line)'; thumbs.appendChild(img);}); count.textContent=`(${frames.length})`;});
+makeBtn.addEventListener('click', ()=>{ if(!frames.length) return alert('Add at least one image.'); result.innerHTML='<div class="card">Generating…</div>';
+ gifshot.createGIF({images:frames,gifWidth:parseInt(sizeEl.value,10),gifHeight:parseInt(sizeEl.value,10),interval:Math.max(0.02,(parseInt(delayEl.value,10)||120)/1000),numFrames:frames.length,sampleInterval:10,numWorkers:2}, (o)=>{ if(o.error){result.innerHTML='<div class="card">Failed to create GIF</div>'; return;} const wrap=document.createElement('div'); wrap.className='card'; const img=document.createElement('img'); img.src=o.image; img.style.maxWidth='100%'; img.style.border='1px solid var(--line)'; img.style.borderRadius='10px'; wrap.appendChild(img); result.innerHTML=''; result.appendChild(wrap); dlBtn.disabled=false; dlBtn.onclick=()=>{const a=document.createElement('a'); a.href=o.image; a.download='hashhero.gif'; a.click();};});});
 </script>
 
 </body>

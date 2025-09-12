@@ -1,24 +1,16 @@
-# HashHero — Pro Static Site (Branded)
+# HashHero — Full Creator Toolkit (with Captions)
 
-Branded build for https://hashhero.app/ with accent color #6ad1ff.
+Domain: https://hashhero.app/
+Includes: QR, Meme, Hashtags, GIF, Polls, Engagement, Aesthetic Text, Caption Generator
+SEO: robots.txt + sitemap.xml; Organization JSON-LD in <head>
 
-## Deploy on Vercel
+Vercel Deploy:
 - New Project → Other (Static)
 - Build Command: (leave empty)
 - Output Directory: `/`
-- Drag/drop this folder or connect a repo.
-- Domain already baked into OG meta + sitemap.
+- Drag & drop or connect repo
+- Add domain under Settings → Domains
 
-## Files
-- /index.html
-- /assets/hashhero.css
-- /assets/logo.svg
-- /favicon.ico
-- /og-tools.png
-- /tools/qr.html
-- /tools/meme.html
-- /tools/hashtags.html
-- /tools/gif.html
-- /tools/polls.html
-- /robots.txt
-- /sitemap.xml
+After deploy:
+- Google Search Console → Inspect URL → Request Indexing
+- Check Rich Results Test for Organization logo
