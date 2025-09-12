@@ -1,0 +1,270 @@
+
+(function(){
+  function ready(fn){ if(document.readyState!=='loading'){ fn(); } else { document.addEventListener('DOMContentLoaded', fn); } }
+  ready(function(){
+    const $ = (sel, ctx=document) => ctx.querySelector(sel);
+    const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+
+    const hero = $('.hero-tool') || document;
+
+    // --- KW detection --------------------------------------------------------
+    const EXCLUDE_IDS = new Set(['aiInclude','aiAvoid','lvRegion']);
+    const EXCLUDE_PLACEHOLDER = /region|locale|include|avoid|caption|description/i;
+
+    function nearestInputTo(btn){
+      if(!btn) return null;
+      // Prefer input in same form
+      let form = btn.closest('form');
+      if(form){
+        let cand = $$('input[type="text"],input[type="search"]', form)
+          .filter(el => !EXCLUDE_IDS.has(el.id) && !EXCLUDE_PLACEHOLDER.test(el.placeholder||''));
+        if(cand.length) return cand[0];
+      }
+      // Otherwise pick the biggest input in hero
+      let all = $$('input[type="text"],input[type="search"]', hero)
+        .filter(el => !EXCLUDE_IDS.has(el.id) && !EXCLUDE_PLACEHOLDER.test(el.placeholder||''));
+      if(!all.length) return null;
+      all.sort((a,b)=>(b.offsetWidth*b.offsetHeight) - (a.offsetWidth*a.offsetHeight));
+      return all[0];
+    }
+
+    // initial guesses
+    let kw = hero.querySelector('#kw')
+          || hero.querySelector('[data-role="kw"]')
+          || hero.querySelector('input[name="kw"]')
+          || hero.querySelector('input[placeholder*="topic" i]')
+          || hero.querySelector('input[placeholder*="keyword" i]');
+
+    const genBtn = document.getElementById('generate') || hero.querySelector('#generate') || hero.querySelector('button');
+    if(!kw) kw = nearestInputTo(genBtn);
+    if(kw) kw.setAttribute('data-role','kw');
+
+    // If user focuses another text input that isn't include/avoid/region, treat it as kw
+    $$('input[type="text"],input[type="search"]', hero).forEach(el=>{
+      if(EXCLUDE_IDS.has(el.id)) return;
+      if(EXCLUDE_PLACEHOLDER.test(el.placeholder||'')) return;
+      el.addEventListener('focus', ()=>{ kw = el; kw.setAttribute('data-role','kw'); });
+      el.addEventListener('click', ()=>{ kw = el; kw.setAttribute('data-role','kw'); });
+    });
+
+    // --- DOM refs
+    const results = $('#results', hero) || document.getElementById('results');
+    const copyAllBtn = document.getElementById('copyAllBtn') || $('#copyAllBtn', hero);
+    const tabs = $$('.hh-tab');
+    const aiInclude = document.getElementById('aiInclude'), aiAvoid = document.getElementById('aiAvoid');
+    const lvIntensity = document.getElementById('lvIntensity'), lvTrend = document.getElementById('lvTrend'), lvNiche = document.getElementById('lvNiche');
+    const lvMax = document.getElementById('lvMax'), lvCase = document.getElementById('lvCase'), lvRegion = document.getElementById('lvRegion');
+    const lvShuffle = document.getElementById('lvShuffle'), lvSafe = document.getElementById('lvSafe');
+
+    if(!results){ return; }
+
+    // --- Logic
+    const POP = { "fyp":950000000,"viral":880000000,"trending":740000000,"love":2200000000,"instagood":1500000000,"fashion":900000000,"youtube":600000000,"shorts":700000000,"tiktok":1300000000 };
+    function estPopularity(tag, platform){
+      const key = String(tag||'').replace(/^#/,'').toLowerCase();
+      const base = POP[key] || (Math.max(1, 12 - Math.min(key.length, 12)) * 1e6);
+      const w = { tiktok:1.2, instagram:1.1, facebook:0.8, x:0.7, youtube:0.9 }[platform] || 1;
+      return Math.round(base * w);
+    }
+    function nf(n){ return n.toLocaleString('en-US'); }
+
+    const RULES = {
+      tiktok:    { label:"TikTok",    maxTags: 5,  style: (t)=>t.map(x=>x.toLowerCase()) },
+      instagram: { label:"Instagram", maxTags: 30, style: (t)=>t },
+      facebook:  { label:"Facebook",  maxTags: 3,  style: (t)=>t },
+      x:         { label:"X",         maxTags: 2,  style: (t)=>t.map(x=>x.replace(/[^a-z0-9#]/gi,'')) },
+      youtube:   { label:"YouTube",   maxTags: 3,  style: (t)=>t }
+    };
+    let active = 'tiktok';
+
+    function debounce(fn, ms){ let t; return function(){ clearTimeout(t); const args=arguments; t=setTimeout(()=>fn.apply(null, args), ms); }; }
+    function norm(s){ return (s||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim(); }
+    function title(s){ return s.replace(/(^|\s)\S/g, t=>t.toUpperCase()); }
+
+    const STOP = new Set(("a an the and or of to in on for with from by is are was were be been at as that this it your you our we i me my mine his her their they them he she do does did not no yes too very just much many more most less few over under again only own same so than then once each both any some such own other into out up down off above below why how all can will should could would might must may".split(" ")));
+    function extractKeywords(txt){
+      const words = norm(txt).split(' ').filter(Boolean).filter(w=>!STOP.has(w));
+      const freq = new Map(); words.forEach(w=>freq.set(w, 1 + (freq.get(w)||0)));
+      return Array.from(freq.entries()).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([w])=>w);
+    }
+    const SYN = {"video":["clip","shorts","reel"],"tips":["hacks","guide","howto","protips"],"travel":["wander","adventure","trip","journey"],"food":["recipe","cooking","kitchen","yum"],"fitness":["workout","gym","health","wellness","fit"],"beauty":["makeup","skincare","glow"],"money":["finance","investing","budget","wealth"],"fashion":["style","outfit","ootd","trend"],"music":["song","beat","remix","cover","instrumental"]};
+
+    function expandIdeas(keys, intensity=40, niche=30){
+      const out = new Set(keys);
+      const more = Math.round( (intensity/100) * 12 );
+      keys.forEach(k=>{
+        const base = k.toLowerCase();
+        (SYN[base] || SYN[base.replace(/s$/,'')] || []).forEach(v=> out.add(v));
+        if(base.length>3){ out.add(base+'tips'); out.add(base+'hacks'); }
+      });
+      const suffixes = ['life','vibes','journey','daily','zone','hub','nation','club','community'];
+      for (let i=0;i<Math.round((niche/100)*suffixes.length);i++){
+        keys.forEach(k=> out.add(k+suffixes[i]));
+      });
+      return Array.from(out).slice(0, Math.max(8, more));
+    }
+    function caseStyle(tag, mode){
+      if(mode==='camel'){
+        return tag.replace(/^#?/, '#').replace(/#?([a-z0-9]+)/i, (m)=>{
+          const core = m.replace(/^#/,'');
+          return '#'+core.replace(/(^|[\\s_\\-])\\w/g, s=>s.replace(/[^a-z0-9]/i,'').toUpperCase());
+        });
+      }
+      return tag.toLowerCase().startsWith('#') ? tag.toLowerCase() : '#'+tag.toLowerCase();
+    }
+    function buildBaseFromKeyword(k){
+      const base = norm(k);
+      if(!base) return [];
+      const key = base.replace(/\\s+/g,'');
+      const K = title(base).split(' ').join('');
+      const buckets = [
+        { mix:['#%k','%k','%kTips','%kHacks','%kGuide','%kIdeas','%kPro'] },
+        { mix:['%kForBeginners','%kForCreators','%k2025','%kDaily','%kNow'] },
+        { mix:['viral','fyp','trending','explore','reels','shorts'] },
+        { mix:['%kCommunity','%kLife','%kJourney','%kVibes','%kHub','%kNation','%kClub'] },
+        { mix:['TikTok','InstaReels','YouTubeShorts','Shorts'] }
+      ];
+      const set = new Set();
+      buckets.forEach(b=> b.mix.forEach(m=> set.add('#' + m.replace(/%k/g, K).replace(/[^A-Za-z0-9]/g,'')) ));
+      set.add('#' + key);
+      set.add('#' + K);
+      return Array.from(set);
+    }
+    function addRegion(tags, regionRaw){
+      const region = (regionRaw||'').trim();
+      if(!region) return tags;
+      const parts = region.split(',').map(s=>norm(s)).filter(Boolean);
+      const out = new Set(tags);
+      parts.forEach(p=> out.add('#'+p.replace(/\\s+/g,'')));
+      if(parts.length>=2){ out.add('#'+parts.map(p=>p.replace(/\\s+/g,'')).join('')); }
+      return Array.from(out);
+    }
+    function applyTrendBoost(tags, boost=50){
+      const trending = ['#viral','#fyp','#trending','#explore','#reels','#shorts'];
+      if(boost<=0) return tags;
+      const n = Math.round((boost/100)*trending.length);
+      const set = new Set(tags);
+      trending.slice(0,n).forEach(t=> set.add(t));
+      return Array.from(set);
+    }
+    const BAN = new Set(['#followforfollow','#likeforlike','#sub4sub','#spam','#nsfw','#adult']);
+    function safeFilter(tags){ return tags.filter(t=> !BAN.has(t.toLowerCase())); }
+    function applyGuidance(tags){
+      const inc = (document.getElementById('aiInclude')?.value||'').trim();
+      const avoid = (document.getElementById('aiAvoid')?.value||'').toLowerCase().split(',').map(s=>s.trim()).filter(Boolean);
+      let list = tags.filter(t=>!avoid.some(a=>t.toLowerCase().includes(a)));
+      if(inc){
+        let t = inc.startsWith('#')?inc:('#'+inc.replace(/[^a-z0-9]/gi,''));
+        if(!list.includes(t)) list.unshift(t);
+      }
+      return list;
+    }
+    function rankOrShuffle(tags){
+      const lvShuffle = document.getElementById('lvShuffle');
+      if(lvShuffle && lvShuffle.checked){
+        const a = tags.slice();
+        for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+        return a;
+      }
+      return tags.slice().sort((a,b)=> estPopularity(b, active) - estPopularity(a, active));
+    }
+    function applyCase(tags){
+      const lvCase = document.getElementById('lvCase');
+      const mode = (lvCase && lvCase.value) || 'lower';
+      return tags.map(t=> caseStyle(t.replace(/^#/,'').replace(/[^A-Za-z0-9]/g,''), mode));
+    }
+    function capToMax(tags){
+      const rule = RULES[active] || RULES.tiktok;
+      const lvMax = document.getElementById('lvMax');
+      const slider = parseInt((lvMax && lvMax.value) || '0', 10);
+      const hardCap = slider>0 ? Math.min(slider, rule.maxTags) : rule.maxTags;
+      return tags.slice(0, hardCap);
+    }
+
+    function buildPipeline(seed){
+      let tags = buildBaseFromKeyword(seed);
+      const lvIntensity = document.getElementById('lvIntensity');
+      const lvNiche = document.getElementById('lvNiche');
+      const keys = extractKeywords(seed);
+      const intensity = parseInt((lvIntensity && lvIntensity.value) || '40',10);
+      const niche     = parseInt((lvNiche && lvNiche.value) || '30',10);
+      const expanded = expandIdeas(keys.concat(((kw && kw.value)||'').split(' ')).filter(Boolean), intensity, niche);
+      const boosted = buildBaseFromKeyword(expanded.join(' '));
+      tags = Array.from(new Set(tags.concat(boosted)));
+      const lvRegion = document.getElementById('lvRegion');
+      tags = addRegion(tags, (lvRegion && lvRegion.value) || '');
+      const lvTrend = document.getElementById('lvTrend');
+      const trend = parseInt((lvTrend && lvTrend.value) || '50',10);
+      tags = applyTrendBoost(tags, trend);
+      const lvSafe = document.getElementById('lvSafe');
+      if(lvSafe && lvSafe.checked){ tags = safeFilter(tags); }
+      tags = applyGuidance(tags);
+      tags = applyCase(tags);
+      tags = rankOrShuffle(tags);
+      const rule = RULES[active] || RULES.tiktok;
+      tags = rule.style(tags);
+      tags = capToMax(tags);
+      return tags;
+    }
+
+    function copyText(txt){
+      return navigator.clipboard?.writeText(txt).catch(()=>{
+        const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta);
+        ta.select(); try { document.execCommand('copy'); } finally { document.body.removeChild(ta); }
+      });
+    }
+    function render(tags){
+      if(!results) return;
+      results.innerHTML = '';
+      const wrap = document.createElement('div');
+      const rows = document.createElement('div'); rows.setAttribute('role','table');
+      tags.forEach(tag=>{
+        const row = document.createElement('div'); row.className='hh-row'; row.setAttribute('role','row');
+        const tcell = document.createElement('div'); tcell.className='hh-tag'; tcell.textContent = tag; row.appendChild(tcell);
+        const metric = document.createElement('div'); metric.className='hh-metric';
+        metric.textContent = 'Popularity (est.): ' + nf(estPopularity(tag, active));
+        row.appendChild(metric);
+        const cbtn = document.createElement('button'); cbtn.className='hh-copy'; cbtn.textContent='Copy';
+        cbtn.addEventListener('click', async ()=>{ await copyText(tag); const old=cbtn.textContent; cbtn.textContent='Copied!'; setTimeout(()=>cbtn.textContent=old, 900); });
+        row.appendChild(cbtn);
+        rows.appendChild(row);
+      });
+      wrap.appendChild(rows);
+      results.appendChild(wrap);
+      if(copyAllBtn){
+        copyAllBtn.onclick = async ()=>{ const blob = tags.join(' '); await copyText(blob); const old=copyAllBtn.textContent; copyAllBtn.textContent='Copied All!'; setTimeout(()=>copyAllBtn.textContent=old, 1000); };
+      }
+      if(results && kw){ results.dataset.lastKw = kw.value || ''; }
+    }
+
+    function setActive(p, el){
+      active = (p==='youtube' ? 'youtube' : p);
+      $$('.hh-tab').forEach(t=>{
+        const is = (t===el);
+        t.classList.toggle('active', is);
+        t.setAttribute('aria-selected', is?'true':'false');
+        t.tabIndex = is?0:-1;
+      });
+      const seed2 = (results && results.dataset && results.dataset.lastKw ? results.dataset.lastKw : (kw && kw.value ? kw.value : ''));
+      if(seed2 && String(seed2).trim().length){ render(buildPipeline(seed2)); }
+    }
+    $$('.hh-tab').forEach(tab => {
+      const plat = tab.dataset?.platform || tab.textContent.trim().toLowerCase();
+      tab.addEventListener('click', () => { setActive(plat, tab); });
+      tab.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); setActive(plat, tab); } });
+    });
+
+    function doGenerate(){ const seed = (kw && kw.value)?kw.value.trim():''; if(seed){ render(buildPipeline(seed)); } }
+    if(genBtn){ genBtn.addEventListener('click', doGenerate); }
+    if(kw){
+      kw.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); doGenerate(); } });
+      const autoRender = debounce(()=>{ const seed = kw.value.trim(); if(seed){ render(buildPipeline(seed)); } else if(results){ results.innerHTML=''; results.dataset.lastKw=''; } }, 260);
+      kw.addEventListener('input', autoRender);
+    }
+    const aiInclude = document.getElementById('aiInclude'), aiAvoid = document.getElementById('aiAvoid');
+    if(aiInclude){ aiInclude.addEventListener('input', ()=>{ if(results?.dataset?.lastKw){ doGenerate(); } }); }
+    if(aiAvoid){ aiAvoid.addEventListener('input', ()=>{ if(results?.dataset?.lastKw){ doGenerate(); } }); }
+
+    const firstTab = $$('.hh-tab')[0]; if(firstTab){ setActive((firstTab.dataset?.platform || firstTab.textContent.trim().toLowerCase()), firstTab); }
+  });
+})();
