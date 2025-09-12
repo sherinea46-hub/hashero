@@ -2,28 +2,43 @@
 (function(){
   function ready(fn){ if(document.readyState!=='loading'){ fn(); } else { document.addEventListener('DOMContentLoaded', fn); } }
   ready(function(){
-    // --- Element helpers
     const $ = (sel, ctx=document) => ctx.querySelector(sel);
     const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
     const byId = (id) => document.getElementById(id);
 
-    // Mount points (tolerant lookups)
-    const kw = byId('kw') || $('input#kw') || $('input[placeholder*="Topic" i]') || $('input');
-    const genBtn = byId('generate') || $('#generate') || $('button#generate');
-    const results = byId('results') || $('#results');
-    const copyAllBtn = byId('copyAllBtn') || $('#copyAllBtn');
+    // Prefer the input INSIDE the hero tool
+    const hero = $('.hero-tool') || document.body;
+    function findKw(){
+      return byId('kw')
+          || $('input#kw', hero)
+          || $('input[data-role="kw"]', hero)
+          || $('input[placeholder*="topic" i]', hero)
+          || $('input[placeholder*="keyword" i]', hero)
+          || $('input[type="search"]', hero)
+          || $('input[type="text"]', hero);
+    }
+    function findGenerate(){
+      return byId('generate')
+          || $('#generate', hero)
+          || $('button[data-role="generate"]', hero)
+          || $('button.btn', hero)
+          || $('button', hero);
+    }
+
+    const kw = findKw();
+    const genBtn = findGenerate();
+    const results = byId('results') || $('#results', hero) || $('#results');
+    const copyAllBtn = byId('copyAllBtn') || $('#copyAllBtn', hero) || $('#copyAllBtn');
     const tabs = $$('.hh-tab');
     const aiInclude = byId('aiInclude'), aiAvoid = byId('aiAvoid');
     const lvIntensity = byId('lvIntensity'), lvTrend = byId('lvTrend'), lvNiche = byId('lvNiche');
     const lvMax = byId('lvMax'), lvCase = byId('lvCase'), lvRegion = byId('lvRegion');
     const lvShuffle = byId('lvShuffle'), lvSafe = byId('lvSafe');
 
-    if(!results){ return; } // nothing to render into
+    if(!results){ return; }
 
-    // --- Popularity baseline + helpers
-    const POP = { "fyp":950000000,"viral":880000000,"trending":740000000,"love":2200000000,
-                  "instagood":1500000000,"fashion":900000000,"youtube":600000000,
-                  "shorts":700000000,"tiktok":1300000000 };
+    // Popularity + helpers
+    const POP = { "fyp":950000000,"viral":880000000,"trending":740000000,"love":2200000000,"instagood":1500000000,"fashion":900000000,"youtube":600000000,"shorts":700000000,"tiktok":1300000000 };
     function estPopularity(tag, platform){
       const key = String(tag||'').replace(/^#/,'').toLowerCase();
       const base = POP[key] || (Math.max(1, 12 - Math.min(key.length, 12)) * 1e6);
@@ -32,7 +47,7 @@
     }
     function nf(n){ return n.toLocaleString('en-US'); }
 
-    // --- Rules
+    // Rules
     const RULES = {
       tiktok:    { label:"TikTok",    maxTags: 5,  style: (t)=>t.map(x=>x.toLowerCase()) },
       instagram: { label:"Instagram", maxTags: 30, style: (t)=>t },
@@ -42,29 +57,20 @@
     };
     let active = 'tiktok';
 
-    // --- Utility
+    // Utils
     function debounce(fn, ms){ let t; return function(){ clearTimeout(t); const args=arguments; t=setTimeout(()=>fn.apply(null, args), ms); }; }
     function norm(s){ return (s||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim(); }
     function title(s){ return s.replace(/(^|\s)\S/g, t=>t.toUpperCase()); }
 
-    // --- Keyword extraction & expansion
+    // NLP
     const STOP = new Set(("a an the and or of to in on for with from by is are was were be been at as that this it your you our we i me my mine his her their they them he she do does did not no yes too very just much many more most less few over under again only own same so than then once each both any some such own other into out up down off above below why how all can will should could would might must may".split(" ")));
     function extractKeywords(txt){
       const words = norm(txt).split(' ').filter(Boolean).filter(w=>!STOP.has(w));
       const freq = new Map(); words.forEach(w=>freq.set(w, 1 + (freq.get(w)||0)));
       return Array.from(freq.entries()).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([w])=>w);
     }
-    const SYN = {
-      "video":["clip","shorts","reel"],
-      "tips":["hacks","guide","howto","protips"],
-      "travel":["wander","adventure","trip","journey"],
-      "food":["recipe","cooking","kitchen","yum"],
-      "fitness":["workout","gym","health","wellness","fit"],
-      "beauty":["makeup","skincare","glow"],
-      "money":["finance","investing","budget","wealth"],
-      "fashion":["style","outfit","ootd","trend"],
-      "music":["song","beat","remix","cover","instrumental"]
-    };
+    const SYN = {"video":["clip","shorts","reel"],"tips":["hacks","guide","howto","protips"],"travel":["wander","adventure","trip","journey"],"food":["recipe","cooking","kitchen","yum"],"fitness":["workout","gym","health","wellness","fit"],"beauty":["makeup","skincare","glow"],"money":["finance","investing","budget","wealth"],"fashion":["style","outfit","ootd","trend"],"music":["song","beat","remix","cover","instrumental"]};
+
     function expandIdeas(keys, intensity=40, niche=30){
       const out = new Set(keys);
       const more = Math.round( (intensity/100) * 12 );
@@ -83,7 +89,7 @@
       if(mode==='camel'){
         return tag.replace(/^#?/, '#').replace(/#?([a-z0-9]+)/i, (m)=>{
           const core = m.replace(/^#/,'');
-          return '#'+core.replace(/(^|[\s_\-])\w/g, s=>s.replace(/[^a-z0-9]/i,'').toUpperCase());
+          return '#'+core.replace(/(^|[\\s_\\-])\\w/g, s=>s.replace(/[^a-z0-9]/i,'').toUpperCase());
         });
       }
       return tag.toLowerCase().startsWith('#') ? tag.toLowerCase() : '#'+tag.toLowerCase();
@@ -91,7 +97,7 @@
     function buildBaseFromKeyword(k){
       const base = norm(k);
       if(!base) return [];
-      const key = base.replace(/\s+/g,'');
+      const key = base.replace(/\\s+/g,'');
       const K = title(base).split(' ').join('');
       const buckets = [
         { mix:['#%k','%k','%kTips','%kHacks','%kGuide','%kIdeas','%kPro'] },
@@ -111,8 +117,8 @@
       if(!region) return tags;
       const parts = region.split(',').map(s=>norm(s)).filter(Boolean);
       const out = new Set(tags);
-      parts.forEach(p=> out.add('#'+p.replace(/\s+/g,'')));
-      if(parts.length>=2){ out.add('#'+parts.map(p=>p.replace(/\s+/g,'')).join('')); }
+      parts.forEach(p=> out.add('#'+p.replace(/\\s+/g,'')));
+      if(parts.length>=2){ out.add('#'+parts.map(p=>p.replace(/\\s+/g,'')).join('')); }
       return Array.from(out);
     }
     function applyTrendBoost(tags, boost=50){
@@ -153,12 +159,13 @@
       const hardCap = slider>0 ? Math.min(slider, rule.maxTags) : rule.maxTags;
       return tags.slice(0, hardCap);
     }
+
     function buildPipeline(seed){
       let tags = buildBaseFromKeyword(seed);
       const keys = extractKeywords(seed);
       const intensity = parseInt((lvIntensity && lvIntensity.value) || '40',10);
       const niche     = parseInt((lvNiche && lvNiche.value) || '30',10);
-      const expanded = expandIdeas(keys.concat((kw && kw.value || '').split(' ')).filter(Boolean), intensity, niche);
+      const expanded = expandIdeas(keys.concat(((kw && kw.value)||'').split(' ')).filter(Boolean), intensity, niche);
       const boosted = buildBaseFromKeyword(expanded.join(' '));
       tags = Array.from(new Set(tags.concat(boosted)));
       tags = addRegion(tags, (lvRegion && lvRegion.value) || '');
@@ -173,6 +180,7 @@
       tags = capToMax(tags);
       return tags;
     }
+
     function copyText(txt){
       return navigator.clipboard?.writeText(txt).catch(()=>{
         const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta);
@@ -198,16 +206,11 @@
       wrap.appendChild(rows);
       results.appendChild(wrap);
       if(copyAllBtn){
-        copyAllBtn.onclick = async ()=>{
-          const blob = tags.join(' ');
-          await copyText(blob);
-          const old=copyAllBtn.textContent; copyAllBtn.textContent='Copied All!'; setTimeout(()=>copyAllBtn.textContent=old, 1000);
-        };
+        copyAllBtn.onclick = async ()=>{ const blob = tags.join(' '); await copyText(blob); const old=copyAllBtn.textContent; copyAllBtn.textContent='Copied All!'; setTimeout(()=>copyAllBtn.textContent=old, 1000); };
       }
       if(results && kw){ results.dataset.lastKw = kw.value || ''; }
     }
 
-    // --- Platform switching
     function setActive(p, el){
       active = (p==='youtube' ? 'youtube' : p);
       tabs.forEach(t=>{
@@ -221,18 +224,14 @@
     }
     tabs.forEach(tab => {
       const plat = tab.dataset?.platform || tab.textContent.trim().toLowerCase();
-      tab.addEventListener('click', () => {
-        setActive(plat, tab);
-      });
-      tab.addEventListener('keydown', (e)=>{
-        if(e.key==='Enter'||e.key===' '){ e.preventDefault(); setActive(plat, tab); }
-      });
+      tab.addEventListener('click', () => { setActive(plat, tab); });
+      tab.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); setActive(plat, tab); } });
     });
 
-    // --- Actions
-    function doGenerate(){ if(!kw) return; render(buildPipeline(kw.value||'')); }
+    function doGenerate(){ const seed = (kw && kw.value)?kw.value.trim():''; if(seed){ render(buildPipeline(seed)); } }
     if(genBtn) genBtn.addEventListener('click', doGenerate);
     if(kw){
+      kw.setAttribute('data-role','kw'); // mark it so future scripts find the right one
       kw.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); doGenerate(); } });
       const autoRender = debounce(()=>{
         const seed = kw.value.trim();
@@ -244,7 +243,6 @@
     if(aiInclude){ aiInclude.addEventListener('input', ()=>{ if(results?.dataset?.lastKw){ doGenerate(); } }); }
     if(aiAvoid){ aiAvoid.addEventListener('input', ()=>{ if(results?.dataset?.lastKw){ doGenerate(); } }); }
 
-    // Init
     const firstTab = tabs[0]; if(firstTab){ setActive((firstTab.dataset?.platform || firstTab.textContent.trim().toLowerCase()), firstTab); }
   });
 })();
