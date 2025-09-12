@@ -23,8 +23,70 @@
   </script>
   <link rel="stylesheet" href="/assets/hashhero.css" />
 
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+
+<link rel="preload" as="image" href="/assets/bg-hero.jpg"/>
+<style>
+/* === Critical CSS (inline) === */
+:root {
+  --bg: #0b0d10;
+  --text: #e8eef6;
+  --muted: #9aa7bc;
+  --line: #1c232d;
+  --accent: #6ad1ff;
+  --accent-2: #88e0ff;
+  --radius: 14px;
+}
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+  background: url('/assets/bg-hero.jpg') no-repeat center top / cover;
+}
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(1200px 520px at 40% 10%, rgba(0,0,0,0.28), transparent),
+    linear-gradient(to bottom, rgba(0,0,0,0.38), rgba(0,0,0,0.38));
+  pointer-events: none;
+  z-index: 0;
+}
+.nav { position: sticky; top:0; z-index:10; backdrop-filter: blur(10px);
+  background: linear-gradient(to bottom, rgba(11,13,16,.9), rgba(11,13,16,.7)); border-bottom:1px solid var(--line); }
+.nav-inner { display:flex; align-items:center; gap:20px; padding:14px 28px; max-width:1160px; margin:0 auto; }
+.brand { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text); font-weight:800; }
+.tools-menu { position: relative; }
+.tools-button { background: transparent; border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 8px 12px; font-weight: 700; cursor: pointer; }
+.tools-dropdown { position: absolute; top:44px; right:0; min-width: 240px; display:none; flex-direction: column; background: rgba(14,19,24,0.98); border:1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 32px rgba(0,0,0,.25); z-index: 20; }
+.tools-dropdown a { padding:10px 12px; color:var(--muted); text-decoration:none; }
+.tools-dropdown a:hover { background: rgba(255,255,255,0.06); color:var(--text); }
+.container { max-width: 1160px; margin: 0 auto; padding: 28px; position: relative; z-index: 1; }
+.backdrop-panel { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.10); border-radius: 18px; box-shadow: 0 12px 32px rgba(0,0,0,.3); }
+.hero-center { text-align: left; padding: 48px 28px; }
+.hero-title { font-size: 44px; font-weight: 850; letter-spacing: -0.6px; margin: 0 0 10px; max-width: 780px; text-shadow: 0 2px 14px rgba(0,0,0,.75); }
+.hero-sub { color: var(--muted); max-width: 720px; text-shadow: 0 2px 14px rgba(0,0,0,.5); }
+.hero-cta { display:flex; gap:12px; margin-top:18px; flex-wrap: wrap; }
+.btn { border:1px solid var(--line); background: rgba(255,255,255,0.06); color:var(--text); padding:12px 16px; border-radius: var(--radius); font-weight:800; cursor:pointer; }
+.btn.primary { background: linear-gradient(180deg, var(--accent), var(--accent-2)); color:#001520; border-color:transparent; box-shadow: 0 8px 24px rgba(106,209,255,.25); }
+.section { margin-top: 24px; }
+.section-title { font-size: 22px; font-weight: 800; margin: 6px 0 12px; }
+.section-wrap { margin-top: 18px; padding: 18px; }
+.grid { display:grid; grid-template-columns: repeat(3,1fr); gap:18px; }
+.card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 18px; box-shadow: 0 2px 8px rgba(0,0,0,.15); transition: transform .2s, box-shadow .2s; }
+.card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+.card h3 { margin:0 0 8px; font-size:18px; display:flex; align-items:center; gap:8px; }
+.card p { margin:6px 0 0; color:var(--muted); }
+.ico { display:inline-flex; width:18px; height:18px; align-items:center; justify-content:center; }
+@media (max-width:980px) { .grid { grid-template-columns: 1fr; } }
+</style>
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
   
   
   
@@ -108,38 +170,38 @@
     })();
   </script>
 
-  <main class="container">
+  <main id="main" class="container">
     <section class="backdrop-panel hero-center">
-      <h1 class="hero-title">HashHero — Free Creator Toolkit</h1>
-      <p class="hero-sub">Simple tools to make your content pop. No logins, no paywalls. Built for TikTok, Instagram & YouTube creators.</p>
+      <h1 class="hero-title">Free Creator Toolkit</h1>
+      <p class="hero-sub">Make content that stands out—memes, captions, hashtags, thumbnails and more. No logins, no paywalls, just fast tools in your browser.</p>
       <div class="hero-cta">
-        <a class="btn primary" href="/tools/captions.html">Generate Captions</a>
+        <a class="btn primary" href="/tools/captions.html">Start creating</a>
         <a class="btn" href="#browse">Browse All Tools</a>
       </div>
     </section>
     <section id="browse" class="backdrop-panel section-wrap">
       <h2 class="section-title">🎥 Content Tools</h2>
       <div class="grid">
-        <a class="card" href="/tools/meme.html"><h3>Meme Maker</h3><p>Top/bottom text PNG — no watermark.</p></a>
-        <a class="card" href="/tools/aesthetic-text.html"><h3>Aesthetic Text</h3><p>Stylish Unicode fonts for bios & captions.</p></a>
-        <a class="card" href="/tools/thumbnail.html"><h3>YouTube Thumbnail</h3><p>Big title overlay with outline & shadow.</p></a>
-        <a class="card" href="/tools/captions.html"><h3>Caption Generator</h3><p>Instant hooks & captions by tone.</p></a>
+        <a class="card" href="/tools/meme.html"><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h10M7 13h6"/></svg> Meme Maker</h3><p>Top/bottom text PNG — no watermark.</p></a>
+        <a class="card" href="/tools/aesthetic-text.html"><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-11 6 11M6 15h8"/></svg> Aesthetic Text</h3><p>Stylish Unicode fonts for bios & captions.</p></a>
+        <a class="card" href="/tools/thumbnail.html"><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 10h10M7 14h6"/></svg> YouTube Thumbnail</h3><p>Big title overlay with outline & shadow.</p></a>
+        <a class="card" href="/tools/captions.html"><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2h18z"/><path d="M7 7h10v4H7z"/></svg> Caption Generator</h3><p>Instant hooks & captions by tone.</p></a>
       </div>
     </section>
     <section class="backdrop-panel section-wrap">
       <h2 class="section-title">📊 Growth Tools</h2>
       <div class="grid">
-        <a class="card" href="/tools/hashtags.html"><h3>Hashtag Ideas</h3><p>Keyword-based sets — one‑click copy.</p></a>
-        <a class="card" href="/tools/engagement.html"><h3>Engagement Calculator</h3><p>ER by Followers & Views.</p></a>
-        <a class="card" href="/tools/polls.html"><h3>Polls</h3><p>Create & share quick polls.</p></a>
-        <a class="card" href="/tools/pfp.html"><h3>Profile Pic Maker</h3><p>Circle crop + border + export.</p></a>
+        <a class="card" href="/tools/hashtags.html"><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9h14M3 15h14M7 3l-2 18M17 3l-2 18"/></svg> Hashtag Ideas</h3><p>Keyword-based sets — one‑click copy.</p></a>
+        <a class="card" href="/tools/engagement.html"><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l6-6 4 4 7-7"/><path d="M21 10v7H3v-5"/></svg> Engagement Calculator</h3><p>ER by Followers & Views.</p></a>
+        <a class="card" href="/tools/polls.html"><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 19V7M12 19V5M18 19v-8"/></svg> Polls</h3><p>Create & share quick polls.</p></a>
+        <a class="card" href="/tools/pfp.html"><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg> Profile Pic Maker</h3><p>Circle crop + border + export.</p></a>
       </div>
     </section>
     <section class="backdrop-panel section-wrap">
       <h2 class="section-title">📎 Utility</h2>
       <div class="grid">
-        <a class="card" href="/tools/qr.html"><h3>QR Code Generator</h3><p>Branded QR in seconds — PNG download.</p></a>
-        <a class="card" href="/tools/gif.html"><h3>GIF Maker</h3><p>Turn images into a smooth GIF.</p></a>
+        <a class="card" href="/tools/qr.html"><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h6v6H3zM15 3h6v6h-6zM15 15h6v6h-6zM3 15h6v6H3z"/></svg> QR Code Generator</h3><p>Branded QR in seconds — PNG download.</p></a>
+        <a class="card" href="/tools/gif.html"><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 12h3M13 9v6M16 9v6"/></svg> GIF Maker</h3><p>Turn images into a smooth GIF.</p></a>
         <div class="card"><h3>Coming Soon</h3><p>Link UTM Builder & more.</p></div>
       </div>
     </section>
