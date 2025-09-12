@@ -3,128 +3,124 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hashtag Ideas • HashHero</title>
-  <style>
-    :root { --bg:#0b0d10; --card:#12161c; --text:#e8eef6; --muted:#97a3b6; --accent:#6ad1ff; --line:#1c232d; }
-    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Segoe UI,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text)}
-    .container{max-width:980px;margin:0 auto;padding:24px}
-    .nav{display:flex;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
-    .nav a{color:var(--muted);text-decoration:none;font-weight:600}
-    .nav a.active,.nav a:hover{color:var(--text)}
-    h1{font-size:28px;margin:18px 0 10px}
-    p.lead{color:var(--muted);margin-top:0}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
-    label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
-    input[type="text"]{width:100%;background:#0f141a;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:12px}
-    .btn{appearance:none;border:1px solid var(--line);background:#0f141a;color:var(--text);padding:12px 14px;border-radius:10px;font-weight:600;cursor:pointer}
-    .btn.primary{background:var(--accent);color:#001520;border-color:transparent}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-    .badge{display:inline-flex;align-items:center;gap:8px;background:#0f141a;border:1px solid var(--line);padding:8px 10px;border-radius:999px;margin:6px 6px 0 0}
-    .copy{margin-top:12px}
-    .muted{color:var(--muted);font-size:12px}
-  </style>
+  <title>Hashtag Generator • HashHero</title>
+  <meta name="description" content="Get hashtag ideas for TikTok, Instagram, and Shorts — one-click copy." />
+  <link rel="icon" href="/favicon.ico" />
+  <meta property="og:title" content="Hashtag Generator • HashHero" />
+  <meta property="og:description" content="Get hashtag ideas for TikTok, Instagram, and Shorts — one-click copy." />
+  <meta property="og:image" content="/og-tools.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://hashhero.app/" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="/assets/hashhero.css" />
+
 </head>
 <body>
-  <div class="container">
-    <nav class="nav">
-      <a href="/" aria-label="Home">HashHero</a>
-      <span style="flex:1"></span>
-      <a href="/tools/qr.html">QR</a>
-      <a href="/tools/meme.html">Meme</a>
-      <a href="/tools/hashtags.html" class="active">Hashtags</a>
-      <a href="/tools/gif.html">GIF</a>
-      <a href="/tools/polls.html">Polls</a>
-    </nav>
+  
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="/">
+        <img src="/assets/logo.svg" alt="HashHero logo" />
+        <span>HashHero</span>
+      </a>
+      <nav class="nav-links">
+        <a href="/tools/qr.html">QR</a>
+        <a href="/tools/meme.html">Meme</a>
+        <a href="/tools/hashtags.html" class="active">Hashtags</a>
+        <a href="/tools/gif.html">GIF</a>
+        <a href="/tools/polls.html">Polls</a>
+      </nav>
+    </div>
+  </header>
 
+  <main class="page">
+    
 <section>
   <h1>Free Hashtag Generator for TikTok & Instagram</h1>
-  <p>
-    Discover the best hashtags for your next post with HashHero’s free hashtag generator. 
-    Just type your niche or keywords, and instantly get ready-to-use sets of hashtags for 
-    TikTok, Instagram, and YouTube Shorts. Optimized to increase reach and engagement, 
-    our smart hashtag tool helps your content land on the For You Page (FYP) and trend 
-    with the right audience. One-click copy makes it easy to paste hashtags directly into 
-    your captions. Unlike other generators, this runs instantly in your browser — no login, 
-    no tracking. Boost your organic reach and grow your followers today.
+  <p class="lead">
+    Discover high‑impact hashtags with a single click. Type your niche and get ready‑to‑use sets for TikTok, Instagram,
+    and YouTube Shorts. One‑click copy. Instant. No login.
   </p>
 </section>
+<div class="row" style="margin-top:14px;">
+  <section class="form" style="flex:1.2">
+    <label for="kw">Your niche or keywords</label>
+    <input id="kw" type="text" placeholder="e.g., travel vlog, fitness, study tips" />
+    <div class="row" style="margin-top:12px">
+      <button id="gen" class="btn primary">Generate</button>
+      <button id="copy" class="btn" disabled>Copy All</button>
+    </div>
+    <p class="lead" style="font-size:12px">This on‑page generator uses a smart template—no external APIs—so it’s fast and privacy‑friendly.</p>
+  </section>
+</div>
+<section class="section">
+  <div class="grid" id="results"></div>
+</section>
 
+  </main>
+  <footer class="footer">© 2025 HashHero — Built for creators.</footer>
+  
+<script>
+  const kw = document.getElementById('kw');
+  const gen = document.getElementById('gen');
+  const copyBtn = document.getElementById('copy');
+  const results = document.getElementById('results');
 
-    <h1>Hashtag Ideas</h1>
-    <p class="lead">Type your niche and generate smart hashtag sets. One‑click copy for TikTok, IG, YouTube Shorts.</p>
+  const buckets = [
+    {name:'Core', mix:['#%k','%k','%kTips','%kHacks','%kIdeas']},
+    {name:'Growth', mix:['%k2025','%kChallenge','%kTok','Viral%k','%kTrend']},
+    {name:'Audience', mix:['%kForYou','%kCommunity','%kCreator','%kLife','%kDaily']},
+    {name:'Discovery', mix:['ForYou','FYP','Viral','Trending','Explore','Discover']},
+    {name:'Platform', mix:['TikTokViral','InstaReels','YouTubeShorts','Shorts']}
+  ];
 
-    <section class="card">
-      <label for="kw">Your niche or keywords</label>
-      <input id="kw" type="text" placeholder="e.g., travel vlog, fitness, study tips" />
-      <div style="display:flex;gap:10px;margin-top:12px">
-        <button id="gen" class="btn primary">Generate</button>
-        <button id="copy" class="btn" disabled>Copy All</button>
-      </div>
-      <p class="muted" style="margin-top:10px">Note: This on‑page generator uses a smart template—no external APIs—so it’s fast and privacy‑friendly. You can later swap the engine for a serverless trends API.
-      </p>
-    </section>
+  function normalize(s){ return s.toLowerCase().trim().replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,''); }
+  function title(s){ return s.replace(/(^|\s)\S/g, t=>t.toUpperCase()); }
 
-    <div class="grid" id="results" style="margin-top:12px"></div>
-  </div>
-
-  <script>
-    const kw = document.getElementById('kw');
-    const gen = document.getElementById('gen');
-    const copyBtn = document.getElementById('copy');
-    const results = document.getElementById('results');
-
-    const buckets = [
-      {name:'Core', mix:['#%k','%k','%kTips','%kHacks','%kIdeas']},
-      {name:'Growth', mix:['%k2025','%kChallenge','%kTok','Viral%k','%kTrend']},
-      {name:'Audience', mix:['%kForYou','%kCommunity','%kCreator','%kLife','%kDaily']},
-      {name:'Discovery', mix:['ForYou','FYP','Viral','Trending','Explore','Discover']},
-      {name:'Platform', mix:['TikTokViral','InstaReels','YouTubeShorts','Shorts']}
-    ];
-
-    function normalize(s){
-      return s.toLowerCase().trim().replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,'');
+  function buildTags(k){
+    const n = normalize(k); if(!n) return [];
+    const base = title(n);
+    let out=[];
+    for(const b of buckets){
+      const set = new Set();
+      for(const m of b.mix){ set.add(m.replaceAll('%k', base)); }
+      set.add(base);
+      out.push({ name:b.name, tags:[...set].map(t=>'#'+t) });
     }
+    return out;
+  }
 
-    function title(s){ return s.replace(/(^|\s)\S/g, t=>t.toUpperCase()); }
-
-    function buildTags(k){
-      const n = normalize(k); if(!n) return [];
-      const base = title(n);
-      let out=[];
-      for(const b of buckets){
-        const set = new Set();
-        for(const m of b.mix){ set.add(m.replaceAll('%k', base)); }
-        set.add(base);
-        out.push({ name:b.name, tags:[...set].map(t=>'#'+t) });
+  function render(sets){
+    results.innerHTML='';
+    if(!sets.length){ copyBtn.disabled=true; return; }
+    let all=[];
+    for(const s of sets){
+      const wrap=document.createElement('a');
+      wrap.className='card';
+      wrap.href='javascript:void(0)';
+      const h=document.createElement('h3'); h.textContent=s.name; wrap.appendChild(h);
+      const box=document.createElement('div'); wrap.appendChild(box);
+      for(const tag of s.tags){
+        const span=document.createElement('span');
+        span.style.display='inline-flex'; span.style.alignItems='center'; span.style.gap='8px';
+        span.style.background='var(--elev)'; span.style.border='1px solid var(--line)';
+        span.style.padding='8px 10px'; span.style.borderRadius='999px'; span.style.margin='6px 6px 0 0';
+        span.textContent=tag; box.appendChild(span);
+        all.push(tag);
       }
-      return out;
+      results.appendChild(wrap);
     }
-
-    function render(sets){
-      results.innerHTML='';
-      if(!sets.length){ copyBtn.disabled=true; return; }
-      let all=[];
-      for(const s of sets){
-        const wrap=document.createElement('div');
-        wrap.className='card';
-        const h=document.createElement('h3'); h.textContent=s.name; wrap.appendChild(h);
-        const box=document.createElement('div'); wrap.appendChild(box);
-        for(const tag of s.tags){
-          const span=document.createElement('span'); span.className='badge'; span.textContent=tag; box.appendChild(span);
-          all.push(tag);
-        }
-        results.appendChild(wrap);
-      }
-      copyBtn.disabled=false;
-      copyBtn.onclick = ()=>{
-        const blob = all.join(' ');
-        navigator.clipboard.writeText(blob).then(()=>{
-          copyBtn.textContent='Copied!'; setTimeout(()=>copyBtn.textContent='Copy All',1200);
-        });
-      }
+    copyBtn.disabled=false;
+    copyBtn.onclick = ()=>{
+      const blob = all.join(' ');
+      navigator.clipboard.writeText(blob).then(()=>{
+        copyBtn.textContent='Copied!'; setTimeout(()=>copyBtn.textContent='Copy All',1200);
+      });
     }
+  }
 
-    gen.addEventListener('click', ()=>{ render(buildTags(kw.value||'')); });
-  </script>
+  gen.addEventListener('click', ()=>{ render(buildTags(kw.value||'')); });
+</script>
+
 </body>
 </html>

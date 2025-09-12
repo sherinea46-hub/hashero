@@ -4,78 +4,68 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>HashHero — Link‑in‑Bio + Free Creator Tools</title>
-  <meta name="description" content="HashHero brings quick free tools for creators: QR Generator, Meme Maker, Hashtags, GIF Maker, Polls." />
+  <meta name="description" content="Free creator tools: QR Generator, Meme Maker, Hashtags, GIF Maker, Polls." />
   <link rel="icon" href="/favicon.ico" />
-  <meta property="og:title" content="HashHero Tools" />
+  <meta property="og:title" content="HashHero — Link‑in‑Bio + Free Creator Tools" />
   <meta property="og:description" content="Free creator tools: QR Generator, Meme Maker, Hashtags, GIF Maker, Polls." />
   <meta property="og:image" content="/og-tools.png" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://yourdomain.com/" />
-  <style>
-    :root { --bg:#0b0d10; --card:#12161c; --text:#e8eef6; --muted:#97a3b6; --accent:#6ad1ff; --line:#1c232d; }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,Segoe UI,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text)}
-    .container{max-width:1080px;margin:0 auto;padding:28px}
-    .nav{display:flex;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
-    .nav a{color:var(--muted);text-decoration:none;font-weight:600}
-    .nav a:hover{color:var(--text)}
-    .hero{display:grid;grid-template-columns:1.2fr 1fr;gap:22px;align-items:center;padding:22px 0}
-    h1{font-size:36px;margin:0}
-    .lead{color:var(--muted);font-size:18px}
-    .cta{display:flex;gap:10px;margin-top:16px}
-    .btn{appearance:none;border:1px solid var(--line);background:#0f141a;color:var(--text);padding:12px 16px;border-radius:12px;font-weight:700;cursor:pointer;text-decoration:none}
-    .btn.primary{background:var(--accent);color:#001520;border-color:transparent}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
-    .card h3{margin:0 0 8px}
-    .footer{margin-top:28px;color:var(--muted);font-size:12px;text-align:center}
-    @media (max-width:900px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr}}
-  </style>
+  <meta property="og:url" content="https://hashhero.app/" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="/assets/hashhero.css" />
+
 </head>
 <body>
-  <div class="container">
-    <nav class="nav">
-      <a href="/">HashHero</a>
-      <span style="flex:1"></span>
-      <a href="/tools/qr.html">QR</a>
-      <a href="/tools/meme.html">Meme</a>
-      <a href="/tools/hashtags.html">Hashtags</a>
-      <a href="/tools/gif.html">GIF</a>
-      <a href="/tools/polls.html">Polls</a>
-    </nav>
+  
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="/">
+        <img src="/assets/logo.svg" alt="HashHero logo" />
+        <span>HashHero</span>
+      </a>
+      <nav class="nav-links">
+        <a href="/tools/qr.html">QR</a>
+        <a href="/tools/meme.html">Meme</a>
+        <a href="/tools/hashtags.html">Hashtags</a>
+        <a href="/tools/gif.html">GIF</a>
+        <a href="/tools/polls.html">Polls</a>
+      </nav>
+    </div>
+  </header>
 
+  <main class="container">
     <section class="hero">
       <div>
-        <h1>Build your link‑in‑bio hub. Ship fast with free tools.</h1>
-        <p class="lead">QR Generator, Meme Maker, Hashtag ideas, GIF Maker, and Polls — simple, fast, and built for creators. Add themes and monetize when you’re ready.</p>
+        <span class="badge">FREE CREATOR TOOLS</span>
+        <h1>Build your link‑in‑bio hub. Ship fast — look pro.</h1>
+        <p class="lead">QR Generator, Meme Maker, Hashtag ideas, GIF Maker, and Polls — all in your browser. No logins. No watermarks. Designed for TikTok, IG, and YouTube creators.</p>
         <div class="cta">
           <a class="btn primary" href="/tools/qr.html">Start with QR</a>
-          <a class="btn" href="/tools/hashtags.html">Try Hashtags</a>
+          <a class="btn ghost" href="/tools/hashtags.html">Find Hashtags</a>
         </div>
       </div>
       <div class="card">
-        <h3 style="margin-top:0">What’s included</h3>
-        <ul style="margin:0 0 0 18px;line-height:1.6">
-          <li>Link‑in‑Bio ready layout & themes (coming up)</li>
+        <h3>What’s included</h3>
+        <ul style="margin:8px 0 0 18px; line-height:1.6; color:var(--muted)">
+          <li>Link‑in‑Bio ready layout & themes (coming soon)</li>
           <li>QR, Meme, Hashtags, GIFs, Polls pages</li>
           <li>One‑click downloads & share links</li>
-          <li>Privacy‑friendly (no login required for tools)</li>
+          <li>Privacy‑friendly (no login required)</li>
         </ul>
       </div>
     </section>
 
-    <section>
+    <section class="section">
       <div class="grid">
-        <a class="card" href="/tools/qr.html"><h3>QR Code Generator</h3><p>Create scannable QRs for your socials and site. Custom colors, sizes, instant PNG.</p></a>
-        <a class="card" href="/tools/meme.html"><h3>Meme Maker</h3><p>Upload, add top/bottom text, and download in one click.</p></a>
-        <a class="card" href="/tools/hashtags.html"><h3>Hashtag Ideas</h3><p>Generate smart hashtag sets for TikTok/IG/Shorts with one‑click copy.</p></a>
-        <a class="card" href="/tools/gif.html"><h3>GIF Maker</h3><p>Turn multiple images into a GIF. Control delay & size; download easily.</p></a>
-        <a class="card" href="/tools/polls.html"><h3>Polls</h3><p>Create a poll and share a link. Votes are saved per device (no login).</p></a>
-        <div class="card"><h3>Coming Soon</h3><p>Bio page themes, analytics, and premium features.</p></div>
+        <a class="card" href="/tools/qr.html"><h3>QR Code Generator</h3><p>Create branded QR codes with custom colors and sizes. Download instantly.</p></a>
+        <a class="card" href="/tools/meme.html"><h3>Meme Maker</h3><p>Classic top/bottom text memes, no watermark. PNG download.</p></a>
+        <a class="card" href="/tools/hashtags.html"><h3>Hashtag Ideas</h3><p>Keyword‑based sets for TikTok, IG, and Shorts with one‑click copy.</p></a>
+        <a class="card" href="/tools/gif.html"><h3>GIF Maker</h3><p>Turn multiple images into a smooth, looping GIF. Totally free.</p></a>
+        <a class="card" href="/tools/polls.html"><h3>Polls</h3><p>Share a poll link and collect votes instantly — no login needed.</p></a>
+        <div class="card"><h3>Coming Soon</h3><p>Bio page themes, analytics, and premium add‑ons.</p></div>
       </div>
     </section>
-
-    <div class="footer">© HashHero — Built for creators. </div>
-  </div>
+  </main>
+  <footer class="footer">© 2025 HashHero — Built for creators.</footer>
 </body>
 </html>

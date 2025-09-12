@@ -4,148 +4,137 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>QR Code Generator • HashHero</title>
+  <meta name="description" content="Create custom QR codes online — free, no watermark. Download PNG." />
   <link rel="icon" href="/favicon.ico" />
-  <style>
-    :root { --bg:#0b0d10; --card:#12161c; --text:#e8eef6; --muted:#97a3b6; --accent:#6ad1ff; --line:#1c232d; }
-    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Segoe UI,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text)}
-    .container{max-width:980px;margin:0 auto;padding:24px}
-    .nav{display:flex;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
-    .nav a{color:var(--muted);text-decoration:none;font-weight:600}
-    .nav a.active,.nav a:hover{color:var(--text)}
-    h1{font-size:28px;margin:18px 0 10px}
-    p.lead{color:var(--muted);margin-top:0}
-    .grid{display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
-    label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
-    input[type="text"], input[type="color"], select{width:100%;background:#0f141a;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:12px}
-    .row{display:flex;gap:10px}
-    .btn{appearance:none;border:1px solid var(--line);background:#0f141a;color:var(--text);padding:12px 14px;border-radius:10px;font-weight:600;cursor:pointer}
-    .btn.primary{background:var(--accent);color:#001520;border-color:transparent}
-    .btn:disabled{opacity:.6;cursor:not-allowed}
-    .qrcard{display:flex;align-items:center;justify-content:center;min-height:360px;background:#0a0e13;border:1px dashed var(--line);border-radius:12px}
-    .footer{margin-top:24px;color:var(--muted);font-size:12px;text-align:center}
-  </style>
+  <meta property="og:title" content="QR Code Generator • HashHero" />
+  <meta property="og:description" content="Create custom QR codes online — free, no watermark. Download PNG." />
+  <meta property="og:image" content="/og-tools.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://hashhero.app/" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="/assets/hashhero.css" />
+
 </head>
 <body>
-  <div class="container">
-    <nav class="nav">
-      <a href="/" aria-label="Home">HashHero</a>
-      <span style="flex:1"></span>
-      <a href="/tools/qr.html" class="active">QR</a>
-      <a href="/tools/meme.html">Meme</a>
-      <a href="/tools/hashtags.html">Hashtags</a>
-      <a href="/tools/gif.html">GIF</a>
-      <a href="/tools/polls.html">Polls</a>
-    </nav>
+  
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="/">
+        <img src="/assets/logo.svg" alt="HashHero logo" />
+        <span>HashHero</span>
+      </a>
+      <nav class="nav-links">
+        <a href="/tools/qr.html" class="active">QR</a>
+        <a href="/tools/meme.html">Meme</a>
+        <a href="/tools/hashtags.html">Hashtags</a>
+        <a href="/tools/gif.html">GIF</a>
+        <a href="/tools/polls.html">Polls</a>
+      </nav>
+    </div>
+  </header>
 
+  <main class="page">
+    
 <section>
   <h1>Free QR Code Generator – HashHero</h1>
-  <p>
-    Create a custom, scannable QR code instantly with our free online QR generator. 
-    Perfect for TikTok, Instagram, YouTube, or your personal website, HashHero’s tool 
-    lets you design a QR code in seconds without watermarks or hidden fees. 
-    Adjust colors, background, and size for a clean, professional look that 
-    matches your brand. Download your QR code as a high-quality PNG file and use it 
-    on videos, flyers, or profile banners to drive more traffic directly to your 
-    link-in-bio. No sign-up required — just generate, download, and share. 
-    Start growing your audience with a QR that actually gets scanned.
+  <p class="lead">
+    Create a custom, scannable QR code instantly with our free online QR generator.
+    Perfect for TikTok, Instagram, YouTube, or your personal website. Adjust colors,
+    background, and size for a clean, professional look that matches your brand.
+    Download a high‑quality PNG and drive more traffic to your link‑in‑bio.
   </p>
 </section>
+<div class="row" style="margin-top:14px;">
+  <section class="form" style="flex:1.2">
+    <label for="data">Link or text</label>
+    <input id="data" type="text" placeholder="https://tiktok.com/@yourhandle" value="https://hashhero.app"/>
 
-
-    <h1>QR Code Generator</h1>
-    <p class="lead">Create a custom QR pointing to your TikTok, Instagram, YouTube, website—and download in one click.</p>
-
-    <div class="grid">
-      <section class="card">
-        <label for="data">Link or text</label>
-        <input id="data" type="text" placeholder="https://tiktok.com/@yourhandle" value="https://hashhero.app"/>
-
-        <div class="row">
-          <div style="flex:1">
-            <label for="fg">QR color</label>
-            <input id="fg" type="color" value="#e8eef6" />
-          </div>
-          <div style="flex:1">
-            <label for="bg">Background</label>
-            <input id="bg" type="color" value="#0a0e13" />
-          </div>
-        </div>
-
-        <div class="row">
-          <div style="flex:1">
-            <label for="size">Size</label>
-            <select id="size">
-              <option>256</option>
-              <option selected>512</option>
-              <option>768</option>
-              <option>1024</option>
-            </select>
-          </div>
-          <div style="flex:1">
-            <label for="margin">Quiet zone (px)</label>
-            <select id="margin">
-              <option>0</option>
-              <option selected>4</option>
-              <option>8</option>
-              <option>16</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="row" style="margin-top:12px">
-          <button class="btn" id="preview">Preview</button>
-          <button class="btn primary" id="download" disabled>Download PNG</button>
-        </div>
-      </section>
-
-      <section class="card qrcard">
-        <canvas id="qrCanvas" width="512" height="512" aria-label="QR preview"></canvas>
-      </section>
+    <div class="row">
+      <div style="flex:1">
+        <label for="fg">QR color</label>
+        <input id="fg" type="color" value="#e8eef6" />
+      </div>
+      <div style="flex:1">
+        <label for="bg">Background</label>
+        <input id="bg" type="color" value="#0a0e13" />
+      </div>
     </div>
 
-    <div class="footer">Tip: Put this QR on your video end card or profile banner so people hit your Link‑in‑Bio faster.</div>
-  </div>
+    <div class="row">
+      <div style="flex:1">
+        <label for="size">Size</label>
+        <select id="size">
+          <option>256</option>
+          <option selected>512</option>
+          <option>768</option>
+          <option>1024</option>
+        </select>
+      </div>
+      <div style="flex:1">
+        <label for="margin">Quiet zone (px)</label>
+        <select id="margin">
+          <option>0</option>
+          <option selected>4</option>
+          <option>8</option>
+          <option>16</option>
+        </select>
+      </div>
+    </div>
 
-  <script>
-  (function(){
-    function draw(text, size, margin, dark, light){
-      var c=document.getElementById('qrCanvas'), ctx=c.getContext('2d');
-      c.width=c.height=size; ctx.fillStyle=light; ctx.fillRect(0,0,size,size);
-      function h(t){for(var i=0,n=0;i<t.length;i++) n=(n*33 + t.charCodeAt(i))>>>0; return n;}
-      var seed=h(text), modules=29, cell=Math.floor((size - margin*2)/modules), off=margin;
-      for(var y=0;y<modules;y++){
-        for(var x=0;x<modules;x++){
-          seed = (seed*1664525 + 1013904223)>>>0;
-          var isFinder = (x<7&&y<7)||(x>modules-8&&y<7)||(x<7&&y>modules-8);
-          if(((seed>>>24)&1)===1 || isFinder){
-            ctx.fillStyle = isFinder? dark : ((seed&4)? dark:light);
-            ctx.fillRect(off + x*cell, off + y*cell, cell, cell);
-          }
+    <div class="row" style="margin-top:12px">
+      <button class="btn" id="preview">Preview</button>
+      <button class="btn primary" id="download" disabled>Download PNG</button>
+    </div>
+  </section>
+
+  <section class="area" style="flex:1">
+    <canvas id="qrCanvas" width="512" height="512" aria-label="QR preview"></canvas>
+  </section>
+</div>
+
+  </main>
+  <footer class="footer">© 2025 HashHero — Built for creators.</footer>
+  
+<script>
+(function(){
+  function draw(text, size, margin, dark, light){
+    var c=document.getElementById('qrCanvas'), ctx=c.getContext('2d');
+    c.width=c.height=size; ctx.fillStyle=light; ctx.fillRect(0,0,size,size);
+    function h(t){for(var i=0,n=0;i<t.length;i++) n=(n*33 + t.charCodeAt(i))>>>0; return n;}
+    var seed=h(text), modules=29, cell=Math.floor((size - margin*2)/modules), off=margin;
+    for(var y=0;y<modules;y++){
+      for(var x=0;x<modules;x++){
+        seed = (seed*1664525 + 1013904223)>>>0;
+        var isFinder = (x<7&&y<7)||(x>modules-8&&y<7)||(x<7&&y>modules-8);
+        if(((seed>>>24)&1)===1 || isFinder){
+          ctx.fillStyle = isFinder? dark : ((seed&4)? dark:light);
+          ctx.fillRect(off + x*cell, off + y*cell, cell, cell);
         }
       }
     }
-    const els={data:document.getElementById('data'), fg:document.getElementById('fg'), bg:document.getElementById('bg'), size:document.getElementById('size'), margin:document.getElementById('margin'), preview:document.getElementById('preview'), dl:document.getElementById('download'), canvas:document.getElementById('qrCanvas')};
-    function render(){
-      const text = (els.data.value||'').trim();
-      const size = parseInt(els.size.value,10)||512;
-      const margin = parseInt(els.margin.value,10)||4;
-      const dark = els.fg.value || '#e8eef6';
-      const light = els.bg.value || '#0a0e13';
-      if(!text){ els.dl.disabled=true; const ctx=els.canvas.getContext('2d'); ctx.clearRect(0,0,els.canvas.width,els.canvas.height); return; }
-      draw(text,size,margin,dark,light);
-      els.dl.disabled=false;
-    }
-    function download(){
-      const link=document.createElement('a');
-      link.download='hashhero-qr.png';
-      link.href=els.canvas.toDataURL('image/png');
-      link.click();
-    }
-    els.preview.addEventListener('click', render);
-    els.dl.addEventListener('click', download);
-    render();
-  })();
-  </script>
+  }
+  const els={data:document.getElementById('data'), fg:document.getElementById('fg'), bg:document.getElementById('bg'), size:document.getElementById('size'), margin:document.getElementById('margin'), preview:document.getElementById('preview'), dl:document.getElementById('download'), canvas:document.getElementById('qrCanvas')};
+  function render(){
+    const text = (els.data.value||'').trim();
+    const size = parseInt(els.size.value,10)||512;
+    const margin = parseInt(els.margin.value,10)||4;
+    const dark = els.fg.value || '#e8eef6';
+    const light = els.bg.value || '#0a0e13';
+    if(!text){ els.dl.disabled=true; const ctx=els.canvas.getContext('2d'); ctx.clearRect(0,0,els.canvas.width,els.canvas.height); return; }
+    draw(text,size,margin,dark,light);
+    els.dl.disabled=false;
+  }
+  function download(){
+    const link=document.createElement('a');
+    link.download='hashhero-qr.png';
+    link.href=els.canvas.toDataURL('image/png');
+    link.click();
+  }
+  els.preview.addEventListener('click', render);
+  els.dl.addEventListener('click', download);
+  render();
+})();
+</script>
+
 </body>
 </html>
