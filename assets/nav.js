@@ -27,8 +27,7 @@
   + '          <a href="'+P+'tools/gif.html" role="menuitem">GIF</a>'
   + '        </div>'
   + '      </div>'
-  + '      <button id="themeToggle" class="tools-button" aria-label="Toggle theme">🌙</button>'
-  + '    </div>'
+  '    </div>'
   + '  </div>'
   + '</nav>';
 
@@ -48,21 +47,6 @@
       document.addEventListener('click', function(e){ if(menu && !menu.contains(e.target)) closeMenu(); });
       document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeMenu(); });
     }
-  })();
-
-  (function(){
-    var root = document.documentElement;
-    var tbtn = document.getElementById('themeToggle');
-    function setTheme(t){ 
-      if(t === 'light') { root.setAttribute('data-theme','light'); localStorage.setItem('hh_theme','light'); if(tbtn) tbtn.textContent='☀️'; }
-      else { root.removeAttribute('data-theme'); localStorage.setItem('hh_theme','dark'); if(tbtn) tbtn.textContent='🌙'; }
-    }
-    var saved = localStorage.getItem('hh_theme');
-    if(saved){ setTheme(saved); } else { 
-      var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches; 
-      setTheme(prefersLight ? 'light' : 'dark'); 
-    }
-    if(tbtn){ tbtn.addEventListener('click', function(){ var current = localStorage.getItem('hh_theme') || 'dark'; setTheme(current === 'dark' ? 'light' : 'dark'); }); }
   })();
 
   (function(){
