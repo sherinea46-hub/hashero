@@ -148,6 +148,7 @@
   const copyAllBtn = document.getElementById('copyAllBtn');
   const results = document.getElementById('results');
   const tabs = Array.from(document.querySelectorAll('.hh-tab'));
+  function debounce(fn, ms){ let t; return function(){ clearTimeout(t); const args=arguments; t=setTimeout(function(){ fn.apply(null, args); }, ms); }; }
 
   // AI Assist fields
   const aiCaption = document.getElementById('aiCaption');
@@ -178,6 +179,10 @@
     youtube:   { label:"YouTube",   maxTags: 3,  style: (t)=>t }
   };
   let active = "tiktok";
+  const autoRender = debounce(function(){
+    var seed = (kw && kw.value) ? kw.value.trim() : '';
+    if(seed){ render(buildPipeline(seed)); }
+  }, 280);
 
   tabs.forEach(tab => {
     tab.addEventListener('click', () => setActive(tab.dataset.platform, tab));

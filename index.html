@@ -107,13 +107,7 @@ body {
 </style>
 </head>
 <body>
-  <nav class="nav">
-    <div class="nav-inner">
-      <a class="brand" href="#"><span>HashHero</span></a>
-      <span class="brand-badge">Hashtags First</span>
-      <div class="filler small">Add‑on tools for creators</div>
-    </div>
-  </nav>
+  <div id="site-nav"></div>
 
   <main class="main">
     <section class="hero primary-hero">
@@ -186,19 +180,16 @@ body {
 
     <section class="addons">
       <h2 class="addons-title">Add‑on Tools</h2>
-      <div class="grid">
-        <a class="card" href="tools/meme.html"><h3>Meme Maker</h3><p>Top/bottom text PNG — no watermark.</p></a>
-        <a class="card" href="tools/aesthetic-text.html"><h3>Aesthetic Text</h3><p>Stylish Unicode fonts for bios & captions.</p></a>
-        <a class="card" href="tools/thumbnail.html"><h3>YouTube Thumbnail</h3><p>Big title overlay with outline & shadow.</p></a>
+      
+<div class="grid">
+  <a class="card" href="tools/captions.html"><h3>Caption Generator</h3><p>Instant hooks & captions by tone.</p></a>
+  <a class="card" href="tools/username.html"><h3>Username Ideas</h3><p>Trendy names by vibe — one‑click copy.</p></a>
+  <a class="card" href="tools/thumbnail.html"><h3>YouTube Thumbnail</h3><p>Big title overlay with outline & shadow.</p></a>
+  <a class="card" href="tools/meme.html"><h3>Meme Maker</h3><p>Top/bottom text PNG — no watermark.</p></a>
+  <a class="card" href="tools/emoji-combos.html"><h3>Emoji Combos</h3><p>Aesthetic emoji strings for bios & captions.</p></a>
+  <a class="card" href="tools/engagement.html"><h3>Engagement Calculator</h3><p>ER by Followers & Views.</p></a>
+</div>
 
-        <a class="card" href="tools/captions.html"><h3>Caption Generator</h3><p>Instant hooks & captions by tone.</p></a>
-        <a class="card" href="tools/username.html"><h3>Username Ideas</h3><p>Trendy names by vibe — one‑click copy.</p></a>
-        <a class="card" href="tools/emoji-combos.html"><h3>Emoji Combos</h3><p>Aesthetic emoji strings for bios & captions.</p></a>
-
-        <a class="card" href="tools/qr.html"><h3>QR</h3><p>Branded QR in seconds — PNG download.</p></a>
-        <a class="card" href="tools/gif.html"><h3>GIF Maker</h3><p>Turn images into a smooth GIF.</p></a>
-        <a class="card" href="tools/engagement.html"><h3>Engagement Calculator</h3><p>Rate by Likes, Comments & Views.</p></a>
-      </div>
     </section>
   </main>
 
@@ -213,6 +204,7 @@ body {
   const copyAllBtn = $('copyAllBtn');
   const results = $('results');
   const tabs = Array.from(document.querySelectorAll('.hh-tab'));
+  function debounce(fn, ms){ let t; return function(){ clearTimeout(t); const args=arguments; t=setTimeout(function(){ fn.apply(null, args); }, ms); }; }
 
   const POP = { "fyp":950000000,"viral":880000000,"trending":740000000,"love":2200000000,"instagood":1500000000,"fashion":900000000,"youtube":600000000,"shorts":700000000,"tiktok":1300000000 };
   const STOP = new Set(("a an the and or of to in on for with from by is are was were be been at as that this it your you our we i me my mine his her their they them he she do does did not no yes too very just much many more most less few over under again only own same so than then once each both any some such own other into out up down off above below why how all can will should could would might must may".split(" ")));
@@ -233,6 +225,10 @@ body {
     youtube:   { label:"YouTube",   maxTags: 3,  style: (t)=>t }
   };
   let active = "tiktok";
+  const autoRender = debounce(function(){
+    var seed = (kw && kw.value) ? kw.value.trim() : '';
+    if(seed){ render(buildPipeline(seed)); }
+  }, 280);
 
   tabs.forEach(tab => {
     tab.addEventListener('click', () => setActive(tab.textContent.trim().toLowerCase(), tab));
@@ -241,7 +237,8 @@ body {
   function setActive(p, el){
     active = (p==='youtube'?'youtube':p);
     tabs.forEach(t=>{ t.classList.toggle('active', t===el); t.setAttribute('aria-selected', t===el?'true':'false'); t.tabIndex = t===el?0:-1; });
-    if(results.dataset.lastKw){ render(buildPipeline(results.dataset.lastKw)); }
+    var seed2 = (results && results.dataset && results.dataset.lastKw ? results.dataset.lastKw : (kw && kw.value ? kw.value : ''));
+    if(seed2 && (''+seed2).trim().length){ render(buildPipeline(seed2)); }
   }
 
   const buckets = [
@@ -426,17 +423,21 @@ body {
 
   gen.addEventListener('click', ()=> render(buildPipeline(kw.value||'')));
   kw.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); render(buildPipeline(kw.value||'')); } });
+  kw.addEventListener('input', ()=>{ autoRender(); });
 
   // Live update when levers change
   ['lvIntensity','lvTrend','lvNiche','lvMax','lvCase','lvRegion','lvShuffle','lvSafe'].forEach(id=>{
     const el = document.getElementById(id); if(!el) return;
-    el.addEventListener('input', ()=>{ if(results.dataset.lastKw){ render(buildPipeline(results.dataset.lastKw)); } });
-    el.addEventListener('change', ()=>{ if(results.dataset.lastKw){ render(buildPipeline(results.dataset.lastKw)); } });
+    el.addEventListener('input', ()=>{ var seed2 = (results && results.dataset && results.dataset.lastKw ? results.dataset.lastKw : (kw && kw.value ? kw.value : ''));
+    if(seed2 && (''+seed2).trim().length){ render(buildPipeline(seed2)); } });
+    el.addEventListener('change', ()=>{ var seed2 = (results && results.dataset && results.dataset.lastKw ? results.dataset.lastKw : (kw && kw.value ? kw.value : ''));
+    if(seed2 && (''+seed2).trim().length){ render(buildPipeline(seed2)); } });
   });
 
   // Init
   setActive('tiktok', document.querySelector('.hh-tab.active'));
 })();
 </script>
+<script>(function(){var s=document.createElement("script");s.src="assets/nav.js?v=live";s.defer=true;document.head.appendChild(s);}())</script>
 </body>
 </html>
