@@ -1,1 +1,79 @@
-<!DOCTYPE html><html><head><title>Emoji Combos • HashHero</title><meta property='og:image' content='/assets/og-emoji-combos.png'></head><body><h1>Emoji Combos</h1></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Emoji Combos • HashHero</title>
+  <meta name="description" content="Curated emoji combos for bios and captions. Copy with one click." />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
+  <meta property="og:title" content="Emoji Combos • HashHero" />
+  <meta property="og:description" content="Aesthetic emoji strings for bios & captions. One-click copy." />
+  <meta property="og:image" content="/assets/og-emoji-combos.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://hashhero.app/tools/emoji-combos.html" />
+  <link rel="stylesheet" href="/assets/hashhero.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="/"><img src="/assets/logo.svg" alt="HashHero logo" /><span>HashHero</span></a>
+      <div style="margin-left:auto; display:flex; align-items:center; gap:12px;">
+        <div class="tools-menu">
+          <button id="toolsToggle" class="tools-button" aria-haspopup="true" aria-expanded="false">Tools ▾</button>
+          <div class="tools-dropdown" role="menu">
+            <a href="/tools/meme.html" role="menuitem">Meme</a>
+            <a href="/tools/aesthetic-text.html" role="menuitem">Aesthetic</a>
+            <a href="/tools/thumbnail.html" role="menuitem">Thumbnail</a>
+            <a href="/tools/captions.html" role="menuitem">Captions</a>
+            <a href="/tools/username.html" role="menuitem">Username</a>
+            <a href="/tools/emoji-combos.html" role="menuitem">Emoji Combos</a>
+            <a href="/tools/bio-ideas.html" role="menuitem">Bio Ideas</a>
+            <a href="/tools/hashtags.html" role="menuitem">Hashtags</a>
+            <a href="/tools/engagement.html" role="menuitem">Engagement</a>
+            <a href="/tools/polls.html" role="menuitem">Polls</a>
+            <a href="/tools/pfp.html" role="menuitem">PFP</a>
+            <a href="/tools/qr.html" role="menuitem">QR</a>
+            <a href="/tools/gif.html" role="menuitem">GIF</a>
+          </div>
+        </div>
+        <button id="themeToggle" class="tools-button" aria-label="Toggle theme">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page" id="main">
+    <section>
+      <h1>Emoji Combos</h1>
+      <p class="lead">Copy aesthetic emoji strings for bios & captions. Organized by vibe.</p>
+    </section>
+
+    <section class="section">
+      <div class="grid" id="grid"></div>
+    </section>
+  </main>
+
+  <footer class="footer">© 2025 HashHero — Built for creators.</footer>
+
+  <script>
+  (function(){
+    const data = [
+      {name:'Aesthetic', items:['🌸✨💫','🫧🌙🤍','🍓🌷✨','🌿☁️✨','🕊️🤍🌙']},
+      {name:'Edgy', items:['🖤⚡🕶️','💀🔥🩸','🕷️🖤⚙️','⚡️🗡️🕶️','🖤🌀⚔️']},
+      {name:'Cute', items:['🐣🌈🍭','🐰💖🎀','🍑🌸🫧','🧸✨🍓','🌼🍯🐝']},
+      {name:'Gaming', items:['🎮⚡🕹️','👾💥🧪','🏆🔥🎯','🛡️⚔️🐉','🧩🌀🎲']},
+      {name:'Travel', items:['✈️🌍📸','🏝️🌊🌞','🚗🗺️🏕️','🧳📍⛰️','⛵🌅🧭']},
+      {name:'Fitness', items:['💪🔥🥤','🏃‍♂️🎧⏱️','🥗🧘‍♀️🌿','🏋️‍♀️⚡🥇','🚴‍♂️🌞🏞️']},
+    ];
+    const grid=document.getElementById('grid');
+    data.forEach(cat=>{
+      const card=document.createElement('div'); card.className='card';
+      const h=document.createElement('h3'); h.textContent=cat.name; card.appendChild(h);
+      const wrap=document.createElement('div');
+      cat.items.forEach(e=>{ const pill=document.createElement('span'); pill.style.display='inline-flex'; pill.style.padding='8px 10px'; pill.style.border='1px solid var(--line)'; pill.style.borderRadius='999px'; pill.style.margin='6px 6px 0 0'; pill.textContent=e; const b=document.createElement('button'); b.className='btn'; b.style.marginLeft='8px'; b.textContent='Copy'; b.onclick=()=>navigator.clipboard.writeText(e).then(()=>{b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy',900);}); wrap.appendChild(pill); wrap.appendChild(b); });
+      card.appendChild(wrap); grid.appendChild(card);
+    });
+  })();
+  </script>
+</body>
+</html>
