@@ -3,149 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Engagement Calculator • HashHero</title>
-  <meta name="description" content="Compute ER by Followers & Views with weighted interactions." />
-  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
-  <meta property="og:title" content="Engagement Calculator • HashHero" />
-  <meta property="og:description" content="Compute ER by Followers & Views with weighted interactions." />
-  <meta property="og:image" content="/og-tools.png" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://hashhero.app/" />
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"Organization",
-    "url":"https://hashhero.app/",
-    "logo":"https://hashhero.app/assets/logo.svg",
-    "name":"HashHero"
-  }
-  </script>
+  <title>Engagement Boost • HashHero</title>
   <link rel="stylesheet" href="/assets/hashhero.css" />
-
-
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-
 </head>
 <body>
-  <a href="#main" class="skip-link">Skip to content</a>
-  
-  
-  
-  
   <header class="nav">
     <div class="nav-inner">
       <a class="brand" href="/"><img src="/assets/logo.svg" alt="HashHero logo" /><span>HashHero</span></a>
       <div style="margin-left:auto; display:flex; align-items:center; gap:12px;">
         <div class="tools-menu">
           <button id="toolsToggle" class="tools-button" aria-haspopup="true" aria-expanded="false">Tools ▾</button>
-          <div class="tools-dropdown" role="menu">
-            <a href="/tools/meme.html" role="menuitem">Meme</a>
-            <a href="/tools/aesthetic-text.html" role="menuitem">Aesthetic</a>
-            <a href="/tools/thumbnail.html" role="menuitem">Thumbnail</a>
-            <a href="/tools/captions.html" role="menuitem">Captions</a>
-            <a href="/tools/username.html" role="menuitem">Username</a>
-            <a href="/tools/emoji-combos.html" role="menuitem">Emoji Combos</a>
-            <a href="/tools/bio-ideas.html" role="menuitem">Bio Ideas</a>
-            <a href="/tools/hashtags.html" role="menuitem">Hashtags</a>
-            <a href="/tools/engagement.html" role="menuitem">Engagement</a>
-            <a href="/tools/polls.html" role="menuitem">Polls</a>
-            <a href="/tools/pfp.html" role="menuitem">PFP</a>
-            <a href="/tools/qr.html" role="menuitem">QR</a>
-            <a href="/tools/gif.html" role="menuitem">GIF</a>
-          </div>
+          <div class="tools-dropdown" role="menu"></div>
         </div>
         <button id="themeToggle" class="tools-button" aria-label="Toggle theme">🌙</button>
       </div>
     </div>
   </header>
-  <script>
-    (function() {
-      // Dropdown logic
-      var menu = document.querySelector('.tools-menu');
-      var toolsBtn = document.getElementById('toolsToggle');
-      var dd = menu ? menu.querySelector('.tools-dropdown') : null;
-      function closeMenu(){ if(menu){ menu.classList.remove('open'); } if(toolsBtn){ toolsBtn.setAttribute('aria-expanded','false'); } }
-      if(toolsBtn && dd){
-        toolsBtn.addEventListener('click', function(e){
-          e.stopPropagation();
-          var open = menu.classList.toggle('open');
-          toolsBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        });
-        document.addEventListener('click', function(e){
-          if(menu && !menu.contains(e.target)) closeMenu();
-        });
-        document.addEventListener('keydown', function(e){
-          if(e.key === 'Escape') closeMenu();
-        });
-      }
-      // Theme toggle
-      var root = document.documentElement;
-      var tbtn = document.getElementById('themeToggle');
-      function setTheme(t) {
-        if(t === 'light') {
-          root.setAttribute('data-theme','light');
-          localStorage.setItem('hh_theme','light');
-          if(tbtn) tbtn.textContent='☀️';
-        } else {
-          root.setAttribute('data-theme','dark');
-          localStorage.setItem('hh_theme','dark');
-          if(tbtn) tbtn.textContent='🌙';
-        }
-      }
-      var saved = localStorage.getItem('hh_theme');
-      if(saved){ setTheme(saved); }
-      else {
-        var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-        setTheme(prefersLight ? 'light' : 'dark');
-      }
-      if(tbtn){
-        tbtn.addEventListener('click', function() {
-          var current = root.getAttribute('data-theme') || 'dark';
-          setTheme(current === 'dark' ? 'light' : 'dark');
-        });
-      }
-    })();
-  </script>
-
-<script>
-    (function() {
-      var btn = document.querySelector('.tools-button');
-      var dd = document.querySelector('.tools-dropdown');
-      if(btn && dd) {
-        btn.addEventListener('click', function() {
-          dd.style.display = (dd.style.display === 'flex') ? 'none' : 'flex';
-        });
-        document.addEventListener('click', function(e) {
-          if(!dd.contains(e.target) && !btn.contains(e.target)) dd.style.display = 'none';
-        });
-      }
-    })();
-  </script>
-<main id="main" class="page">
-<section><h1>Engagement Rate Calculator</h1><p class="lead">Compute ER by Followers and by Views using weighted likes, comments, shares, and saves.</p></section>
-<div class="row" style="margin-top:14px;">
-  <section class="form" style="flex:1.2">
-    <div class="row"><div style="flex:1"><label>Platform</label><select id="platform"><option>TikTok</option><option>Instagram</option><option>YouTube</option></select></div><div style="flex:1"><label>Followers (optional)</label><input id="followers" type="number"/></div></div>
-    <div class="row"><div style="flex:1"><label>Views (optional)</label><input id="views" type="number"/></div><div style="flex:1"><label>Likes</label><input id="likes" type="number"/></div></div>
-    <div class="row"><div style="flex:1"><label>Comments</label><input id="comments" type="number"/></div><div style="flex:1"><label>Shares</label><input id="shares" type="number"/></div></div>
-    <div class="row"><div style="flex:1"><label>Saves</label><input id="saves" type="number"/></div><div style="flex:1"><label>Weighting</label><select id="weighting"><option value="balanced">Balanced</option><option value="comments">Comment-Heavy</option><option value="shares">Share-Heavy</option><option value="saves">Save-Heavy</option></select></div></div>
-    <div class="row" style="margin-top:12px"><button class="btn primary" id="calc">Calculate</button><button class="btn" id="copy" disabled>Copy Result</button></div>
-  </section>
-  <section class="area" style="flex:1"><div class="card" id="out"><h3 style="margin-top:0">Results</h3><div id="erF">ER (by Followers): —</div><div id="erV" style="margin-top:6px">ER (by Views): —</div><div id="grade" style="margin-top:10px; color:var(--muted)">Grade: —</div></div></section>
-</div>
-</main>
-  <footer class="footer">© 2025 HashHero — Built for creators.</footer>
-  
-<script>
-const E={followers:followers, views:views, likes:likes, comments:comments, shares:shares, saves:saves, weighting:weighting, calc:calc, copy:copy, erF:erF, erV:erV, grade:grade};
-function W(p){return p==='comments'?{L:1,C:3,S:2,Sv:2}:p==='shares'?{L:1,C:2,S:3,Sv:2}:p==='saves'?{L:1,C:2,S:2,Sv:3}:{L:1,C:2,S:2,Sv:2};}
-function fmt(x){return isFinite(x)?(Math.round(x*100)/100).toFixed(2):'—';}
-function g(er){if(!isFinite(er)) return '—'; if(er>=10) return 'A+ (viral)'; if(er>=6) return 'A (excellent)'; if(er>=3) return 'B (good)'; if(er>=1.5) return 'C (ok)'; if(er>0) return 'D (low)'; return '—';}
-calc.addEventListener('click', ()=>{const L=parseFloat(E.likes.value)||0, C=parseFloat(E.comments.value)||0, S=parseFloat(E.shares.value)||0, Sv=parseFloat(E.saves.value)||0; const F=parseFloat(E.followers.value), V=parseFloat(E.views.value); const w=W(E.weighting.value); const weighted=L*w.L + C*w.C + S*w.S + Sv*w.Sv; let f=NaN,v=NaN; if(F>0) f=(weighted/F)*100; if(V>0) v=(weighted/V)*100; erF.textContent='ER (by Followers): '+(isFinite(f)?fmt(f)+'%':'—'); erV.textContent='ER (by Views): '+(isFinite(v)?fmt(v)+'%':'—'); grade.textContent='Grade: '+(isFinite(v)?g(v):g(f)); const summary=`ER by Followers ${isFinite(f)?fmt(f)+'%':'—'}, ER by Views ${isFinite(v)?fmt(v)+'%':'—'}`; copy.disabled=false; copy.onclick=()=>navigator.clipboard.writeText(summary).then(()=>{copy.textContent='Copied!'; setTimeout(()=>copy.textContent='Copy Result',900);});});
-</script>
-
+  <main class="page"><section><h1>Engagement Boost</h1><p class="lead">Content for Engagement Boost goes here.</p></section></main>
+  <footer class="footer">© 2025 HashHero</footer>
+  <script src="/assets/site.js"></script>
 </body>
 </html>

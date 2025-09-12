@@ -3,15 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Username Ideas Generator • HashHero</title>
-  <meta name="description" content="Generate aesthetic, edgy, or cute username ideas for TikTok, Instagram, and YouTube. Copy with one click." />
-  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
-  <meta property="og:title" content="Username Ideas Generator • HashHero" />
-  <meta property="og:description" content="Trendy username ideas for creators. Aesthetic, edgy, cute — one-click copy." />
-  <meta property="og:image" content="/assets/og-username.png" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://hashhero.app/tools/username.html" />
+  <title>Username Ideas • HashHero</title>
   <link rel="stylesheet" href="/assets/hashhero.css" />
 </head>
 <body>
@@ -21,94 +13,14 @@
       <div style="margin-left:auto; display:flex; align-items:center; gap:12px;">
         <div class="tools-menu">
           <button id="toolsToggle" class="tools-button" aria-haspopup="true" aria-expanded="false">Tools ▾</button>
-          <div class="tools-dropdown" role="menu">
-            <a href="/tools/meme.html" role="menuitem">Meme</a>
-            <a href="/tools/aesthetic-text.html" role="menuitem">Aesthetic</a>
-            <a href="/tools/thumbnail.html" role="menuitem">Thumbnail</a>
-            <a href="/tools/captions.html" role="menuitem">Captions</a>
-            <a href="/tools/username.html" role="menuitem">Username</a>
-            <a href="/tools/emoji-combos.html" role="menuitem">Emoji Combos</a>
-            <a href="/tools/bio-ideas.html" role="menuitem">Bio Ideas</a>
-            <a href="/tools/hashtags.html" role="menuitem">Hashtags</a>
-            <a href="/tools/engagement.html" role="menuitem">Engagement</a>
-            <a href="/tools/polls.html" role="menuitem">Polls</a>
-            <a href="/tools/pfp.html" role="menuitem">PFP</a>
-            <a href="/tools/qr.html" role="menuitem">QR</a>
-            <a href="/tools/gif.html" role="menuitem">GIF</a>
-          </div>
+          <div class="tools-dropdown" role="menu"></div>
         </div>
         <button id="themeToggle" class="tools-button" aria-label="Toggle theme">🌙</button>
       </div>
     </div>
   </header>
-
-  <main class="page" id="main">
-    <section>
-      <h1>Username Ideas</h1>
-      <p class="lead">Type a keyword and pick a vibe. Get 20+ names you can copy instantly.</p>
-    </section>
-
-    <div class="row" style="margin-top:14px;">
-      <section class="form" style="flex:1.2">
-        <label>Keyword / niche</label><input id="kw" type="text" placeholder="e.g., fitness, travel, art"/>
-        <div class="row">
-          <div style="flex:1"><label>Vibe</label>
-            <select id="vibe">
-              <option value="aesthetic">Aesthetic</option>
-              <option value="edgy">Edgy</option>
-              <option value="cute">Cute</option>
-              <option value="pro">Professional</option>
-            </select>
-          </div>
-          <div style="flex:1"><label>Count</label><input id="count" type="number" value="24" min="6" max="60"/></div>
-        </div>
-        <div class="row" style="margin-top:12px">
-          <button id="gen" class="btn primary">Generate</button>
-          <button id="copyAll" class="btn" disabled>Copy All</button>
-        </div>
-      </section>
-      <section class="area" style="flex:1">
-        <div class="card" id="out" style="width:100%">
-          <h3 style="margin-top:0">Results</h3>
-          <div id="list"></div>
-        </div>
-      </section>
-    </div>
-  </main>
-
-  <footer class="footer">© 2025 HashHero — Built for creators.</footer>
-
-  <script>
-  (function(){
-    const kw = document.getElementById('kw'), vibe=document.getElementById('vibe'), count=document.getElementById('count');
-    const btn=document.getElementById('gen'), list=document.getElementById('list'), copyAll=document.getElementById('copyAll');
-    const suffix={'aesthetic':['studio','lab','vibes','cloud','atelier','nova','works','aura','pixel','bloom','haze','zen'], 'edgy':['x','_hq','404','void','shift','prime','grim','raw','arc','flux','zero'], 'cute':['kitty','bun','sparkle','star','angel','berry','bubbles','sprout','puff','peach'], 'pro':['media','digital','creative','studio','official','hq','labs','group','works']};
-    const prefix={'aesthetic':['neo','ultra','meta','astro','lunar','glow','aero','micro','macro','hyper'], 'edgy':['drk','neo','void','hex','vanta','riot','grim','null'], 'cute':['lil','mini','baby','soft','sweet','tiny','pastel'], 'pro':['get','try','go','join','the','team']};
-    function norm(s){return s.toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();}
-    function cap(s){return s.replace(/(^|\s)\S/g,t=>t.toUpperCase());}
-    function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
-    function genOne(base, style){
-      const baseN = base.replace(/\s+/g,'');
-      switch(style){
-        case 'aesthetic': return [baseN+pick(suffix.aesthetic), pick(prefix.aesthetic)+cap(baseN), baseN+'.studio', baseN+'hub', baseN+'works'];
-        case 'edgy': return [baseN+pick(suffix.edgy), pick(prefix.edgy)+baseN, baseN+'_x', baseN+'-dev', baseN+'0'];
-        case 'cute': return [baseN+pick(suffix.cute), 'its'+cap(baseN), 'hey'+cap(baseN), baseN+'_cutie', cap(baseN)+'BFF'];
-        case 'pro': return [baseN+pick(suffix.pro), pick(prefix.pro)+cap(baseN), cap(baseN)+'Official', 'use'+cap(baseN), baseN+'app'];
-      }
-    }
-    function unique(arr){return [...new Set(arr)];}
-    btn.addEventListener('click', ()=>{
-      const k=norm(kw.value||'creator'); const vibeV=vibe.value; constn=parseInt(count.value)||24;
-      let out=[];
-      for(let i=0;i<constn;i++){ out.push(...genOne(k, vibeV)); }
-      out = unique(out).slice(0,constn);
-      list.innerHTML='';
-      const frag=document.createDocumentFragment();
-      out.forEach(name=>{ const item=document.createElement('div'); item.className='row'; const pill=document.createElement('span'); pill.style.display='inline-flex'; pill.style.padding='8px 10px'; pill.style.border='1px solid var(--line)'; pill.style.borderRadius='999px'; pill.textContent=name; const b=document.createElement('button'); b.className='btn'; b.textContent='Copy'; b.onclick=()=>navigator.clipboard.writeText(name).then(()=>{b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy',900);}); item.appendChild(pill); item.appendChild(b); frag.appendChild(item); });
-      list.appendChild(frag);
-      copyAll.disabled=false; copyAll.onclick=()=>{ navigator.clipboard.writeText(out.join('\n')).then(()=>{copyAll.textContent='Copied!'; setTimeout(()=>copyAll.textContent='Copy All',900);}); };
-    });
-  })();
-  </script>
+  <main class="page"><section><h1>Username Ideas</h1><p class="lead">Content for Username Ideas goes here.</p></section></main>
+  <footer class="footer">© 2025 HashHero</footer>
+  <script src="/assets/site.js"></script>
 </body>
 </html>
