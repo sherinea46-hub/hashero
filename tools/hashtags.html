@@ -28,6 +28,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
 
+<script>(function(){var s=document.createElement("script");s.src="../assets/nav.js";s.defer=true;document.head.appendChild(s);}())</script>
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -35,32 +36,7 @@
   
   
   
-  <header class="nav">
-    <div class="nav-inner">
-      <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="HashHero logo" /><span>HashHero</span></a>
-      <div style="margin-left:auto; display:flex; align-items:center; gap:12px;">
-        <div class="tools-menu">
-          <button id="toolsToggle" class="tools-button" aria-haspopup="true" aria-expanded="false">Tools ▾</button>
-          <div class="tools-dropdown" role="menu">
-            <a href="meme.html" role="menuitem">Meme</a>
-            <a href="aesthetic-text.html" role="menuitem">Aesthetic</a>
-            <a href="thumbnail.html" role="menuitem">Thumbnail</a>
-            <a href="captions.html" role="menuitem">Captions</a>
-            <a href="username.html" role="menuitem">Username</a>
-            <a href="emoji-combos.html" role="menuitem">Emoji Combos</a>
-            <a href="bio-ideas.html" role="menuitem">Bio Ideas</a>
-            <a href="hashtags.html" role="menuitem" class="is-primary">Hashtags</a>
-            <a href="engagement.html" role="menuitem">Engagement</a>
-            <a href="polls.html" role="menuitem">Polls</a>
-            <a href="pfp.html" role="menuitem">PFP</a>
-            <a href="qr.html" role="menuitem">QR</a>
-            <a href="gif.html" role="menuitem">GIF</a>
-          </div>
-        </div>
-        <button id="themeToggle" class="tools-button" aria-label="Toggle theme">🌙</button>
-      </div>
-    </div>
-  </header>
+  <div id="site-nav"></div>
   <script>
     (function() {
       // Dropdown logic
@@ -138,8 +114,23 @@
   <div class="hh-tab" data-platform="x" role="tab" aria-selected="false" tabindex="-1">X</div>
   <div class="hh-tab" data-platform="youtube" role="tab" aria-selected="false" tabindex="-1">YouTube</div>
 </div>
+<div class="ai-assist">
+  <h4>AI Assist (local)</h4>
+  <textarea id="aiCaption" placeholder="Paste your caption, description, or transcript here..."></textarea>
+  <div class="ai-row">
+    <input id="aiInclude" placeholder="Always include (brand/handle), e.g., #HashHero" />
+    <input id="aiAvoid" placeholder="Avoid words/tags (comma-separated)" />
+    <input id="aiLang" placeholder="Language (en)" value="en" />
+  </div>
+  <div class="ai-actions">
+    <button id="aiExtract">Extract Keywords</button>
+    <button id="aiExpand">AI Assist: Expand Ideas</button>
+    <button id="aiGenerate">Generate Hashtags from Caption</button>
+  </div>
+  <div class="hh-note">This on-page AI uses smart heuristics offline. You can wire a real API later without changing the UI.</div>
+</div>
 <div class="hh-topbar">
-  <div class="hh-note">Platform-specific limits are applied automatically (e.g., fewer tags for X & TikTok). Popularity is an estimate.</div>
+  <div class="hh-note">Platform-specific limits are applied automatically. Popularity numbers are estimates.</div>
   <button class="copy-all" id="copyAllBtn">Copy All</button>
 </div>
 
@@ -149,6 +140,7 @@
 </main>
   <footer class="footer">© 2025 HashHero — Built for creators.</footer>
   
+
 <script>
 (function(){
   const kw = document.getElementById('kw');
@@ -157,11 +149,19 @@
   const results = document.getElementById('results');
   const tabs = Array.from(document.querySelectorAll('.hh-tab'));
 
-  const POP = {
-    "fyp": 950000000, "viral": 880000000, "trending": 740000000,
-    "love": 2200000000, "instagood": 1500000000, "fashion": 900000000,
-    "youtube": 600000000, "shorts": 700000000, "tiktok": 1300000000
-  };
+  // AI Assist fields
+  const aiCaption = document.getElementById('aiCaption');
+  const aiInclude = document.getElementById('aiInclude');
+  const aiAvoid = document.getElementById('aiAvoid');
+  const aiLang = document.getElementById('aiLang');
+  const aiExtract = document.getElementById('aiExtract');
+  const aiExpand = document.getElementById('aiExpand');
+  const aiGenerate = document.getElementById('aiGenerate');
+
+  // Popularity seed (illustrative)
+  const POP = { "fyp":950000000,"viral":880000000,"trending":740000000,"love":2200000000,"instagood":1500000000,"fashion":900000000,"youtube":600000000,"shorts":700000000,"tiktok":1300000000 };
+  const STOP = new Set(("a an the and or of to in on for with from by is are was were be been at as that this it your you our we i me my mine his her their they them he she do does did not no yes too very just much many more most less few over under again only own same so than then once each both any some such own other into out up down off above below why how all can will should could would might must may".split(" ")));
+
   function estPopularity(tag, platform){
     const key = tag.replace(/^#/,'').toLowerCase();
     const base = POP[key] || (Math.max(1, 12 - Math.min(key.length, 12)) * 1e6);
@@ -197,15 +197,54 @@
     { name:'Platform', mix:['TikTok','InstaReels','YouTubeShorts','Shorts'] }
   ];
 
-  function norm(s){ return (s||'').toLowerCase().trim().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim(); }
-  function title(s){ return s.replace(/(^|\s)\S/g, t=>t.toUpperCase()); }
+  function norm(s){ return (s||'').toLowerCase().replace(/[^a-z0-9\\s]/g,' ').replace(/\\s+/g,' ').trim(); }
+  function title(s){ return s.replace(/(^|\\s)\\S/g, t=>t.toUpperCase()); }
+
+  function extractKeywords(txt){
+    const words = norm(txt).split(' ').filter(Boolean).filter(w=>!STOP.has(w));
+    // basic dedupe + weight by frequency
+    const freq = new Map();
+    words.forEach(w=>freq.set(w, 1 + (freq.get(w)||0)));
+    return Array.from(freq.entries()).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([w])=>w);
+  }
+
+  const SYN = {
+    "video":["clip","shorts","reel"],
+    "tips":["hacks","guide","howto","protips"],
+    "travel":["wander","adventure","trip","journey"],
+    "food":["recipe","cooking","kitchen","yum"],
+    "fitness":["workout","gym","health","wellness","fit"],
+    "beauty":["makeup","skincare","glow"],
+    "money":["finance","investing","budget","wealth"],
+    "fashion":["style","outfit","ootd","trend"],
+    "music":["song","beat","remix","cover","instrumental"]
+  };
+
+  function expandIdeas(keys){
+    const out = new Set(keys);
+    keys.forEach(k=>{
+      const list = SYN[k] || SYN[k.replace(/s$/,'')] || [];
+      list.forEach(v=> out.add(v));
+      if(k.length>3){ out.add(k+'tips'); out.add(k+'hacks'); }
+    });
+    return Array.from(out).slice(0,12);
+  }
+
+  function buildFromKeywords(keywords){
+    const K = title(keywords.join(' ')).split(' ').join('');
+    const set = new Set();
+    buckets.forEach(b=>{
+      b.mix.forEach(m=>{ set.add('#' + m.replace(/%k/g, K).replace(/[^A-Za-z0-9]/g,'')); });
+    });
+    set.add('#' + K.toLowerCase());
+    return Array.from(set);
+  }
 
   function build(k){
     const base = norm(k);
     if(!base) return [];
-    const key = base.replace(/\s+/g,'');
+    const key = base.replace(/\\s+/g,'');
     const K = title(base).split(' ').join('');
-    const out = [];
     const set = new Set();
     buckets.forEach(b=>{
       b.mix.forEach(m=>{
@@ -218,8 +257,21 @@
     set.add('#' + K);
     const arr = Array.from(set);
     const rule = RULES[active];
-    const styled = rule.style(arr).slice(0, rule.maxTags);
-    return styled;
+    return rule.style(arr).slice(0, rule.maxTags);
+  }
+
+  function applyGuidance(tags){
+    const inc = (aiInclude.value||'').trim();
+    const avoid = (aiAvoid.value||'').toLowerCase().split(',').map(s=>s.trim()).filter(Boolean);
+    const added = [];
+    let list = tags.filter(t=>!avoid.some(a=>t.toLowerCase().includes(a)));
+    if(inc){
+      let t = inc.startsWith('#')?inc:('#'+inc.replace(/[^a-z0-9]/gi,''));
+      if(!list.includes(t)) { list.unshift(t); added.push(t); }
+    }
+    // enforce platform limits
+    const rule = RULES[active];
+    return list.slice(0, rule.maxTags);
   }
 
   function copyText(txt){
@@ -232,10 +284,8 @@
 
   function render(tags){
     results.innerHTML = '';
-    const rule = RULES[active];
     const wrap = document.createElement('div');
-    const rows = document.createElement('div');
-    rows.setAttribute('role','table');
+    const rows = document.createElement('div'); rows.setAttribute('role','table');
     tags.forEach(tag=>{
       const row = document.createElement('div'); row.className='hh-row'; row.setAttribute('role','row');
       const tcell = document.createElement('div'); tcell.className='hh-tag'; tcell.textContent = tag; row.appendChild(tcell);
@@ -243,29 +293,39 @@
       metric.textContent = 'Popularity (est.): ' + nf(estPopularity(tag, active));
       row.appendChild(metric);
       const cbtn = document.createElement('button'); cbtn.className='hh-copy'; cbtn.textContent='Copy';
-      cbtn.addEventListener('click', async ()=>{
-        await copyText(tag);
-        const old = cbtn.textContent; cbtn.textContent='Copied!'; setTimeout(()=>cbtn.textContent=old, 900);
-      });
+      cbtn.addEventListener('click', async ()=>{ await copyText(tag); const old=cbtn.textContent; cbtn.textContent='Copied!'; setTimeout(()=>cbtn.textContent=old, 900); });
       row.appendChild(cbtn);
       rows.appendChild(row);
     });
     wrap.appendChild(rows);
     results.appendChild(wrap);
-    copyAllBtn.onclick = async ()=>{
-      const blob = tags.join(' ');
-      await copyText(blob);
-      const old = copyAllBtn.textContent; copyAllBtn.textContent='Copied All!'; setTimeout(()=>copyAllBtn.textContent=old, 1000);
-    };
+    copyAllBtn.onclick = async ()=>{ const blob = tags.join(' '); await copyText(blob); const old=copyAllBtn.textContent; copyAllBtn.textContent='Copied All!'; setTimeout(()=>copyAllBtn.textContent=old, 1000); };
     results.dataset.lastKw = kw.value || '';
   }
 
-  gen.addEventListener('click', ()=> render(build(kw.value||'')));
-  kw.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); render(build(kw.value||'')); } });
+  gen.addEventListener('click', ()=> render(applyGuidance(build(kw.value||''))));
+  kw.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); render(applyGuidance(build(kw.value||''))); } });
+
+  aiExtract.addEventListener('click', ()=>{
+    const keys = extractKeywords(aiCaption.value||'');
+    kw.value = keys.join(' ');
+  });
+  aiExpand.addEventListener('click', ()=>{
+    const keys = extractKeywords(aiCaption.value||'').concat((kw.value||'').split(' ')).filter(Boolean);
+    const exp = expandIdeas(keys.map(k=>k.toLowerCase()));
+    kw.value = Array.from(new Set(exp)).join(' ');
+  });
+  aiGenerate.addEventListener('click', ()=>{
+    const keys = extractKeywords(aiCaption.value||'');
+    const expanded = expandIdeas(keys);
+    const tags = applyGuidance(buildFromKeywords(expanded));
+    render(tags);
+  });
 
   setActive('tiktok', tabs[0]);
 })();
 </script>
+
 
 </body>
 </html>

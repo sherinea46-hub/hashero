@@ -84,6 +84,7 @@ body::before {
 .ico { display:inline-flex; width:18px; height:18px; align-items:center; justify-content:center; }
 @media (max-width:980px) { .grid { grid-template-columns: 1fr; } }
 </style>
+<script>(function(){var s=document.createElement("script");s.src="assets/nav.js";s.defer=true;document.head.appendChild(s);}())</script>
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -91,29 +92,7 @@ body::before {
   
   
   
-  <header class="nav">
-    <div class="nav-inner">
-      <a class="brand" href="index.html"><img src="assets/logo.svg" alt="HashHero logo" /><span>HashHero</span></a>
-      <div style="margin-left:auto; display:flex; align-items:center; gap:12px;">
-        <div class="tools-menu">
-          <button id="toolsToggle" class="tools-button" aria-haspopup="true" aria-expanded="false">Tools ▾</button>
-          <div class="tools-dropdown" role="menu">
-            <a href="tools/meme.html" role="menuitem">Meme</a>
-            <a href="tools/aesthetic-text.html" role="menuitem">Aesthetic</a>
-            <a href="tools/thumbnail.html" role="menuitem">Thumbnail</a>
-            <a href="tools/captions.html" role="menuitem">Captions</a>
-            <a href="tools/hashtags.html" role="menuitem">Hashtags</a>
-            <a href="tools/engagement.html" role="menuitem">Engagement</a>
-            <a href="tools/polls.html" role="menuitem">Polls</a>
-            <a href="tools/pfp.html" role="menuitem">PFP</a>
-            <a href="tools/qr.html" role="menuitem">QR</a>
-            <a href="tools/gif.html" role="menuitem">GIF</a>
-          </div>
-        </div>
-        <button id="themeToggle" class="tools-button" aria-label="Toggle theme">🌙</button>
-      </div>
-    </div>
-  </header>
+  <div id="site-nav"></div>
   <script>
     (function() {
       // Dropdown logic
@@ -214,8 +193,6 @@ body::before {
       <div class="grid">
         <a class="card" href="tools/qr.html"><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h6v6H3zM15 3h6v6h-6zM15 15h6v6h-6zM3 15h6v6H3z"/></svg> QR Code Generator</h3><p>Branded QR in seconds — PNG download.</p></a>
         <a class="card" href="tools/gif.html"><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 12h3M13 9v6M16 9v6"/></svg> GIF Maker</h3><p>Turn images into a smooth GIF.</p></a>
-        <div class="card"><h3>Coming Soon</h3><p>Link UTM Builder & more.</p></div>
-      </div>
     </section>
   </main>
 

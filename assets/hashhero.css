@@ -247,6 +247,13 @@ body::before {
 .tools-menu.open .tools-dropdown { display: flex; }
 
 
+/* Featured Hashtag card */
+.card.featured { outline: 2px solid var(--accent,#19e68c); box-shadow: 0 0 0 6px rgba(25,230,140,0.12); position: relative; }
+.card.featured .badge {
+  position: absolute; top: 10px; left: 10px; background: var(--accent,#19e68c);
+  color: #0b0f14; font-weight: 700; padding: 4px 8px; border-radius: 999px; font-size: 12px;
+}
+
 /* === HashHero Hashtag Enhancements === */
 .tools-dropdown a[href$="hashtags.html"],
 .tools-dropdown a:is([href$="hashtags.html"]).is-primary {
@@ -255,10 +262,13 @@ body::before {
   font-weight: 700;
   border-radius: 8px;
 }
-
 .hh-tabs { display:flex; gap:8px; flex-wrap:wrap; margin:16px 0 8px; }
 .hh-tab { border:1px solid var(--border,#1e2633); padding:8px 12px; border-radius:999px; cursor:pointer; user-select:none; }
 .hh-tab.active { background: var(--accent-weak, rgba(25,230,140,0.14)); color: var(--accent,#19e68c); border-color: var(--accent,#19e68c); }
+
+.hh-topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:8px 0 16px; }
+.hh-topbar .copy-all { padding:10px 14px; border-radius:10px; border:1px solid var(--border,#1e2633); cursor:pointer; }
+.hh-topbar .copy-all:hover { border-color: var(--accent,#19e68c); color: var(--accent,#19e68c); }
 
 .hh-row { display:grid; grid-template-columns: 1fr auto auto; gap:10px; align-items:center; padding:10px; border-bottom:1px solid var(--border,#111a24); }
 .hh-tag { font-weight:600; }
@@ -266,15 +276,16 @@ body::before {
 .hh-copy { border:1px solid var(--border,#1e2633); padding:6px 10px; border-radius:8px; cursor:pointer; }
 .hh-copy:hover { border-color: var(--accent,#19e68c); color: var(--accent,#19e68c); }
 
-.hh-topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:8px 0 16px; }
-.hh-topbar .copy-all { padding:10px 14px; border-radius:10px; border:1px solid var(--border,#1e2633); cursor:pointer; }
-.hh-topbar .copy-all:hover { border-color: var(--accent,#19e68c); color: var(--accent,#19e68c); }
+/* AI Assist panel */
+.ai-assist { margin-top: 14px; border:1px dashed var(--border,#1e2633); border-radius:12px; padding:12px; }
+.ai-assist h4 { margin: 0 0 8px; }
+.ai-assist textarea { width:100%; min-height: 110px; border-radius:10px; border:1px solid var(--border,#1e2633); background: transparent; color: inherit; padding:10px; }
+.ai-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top: 8px; }
+.ai-actions button { border:1px solid var(--border,#1e2633); padding:8px 12px; border-radius:10px; cursor:pointer; }
+.ai-actions button:hover { border-color: var(--accent,#19e68c); color: var(--accent,#19e68c); }
+.ai-row { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+.ai-row input { flex:1 1 220px; padding:8px 10px; border-radius:10px; border:1px solid var(--border,#1e2633); background: transparent; color: inherit; }
 
-.hh-note { font-size: 12px; opacity: 0.7; margin-top: 8px; }
-
-/* Featured Hashtag card */
-.card.featured { outline: 2px solid var(--accent,#19e68c); box-shadow: 0 0 0 6px rgba(25,230,140,0.12); position: relative; }
-.card.featured .badge {
-  position: absolute; top: 10px; left: 10px; background: var(--accent,#19e68c);
-  color: #0b0f14; font-weight: 700; padding: 4px 8px; border-radius: 999px; font-size: 12px;
-}
+/* Shared nav active and primary states */
+.tools-dropdown a.active { background: rgba(255,255,255,0.06); }
+.tools-dropdown a.is-primary { background: var(--accent-weak, rgba(25,230,140,0.14)); color: var(--accent,#19e68c); font-weight:700; border-radius:8px; }
