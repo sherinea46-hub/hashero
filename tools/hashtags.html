@@ -49,7 +49,7 @@
             <a href="username.html" role="menuitem">Username</a>
             <a href="emoji-combos.html" role="menuitem">Emoji Combos</a>
             <a href="bio-ideas.html" role="menuitem">Bio Ideas</a>
-            <a href="hashtags.html" role="menuitem">Hashtags</a>
+            <a href="hashtags.html" role="menuitem" class="is-primary">Hashtags</a>
             <a href="engagement.html" role="menuitem">Engagement</a>
             <a href="polls.html" role="menuitem">Polls</a>
             <a href="pfp.html" role="menuitem">PFP</a>
@@ -130,6 +130,19 @@
   <section class="form" style="flex:1.2">
     <label>Your niche</label><input id="kw" type="text" placeholder="fitness, travel vlog, study tips"/>
     <div class="row" style="margin-top:12px"><button id="gen" class="btn primary">Generate</button><button id="copy" class="btn" disabled>Copy All</button></div>
+
+<div class="hh-tabs" id="platformTabs" role="tablist" aria-label="Platforms">
+  <div class="hh-tab active" data-platform="tiktok" role="tab" aria-selected="true" tabindex="0">TikTok</div>
+  <div class="hh-tab" data-platform="instagram" role="tab" aria-selected="false" tabindex="-1">Instagram</div>
+  <div class="hh-tab" data-platform="facebook" role="tab" aria-selected="false" tabindex="-1">Facebook</div>
+  <div class="hh-tab" data-platform="x" role="tab" aria-selected="false" tabindex="-1">X</div>
+  <div class="hh-tab" data-platform="youtube" role="tab" aria-selected="false" tabindex="-1">YouTube</div>
+</div>
+<div class="hh-topbar">
+  <div class="hh-note">Platform-specific limits are applied automatically (e.g., fewer tags for X & TikTok). Popularity is an estimate.</div>
+  <button class="copy-all" id="copyAllBtn">Copy All</button>
+</div>
+
   </section>
 </div>
 <section class="section"><div class="grid" id="results"></div></section>
@@ -137,13 +150,121 @@
   <footer class="footer">© 2025 HashHero — Built for creators.</footer>
   
 <script>
-const kw=document.getElementById('kw'), gen=document.getElementById('gen'), copyBtn=document.getElementById('copy'), results=document.getElementById('results');
-const buckets=[{name:'Core',mix:['#%k','%k','%kTips','%kHacks','%kIdeas']},{name:'Growth',mix:['%k2025','%kChallenge','%kTok','Viral%k','%kTrend']},{name:'Audience',mix:['%kForYou','%kCommunity','%kCreator','%kLife','%kDaily']},{name:'Discovery',mix:['ForYou','FYP','Viral','Trending','Explore','Discover']},{name:'Platform',mix:['TikTokViral','InstaReels','YouTubeShorts','Shorts']}];
-function norm(s){return s.toLowerCase().trim().replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,'');}
-function title(s){return s.replace(/(^|\s)\S/g,t=>t.toUpperCase());}
-function build(k){const n=norm(k); if(!n) return []; const base=title(n); let out=[]; for(const b of buckets){const set=new Set(); for(const m of b.mix) set.add(m.replaceAll('%k',base)); set.add(base); out.push({name:b.name, tags:[...set].map(t=>'#'+t)});} return out;}
-function render(sets){results.innerHTML=''; if(!sets.length){copyBtn.disabled=true; return;} let all=[]; for(const s of sets){const wrap=document.createElement('a'); wrap.className='card'; const h=document.createElement('h3'); h.textContent=s.name; wrap.appendChild(h); const box=document.createElement('div'); wrap.appendChild(box); for(const tag of s.tags){const sp=document.createElement('span'); sp.style.display='inline-flex'; sp.style.margin='6px 6px 0 0'; sp.style.padding='8px 10px'; sp.style.border='1px solid var(--line)'; sp.style.borderRadius='999px'; sp.textContent=tag; box.appendChild(sp); all.push(tag);} results.appendChild(wrap);} copyBtn.disabled=false; copyBtn.onclick=()=>{navigator.clipboard.writeText(all.join(' ')).then(()=>{copyBtn.textContent='Copied!'; setTimeout(()=>copyBtn.textContent='Copy All',1200);});};}
-gen.addEventListener('click', ()=>render(build(kw.value||'')));
+(function(){
+  const kw = document.getElementById('kw');
+  const gen = document.getElementById('generate');
+  const copyAllBtn = document.getElementById('copyAllBtn');
+  const results = document.getElementById('results');
+  const tabs = Array.from(document.querySelectorAll('.hh-tab'));
+
+  const POP = {
+    "fyp": 950000000, "viral": 880000000, "trending": 740000000,
+    "love": 2200000000, "instagood": 1500000000, "fashion": 900000000,
+    "youtube": 600000000, "shorts": 700000000, "tiktok": 1300000000
+  };
+  function estPopularity(tag, platform){
+    const key = tag.replace(/^#/,'').toLowerCase();
+    const base = POP[key] || (Math.max(1, 12 - Math.min(key.length, 12)) * 1e6);
+    const w = { tiktok:1.2, instagram:1.1, facebook:0.8, x:0.7, youtube:0.9 }[platform] || 1;
+    return Math.round(base * w);
+  }
+  function nf(n){ return n.toLocaleString('en-US'); }
+
+  const RULES = {
+    tiktok:    { label:"TikTok",    maxTags: 5,  style: (t)=>t.map(x=>x.toLowerCase()) },
+    instagram: { label:"Instagram", maxTags: 30, style: (t)=>t },
+    facebook:  { label:"Facebook",  maxTags: 3,  style: (t)=>t },
+    x:         { label:"X",         maxTags: 2,  style: (t)=>t.map(x=>x.replace(/[^a-z0-9#]/gi,'')) },
+    youtube:   { label:"YouTube",   maxTags: 3,  style: (t)=>t }
+  };
+  let active = "tiktok";
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => setActive(tab.dataset.platform, tab));
+    tab.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' ') { e.preventDefault(); setActive(tab.dataset.platform, tab); } });
+  });
+  function setActive(p, el){
+    active = p;
+    tabs.forEach(t=>{ t.classList.toggle('active', t===el); t.setAttribute('aria-selected', t===el?'true':'false'); t.tabIndex = t===el?0:-1; });
+    if(results.dataset.lastKw){ render(build(results.dataset.lastKw)); }
+  }
+
+  const buckets = [
+    { name:'Core', mix:['#%k','%k','%kTips','%kHacks','%kGuide','%kIdeas','%kPro'] },
+    { name:'Context', mix:['%kForBeginners','%kForCreators','%k2025','%kDaily','%kNow'] },
+    { name:'Trending', mix:['viral','fyp','trending','explore','reels','shorts'] },
+    { name:'Niche', mix:['%kCommunity','%kLife','%kJourney','%kVibes'] },
+    { name:'Platform', mix:['TikTok','InstaReels','YouTubeShorts','Shorts'] }
+  ];
+
+  function norm(s){ return (s||'').toLowerCase().trim().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim(); }
+  function title(s){ return s.replace(/(^|\s)\S/g, t=>t.toUpperCase()); }
+
+  function build(k){
+    const base = norm(k);
+    if(!base) return [];
+    const key = base.replace(/\s+/g,'');
+    const K = title(base).split(' ').join('');
+    const out = [];
+    const set = new Set();
+    buckets.forEach(b=>{
+      b.mix.forEach(m=>{
+        const raw = m.replace(/%k/g, K);
+        const tag = '#' + raw.replace(/[^A-Za-z0-9]/g,'');
+        set.add(tag);
+      });
+    });
+    set.add('#' + key);
+    set.add('#' + K);
+    const arr = Array.from(set);
+    const rule = RULES[active];
+    const styled = rule.style(arr).slice(0, rule.maxTags);
+    return styled;
+  }
+
+  function copyText(txt){
+    return navigator.clipboard?.writeText(txt).catch(()=>{
+      const ta = document.createElement('textarea');
+      ta.value = txt; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } finally { document.body.removeChild(ta); }
+    });
+  }
+
+  function render(tags){
+    results.innerHTML = '';
+    const rule = RULES[active];
+    const wrap = document.createElement('div');
+    const rows = document.createElement('div');
+    rows.setAttribute('role','table');
+    tags.forEach(tag=>{
+      const row = document.createElement('div'); row.className='hh-row'; row.setAttribute('role','row');
+      const tcell = document.createElement('div'); tcell.className='hh-tag'; tcell.textContent = tag; row.appendChild(tcell);
+      const metric = document.createElement('div'); metric.className='hh-metric';
+      metric.textContent = 'Popularity (est.): ' + nf(estPopularity(tag, active));
+      row.appendChild(metric);
+      const cbtn = document.createElement('button'); cbtn.className='hh-copy'; cbtn.textContent='Copy';
+      cbtn.addEventListener('click', async ()=>{
+        await copyText(tag);
+        const old = cbtn.textContent; cbtn.textContent='Copied!'; setTimeout(()=>cbtn.textContent=old, 900);
+      });
+      row.appendChild(cbtn);
+      rows.appendChild(row);
+    });
+    wrap.appendChild(rows);
+    results.appendChild(wrap);
+    copyAllBtn.onclick = async ()=>{
+      const blob = tags.join(' ');
+      await copyText(blob);
+      const old = copyAllBtn.textContent; copyAllBtn.textContent='Copied All!'; setTimeout(()=>copyAllBtn.textContent=old, 1000);
+    };
+    results.dataset.lastKw = kw.value || '';
+  }
+
+  gen.addEventListener('click', ()=> render(build(kw.value||'')));
+  kw.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); render(build(kw.value||'')); } });
+
+  setActive('tiktok', tabs[0]);
+})();
 </script>
 
 </body>
