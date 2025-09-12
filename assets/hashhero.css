@@ -241,3 +241,7 @@ body::before {
 
 /* Container width tweak */
 .container { max-width: 1160px; }
+
+/* Tools dropdown fix */
+.tools-dropdown { display: none; z-index: 50; }
+.tools-menu.open .tools-dropdown { display: flex; }
