@@ -4,23 +4,155 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Meme Maker • HashHero</title>
-  <link rel="stylesheet" href="/assets/hashhero.css" />
+  <meta name="description" content="Create memes online — free, no watermark." />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml" />
+  <meta property="og:title" content="Meme Maker • HashHero" />
+  <meta property="og:description" content="Create memes online — free, no watermark." />
+  <meta property="og:image" content="/og-tools.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://hashhero.app/" />
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Organization",
+    "url":"https://hashhero.app/",
+    "logo":"https://hashhero.app/assets/logo.svg",
+    "name":"HashHero"
+  }
+  </script>
+  <link rel="stylesheet" href="../assets/hashhero.css" />
+
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
+  
+  
+  
+  
   <header class="nav">
     <div class="nav-inner">
-      <a class="brand" href="/"><img src="/assets/logo.svg" alt="HashHero logo" /><span>HashHero</span></a>
+      <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="HashHero logo" /><span>HashHero</span></a>
       <div style="margin-left:auto; display:flex; align-items:center; gap:12px;">
         <div class="tools-menu">
           <button id="toolsToggle" class="tools-button" aria-haspopup="true" aria-expanded="false">Tools ▾</button>
-          <div class="tools-dropdown" role="menu"></div>
+          <div class="tools-dropdown" role="menu">
+            <a href="meme.html" role="menuitem">Meme</a>
+            <a href="aesthetic-text.html" role="menuitem">Aesthetic</a>
+            <a href="thumbnail.html" role="menuitem">Thumbnail</a>
+            <a href="captions.html" role="menuitem">Captions</a>
+            <a href="username.html" role="menuitem">Username</a>
+            <a href="emoji-combos.html" role="menuitem">Emoji Combos</a>
+            <a href="bio-ideas.html" role="menuitem">Bio Ideas</a>
+            <a href="hashtags.html" role="menuitem">Hashtags</a>
+            <a href="engagement.html" role="menuitem">Engagement</a>
+            <a href="polls.html" role="menuitem">Polls</a>
+            <a href="pfp.html" role="menuitem">PFP</a>
+            <a href="qr.html" role="menuitem">QR</a>
+            <a href="gif.html" role="menuitem">GIF</a>
+          </div>
         </div>
         <button id="themeToggle" class="tools-button" aria-label="Toggle theme">🌙</button>
       </div>
     </div>
   </header>
-  <main class="page"><section><h1>Meme Maker</h1><p class="lead">Content for Meme Maker goes here.</p></section></main>
-  <footer class="footer">© 2025 HashHero</footer>
-  <script src="/assets/site.js"></script>
+  <script>
+    (function() {
+      // Dropdown logic
+      var menu = document.querySelector('.tools-menu');
+      var toolsBtn = document.getElementById('toolsToggle');
+      var dd = menu ? menu.querySelector('.tools-dropdown') : null;
+      function closeMenu(){ if(menu){ menu.classList.remove('open'); } if(toolsBtn){ toolsBtn.setAttribute('aria-expanded','false'); } }
+      if(toolsBtn && dd){
+        toolsBtn.addEventListener('click', function(e){
+          e.stopPropagation();
+          var open = menu.classList.toggle('open');
+          toolsBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        document.addEventListener('click', function(e){
+          if(menu && !menu.contains(e.target)) closeMenu();
+        });
+        document.addEventListener('keydown', function(e){
+          if(e.key === 'Escape') closeMenu();
+        });
+      }
+      // Theme toggle
+      var root = document.documentElement;
+      var tbtn = document.getElementById('themeToggle');
+      function setTheme(t) {
+        if(t === 'light') {
+          root.setAttribute('data-theme','light');
+          localStorage.setItem('hh_theme','light');
+          if(tbtn) tbtn.textContent='☀️';
+        } else {
+          root.setAttribute('data-theme','dark');
+          localStorage.setItem('hh_theme','dark');
+          if(tbtn) tbtn.textContent='🌙';
+        }
+      }
+      var saved = localStorage.getItem('hh_theme');
+      if(saved){ setTheme(saved); }
+      else {
+        var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        setTheme(prefersLight ? 'light' : 'dark');
+      }
+      if(tbtn){
+        tbtn.addEventListener('click', function() {
+          var current = root.getAttribute('data-theme') || 'dark';
+          setTheme(current === 'dark' ? 'light' : 'dark');
+        });
+      }
+    })();
+  </script>
+
+<script>
+    (function() {
+      var btn = document.querySelector('.tools-button');
+      var dd = document.querySelector('.tools-dropdown');
+      if(btn && dd) {
+        btn.addEventListener('click', function() {
+          dd.style.display = (dd.style.display === 'flex') ? 'none' : 'flex';
+        });
+        document.addEventListener('click', function(e) {
+          if(!dd.contains(e.target) && !btn.contains(e.target)) dd.style.display = 'none';
+        });
+      }
+    })();
+  </script>
+<main id="main" class="page">
+<section><h1>Meme Maker — No Watermark</h1><p class="lead">Upload, add top/bottom text, and download as a clean PNG.</p></section>
+<div class="row" style="margin-top:14px;">
+  <section class="form" style="flex:1.2">
+    <label>Upload image</label><input id="file" type="file" accept="image/*"/>
+    <label>Top text</label><input id="top" type="text" placeholder="TOP TEXT"/>
+    <label>Bottom text</label><input id="bottom" type="text" placeholder="BOTTOM TEXT"/>
+    <div class="row"><div style="flex:1"><label>Font</label><select id="font"><option>Impact</option><option selected>Inter</option><option>Arial Black</option></select></div><div style="flex:1"><label>Size</label><input id="size" type="range" min="20" max="120" value="48"/></div></div>
+    <div class="row" style="margin-top:12px"><button class="btn" id="preview">Preview</button><button class="btn primary" id="download" disabled>Download PNG</button></div>
+  </section>
+  <section class="area" style="flex:1"><canvas id="meme" width="1024" height="1024"></canvas></section>
+</div>
+</main>
+  <footer class="footer">© 2025 HashHero — Built for creators.</footer>
+  
+<script>
+const el={file:document.getElementById('file'), top:top, bottom:bottom, font:font, size:size, prev:preview, dl:download, c:document.getElementById('meme')};
+let img=new Image(); img.onload=()=>draw();
+el.file.addEventListener('change', e=>{const f=e.target.files?.[0]; if(!f) return; img.src=URL.createObjectURL(f); el.dl.disabled=false;});
+function draw(){const c=el.c, ctx=c.getContext('2d'); ctx.fillStyle='#0a0e13'; ctx.fillRect(0,0,c.width,c.height);
+ if(img.width){const cw=c.width,ch=c.height,ir=img.width/img.height,cr=cw/ch;let dw,dh; if(ir>cr){dw=cw;dh=cw/ir;}else{dh=ch;dw=ch*ir;} const dx=(cw-dw)/2,dy=(ch-dh)/2; ctx.drawImage(img,dx,dy,dw,dh);}
+ const s=parseInt(el.size.value)||48, pad=Math.max(24, Math.round(s*0.6)); ctx.textAlign='center'; ctx.textBaseline='top'; ctx.font=`700 ${s}px ${el.font.value}, Impact, Arial Black, Arial, sans-serif`;
+ function t(txt,y){const x=c.width/2; ctx.lineWidth=Math.max(8, Math.round(s*0.12)); ctx.strokeStyle='black'; ctx.strokeText(txt,x,y); ctx.fillStyle='white'; ctx.fillText(txt,x,y);}
+ if(el.top.value) t(el.top.value.toUpperCase(), pad);
+ if(el.bottom.value){ctx.textBaseline='bottom'; t(el.bottom.value.toUpperCase(), c.height-pad-s*0.1);}
+}
+el.prev.addEventListener('click', draw);
+el.dl.addEventListener('click', ()=>{const a=document.createElement('a'); a.download='hashhero-meme.png'; a.href=el.c.toDataURL('image/png'); a.click();});
+</script>
+
 </body>
 </html>

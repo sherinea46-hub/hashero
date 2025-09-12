@@ -4,23 +4,147 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GIF Maker • HashHero</title>
-  <link rel="stylesheet" href="/assets/hashhero.css" />
+  <meta name="description" content="Make GIFs from photos — fast & simple." />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml" />
+  <meta property="og:title" content="GIF Maker • HashHero" />
+  <meta property="og:description" content="Make GIFs from photos — fast & simple." />
+  <meta property="og:image" content="/og-tools.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://hashhero.app/" />
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Organization",
+    "url":"https://hashhero.app/",
+    "logo":"https://hashhero.app/assets/logo.svg",
+    "name":"HashHero"
+  }
+  </script>
+  <link rel="stylesheet" href="../assets/hashhero.css" />
+
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
+  
+  
+  
+  
   <header class="nav">
     <div class="nav-inner">
-      <a class="brand" href="/"><img src="/assets/logo.svg" alt="HashHero logo" /><span>HashHero</span></a>
+      <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="HashHero logo" /><span>HashHero</span></a>
       <div style="margin-left:auto; display:flex; align-items:center; gap:12px;">
         <div class="tools-menu">
           <button id="toolsToggle" class="tools-button" aria-haspopup="true" aria-expanded="false">Tools ▾</button>
-          <div class="tools-dropdown" role="menu"></div>
+          <div class="tools-dropdown" role="menu">
+            <a href="meme.html" role="menuitem">Meme</a>
+            <a href="aesthetic-text.html" role="menuitem">Aesthetic</a>
+            <a href="thumbnail.html" role="menuitem">Thumbnail</a>
+            <a href="captions.html" role="menuitem">Captions</a>
+            <a href="username.html" role="menuitem">Username</a>
+            <a href="emoji-combos.html" role="menuitem">Emoji Combos</a>
+            <a href="bio-ideas.html" role="menuitem">Bio Ideas</a>
+            <a href="hashtags.html" role="menuitem">Hashtags</a>
+            <a href="engagement.html" role="menuitem">Engagement</a>
+            <a href="polls.html" role="menuitem">Polls</a>
+            <a href="pfp.html" role="menuitem">PFP</a>
+            <a href="qr.html" role="menuitem">QR</a>
+            <a href="gif.html" role="menuitem">GIF</a>
+          </div>
         </div>
         <button id="themeToggle" class="tools-button" aria-label="Toggle theme">🌙</button>
       </div>
     </div>
   </header>
-  <main class="page"><section><h1>GIF Maker</h1><p class="lead">Content for GIF Maker goes here.</p></section></main>
-  <footer class="footer">© 2025 HashHero</footer>
-  <script src="/assets/site.js"></script>
+  <script>
+    (function() {
+      // Dropdown logic
+      var menu = document.querySelector('.tools-menu');
+      var toolsBtn = document.getElementById('toolsToggle');
+      var dd = menu ? menu.querySelector('.tools-dropdown') : null;
+      function closeMenu(){ if(menu){ menu.classList.remove('open'); } if(toolsBtn){ toolsBtn.setAttribute('aria-expanded','false'); } }
+      if(toolsBtn && dd){
+        toolsBtn.addEventListener('click', function(e){
+          e.stopPropagation();
+          var open = menu.classList.toggle('open');
+          toolsBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        document.addEventListener('click', function(e){
+          if(menu && !menu.contains(e.target)) closeMenu();
+        });
+        document.addEventListener('keydown', function(e){
+          if(e.key === 'Escape') closeMenu();
+        });
+      }
+      // Theme toggle
+      var root = document.documentElement;
+      var tbtn = document.getElementById('themeToggle');
+      function setTheme(t) {
+        if(t === 'light') {
+          root.setAttribute('data-theme','light');
+          localStorage.setItem('hh_theme','light');
+          if(tbtn) tbtn.textContent='☀️';
+        } else {
+          root.setAttribute('data-theme','dark');
+          localStorage.setItem('hh_theme','dark');
+          if(tbtn) tbtn.textContent='🌙';
+        }
+      }
+      var saved = localStorage.getItem('hh_theme');
+      if(saved){ setTheme(saved); }
+      else {
+        var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        setTheme(prefersLight ? 'light' : 'dark');
+      }
+      if(tbtn){
+        tbtn.addEventListener('click', function() {
+          var current = root.getAttribute('data-theme') || 'dark';
+          setTheme(current === 'dark' ? 'light' : 'dark');
+        });
+      }
+    })();
+  </script>
+
+<script>
+    (function() {
+      var btn = document.querySelector('.tools-button');
+      var dd = document.querySelector('.tools-dropdown');
+      if(btn && dd) {
+        btn.addEventListener('click', function() {
+          dd.style.display = (dd.style.display === 'flex') ? 'none' : 'flex';
+        });
+        document.addEventListener('click', function(e) {
+          if(!dd.contains(e.target) && !btn.contains(e.target)) dd.style.display = 'none';
+        });
+      }
+    })();
+  </script>
+<main id="main" class="page">
+<section><h1>GIF Maker</h1><p class="lead">Upload multiple images, set frame delay & size, and create a looping GIF.</p></section>
+<div class="row" style="margin-top:14px;">
+  <section class="form" style="flex:1.2">
+    <label>Upload images</label><input id="files" type="file" accept="image/*" multiple/>
+    <div class="row"><div style="flex:1"><label>Delay (ms)</label><input id="delay" type="number" value="120"/></div><div style="flex:1"><label>Size</label><select id="size"><option>256</option><option selected>512</option><option>768</option></select></div></div>
+    <div class="row" style="margin-top:12px"><button class="btn primary" id="make">Create GIF</button><button class="btn" id="download" disabled>Download</button></div>
+  </section>
+  <section class="area" style="flex:1"><div class="card" style="width:100%"><h3 style="margin-top:0">Frames <span id="count">(0)</span></h3><div class="row" id="thumbs" style="flex-wrap:wrap; gap:10px"></div><div id="result" style="margin-top:12px"></div></div></section>
+</div>
+</main>
+  <footer class="footer">© 2025 HashHero — Built for creators.</footer>
+  
+<script src="https://unpkg.com/gifshot@0.4.5/build/gifshot.min.js"></script>
+<script>
+const filesEl=files, delayEl=delay, sizeEl=size, makeBtn=make, dlBtn=download, thumbs=document.getElementById('thumbs'), result=document.getElementById('result'), count=document.getElementById('count');
+let frames=[];
+filesEl.addEventListener('change', e=>{const fs=[...e.target.files||[]]; frames=fs.map(f=>URL.createObjectURL(f)); thumbs.innerHTML=''; frames.forEach(u=>{const img=document.createElement('img'); img.src=u; img.style.width='96px'; img.style.height='96px'; img.style.objectFit='cover'; img.style.borderRadius='10px'; img.style.border='1px solid var(--line)'; thumbs.appendChild(img);}); count.textContent=`(${frames.length})`;});
+makeBtn.addEventListener('click', ()=>{ if(!frames.length) return alert('Add at least one image.'); result.innerHTML='<div class="card">Generating…</div>';
+ gifshot.createGIF({images:frames,gifWidth:parseInt(sizeEl.value,10),gifHeight:parseInt(sizeEl.value,10),interval:Math.max(0.02,(parseInt(delayEl.value,10)||120)/1000),numFrames:frames.length,sampleInterval:10,numWorkers:2}, (o)=>{ if(o.error){result.innerHTML='<div class="card">Failed to create GIF</div>'; return;} const wrap=document.createElement('div'); wrap.className='card'; const img=document.createElement('img'); img.src=o.image; img.style.maxWidth='100%'; img.style.border='1px solid var(--line)'; img.style.borderRadius='10px'; wrap.appendChild(img); result.innerHTML=''; result.appendChild(wrap); dlBtn.disabled=false; dlBtn.onclick=()=>{const a=document.createElement('a'); a.href=o.image; a.download='hashhero.gif'; a.click();};});});
+</script>
+
 </body>
 </html>
