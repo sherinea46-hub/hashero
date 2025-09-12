@@ -1,1 +1,90 @@
-<!DOCTYPE html><html><body><h1>HashHero Index</h1></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HashHero — Free Hashtag Generator</title>
+  <meta name="description" content="Smart hashtag generator for TikTok, Instagram & YouTube — copy single tags or entire sets. No logins." />
+  <link rel="icon" href="/favicon.ico" />
+  <meta property="og:title" content="HashHero — Free Hashtag Generator" />
+  <meta property="og:description" content="Hashtags • QR • Memes • GIFs • Polls — creator tools, free forever." />
+  <style>
+    :root{--page-max:1140px;--text:#eaf0fb;--muted:#9db0c7;--line:rgba(255,255,255,.08);--card:rgba(18,22,28,.65);--accent:#6ad1ff;--accent-ink:#001522;--shadow:0 10px 30px rgba(0,0,0,.35)}
+    *,*::before,*::after{box-sizing:border-box} html,body{height:100%}
+    body{margin:0;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif;background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(122,60,255,.25), transparent 60%),
+      radial-gradient(900px 600px at 10% 10%, rgba(0,165,255,.25), transparent 60%),
+      radial-gradient(700px 500px at 60% 110%, rgba(255,40,120,.22), transparent 60%),
+      linear-gradient(180deg, #0a0d13, #0b0f15 55%, #0b0d13);background-attachment:fixed}
+    .container{max-width:var(--page-max);margin:0 auto;padding:24px}
+    .nav{display:flex;align-items:center;gap:18px;padding:10px 14px;border:1px solid var(--line);border-radius:14px;background:rgba(10,14,19,.35);backdrop-filter:blur(10px);box-shadow:var(--shadow)}
+    .brand{display:flex;align-items:center;gap:10px;color:var(--text);text-decoration:none;font-weight:800;letter-spacing:.2px}
+    .brand-badge{display:grid;place-items:center;width:26px;height:26px;border-radius:7px;background:#0e1a24;border:1px solid var(--line);font-weight:900}
+    .nav a{color:var(--muted);text-decoration:none;font-weight:650}.nav a:hover{color:var(--text)} .spacer{flex:1}
+    .hero{margin-top:22px;padding:36px 34px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(180deg, rgba(16,22,29,.55), rgba(16,22,29,.40));backdrop-filter:blur(14px) saturate(120%);box-shadow:var(--shadow);display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:center}
+    .hero h1{font-size:44px;line-height:1.06;margin:0 0 10px}.lead{color:var(--muted);font-size:18px;margin:0}
+    .cta{display:flex;gap:12px;margin-top:18px}
+    .btn{appearance:none;cursor:pointer;padding:12px 16px;border-radius:12px;font-weight:800;letter-spacing:.2px;background:transparent;border:1px solid var(--line);color:var(--text);text-decoration:none}
+    .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+    .what{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+    .section{margin-top:26px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;text-decoration:none;color:var(--text)}
+    .card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.18)} .card h3{margin:0 0 6px}.card p{margin:0;color:var(--muted)}
+    .footer{margin:30px 0 10px;color:var(--muted);font-size:12px;text-align:center}
+    @media (max-width:1000px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.hero h1{font-size:38px}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="nav">
+      <a class="brand" href="/"><span class="brand-badge">H</span><span>HashHero</span></a>
+      <span class="spacer"></span>
+      <a href="/tools/hashtags.html">Hashtags</a>
+      <a href="/tools/qr.html">QR</a>
+      <a href="/tools/meme.html">Meme</a>
+      <a href="/tools/gif.html">GIF</a>
+      <a href="/tools/polls.html">Polls</a>
+    </nav>
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div>
+        <h1 id="hero-title">HashHero — Free Hashtag Generator</h1>
+        <p class="lead">Hashtags built for TikTok, Instagram & YouTube. Copy single tags or entire sets. Now with AI assist + popularity hints.</p>
+        <div class="cta">
+          <a class="btn primary" href="/tools/hashtags.html">Generate Hashtags</a>
+          <a class="btn" href="/tools/qr.html">Other Tools</a>
+        </div>
+      </div>
+      <div class="what">
+        <h3 style="margin-top:0">Why HashHero?</h3>
+        <ul style="margin:0 0 0 18px; line-height:1.6">
+          <li>AI‑assisted tags tuned for each platform</li>
+          <li>Copy per tag, or copy all at once</li>
+          <li>Fast. Zero tracking. Free forever.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid" style="grid-template-columns:repeat(3,1fr);">
+        <a class="card" href="/tools/hashtags.html" style="grid-column: span 3; display:block; text-align:center; padding:28px;">
+          <h3 style="margin:0 0 6px; font-size:28px;">⭐ Featured: Hashtag Generator</h3>
+          <p>Platform‑tailored sets for TikTok, Instagram & YouTube — copy single tags, copy all, AI assist + popularity hints.</p>
+        </a>
+      </div>
+      <h3 style="margin:18px 4px;">Add‑On Tools</h3>
+      <div class="grid">
+        <a class="card" href="/tools/qr.html"><h3>QR Code Generator</h3><p>Create scannable QRs with custom colors & instant PNG.</p></a>
+        <a class="card" href="/tools/meme.html"><h3>Meme Maker</h3><p>Add top/bottom text and save in one click.</p></a>
+        <a class="card" href="/tools/gif.html"><h3>GIF Maker</h3><p>Turn images into a GIF. Control delay & size.</p></a>
+        <a class="card" href="/tools/polls.html"><h3>Polls</h3><p>Make a shareable poll. Votes saved per device.</p></a>
+        <a class="card" href="/tools/username.html"><h3>Username Ideas</h3><p>Trendy name ideas by vibe — one‑click copy.</p></a>
+        <a class="card" href="/tools/emoji-combos.html"><h3>Emoji Combos</h3><p>Aesthetic emoji strings for bios & captions.</p></a>
+        <a class="card" href="/tools/bio-ideas.html"><h3>Bio Ideas</h3><p>Short bios by vibe — ready to copy.</p></a>
+      </div>
+    </section>
+
+    <div class="footer">© HashHero — Built for creators.</div>
+  </div>
+</body>
+</html>
