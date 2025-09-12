@@ -304,3 +304,15 @@ body::before {
 .hero .btn { padding: 10px 14px; border-radius: 10px; border:1px solid var(--border,#1e2633); cursor:pointer; }
 .hero .btn:hover { border-color: var(--accent,#19e68c); color: var(--accent,#19e68c); }
 .subdued { opacity: .8; }
+
+
+/* Card links: inherit color, remove underline */
+.card, .card h3, .card h3 a, .card p, .card a { color: inherit; text-decoration: none; }
+.card:hover { transform: translateY(-1px); transition: transform .15s ease; }
+.grid .card { display:block; border:1px solid var(--border,#1e2633); border-radius:16px; padding:16px; background: rgba(255,255,255,0.03); }
+.grid .card h3 { margin: 0 0 6px; }
+
+
+/* Spacing and hierarchy */
+.main .primary-hero { margin-bottom: 18px; }
+.main section h2 { margin-top: 24px; }
