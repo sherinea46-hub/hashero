@@ -32,20 +32,7 @@
       <div style="margin-left:auto; display:flex; align-items:center; gap:12px;">
         <div class="tools-menu">
           <button id="toolsToggle" class="tools-button" aria-haspopup="true" aria-expanded="false">Tools ▾</button>
-          <div class="tools-dropdown" role="menu">
-            <a href="/tools/meme.html" role="menuitem">Meme</a>
-            <a href="/tools/thumbnail.html" role="menuitem">Thumbnail</a>
-            <a href="/tools/captions.html" role="menuitem">Captions</a>
-            <a href="/tools/username.html" role="menuitem">Username</a>
-            <a href="/tools/emoji-combos.html" role="menuitem">Emoji Combos</a>
-            <a href="/tools/bio-ideas.html" role="menuitem">Bio Ideas</a>
-            <a href="/tools/hashtags.html" role="menuitem">Hashtags</a>
-            <a href="/tools/engagement.html" role="menuitem">Engagement</a>
-            <a href="/tools/polls.html" role="menuitem">Polls</a>
-            <a href="/tools/pfp.html" role="menuitem">PFP</a>
-            <a href="/tools/qr.html" role="menuitem">QR</a>
-            <a href="/tools/gif.html" role="menuitem">GIF</a>
-          </div>
+          <div class="tools-dropdown" role="menu"></div>
         </div>
         <button id="themeToggle" class="tools-button" aria-label="Toggle theme">🌙</button>
       </div>
@@ -66,9 +53,9 @@
           <div style="flex:1; min-width:220px">
             <label for="platform">Platform</label>
             <div class="tabs" role="tablist" aria-label="Platform">
-              <button class="tab" role="tab" id="tt" aria-selected="true" data-platform="tiktok">TikTok</button>
-              <button class="tab" role="tab" id="ig" aria-selected="false" data-platform="instagram">Instagram</button>
-              <button class="tab" role="tab" id="yt" aria-selected="false" data-platform="youtube">YouTube</button>
+              <button class="tab" role="tab" aria-selected="true" data-platform="tiktok">TikTok</button>
+              <button class="tab" role="tab" aria-selected="false" data-platform="instagram">Instagram</button>
+              <button class="tab" role="tab" aria-selected="false" data-platform="youtube">YouTube</button>
             </div>
             <p class="hint" id="rules">TikTok: aim for 3–5 high‑relevance tags.</p>
           </div>
@@ -148,7 +135,6 @@
     neutral:['guide','ideas','setup','hack','hacks','vlog','shorts','reels']
   };
 
-  // Naive "AI Assist": expands the topic with modifiers and reshapes by platform & goal
   function aiExpand(baseWords, g){
     let parts = [];
     const pool = g==='broad' ? modifiers.broad
@@ -160,26 +146,17 @@
     return uniq(parts.concat(baseWords));
   }
 
-  // Popularity estimator (deterministic pseudo-counts per platform)
   function hashCode(str){ let h=0; for(let i=0;i<str.length;i++){ h=((h<<5)-h)+str.charCodeAt(i); h|=0; } return Math.abs(h); }
   function popEstimate(tag){
     const base = tag.replace(/^#/,'').toLowerCase();
     const h = hashCode(base);
-    // ranges chosen per platform scale (fake but plausible-ish orders of magnitude)
-    return {
-      tiktok:  (h % 5000000) + 5000,       // 5K - 5M
-      instagram: (h % 2000000) + 2000,     // 2K - 2M
-      youtube: (h % 500000) + 500          // 500 - 500K (tags count)
-    };
+    return { tiktok:(h%5000000)+5000, instagram:(h%2000000)+2000, youtube:(h%500000)+500 };
   }
 
   function makeTags(topic, n, g, aiOn){
     const base = sluggify(topic);
     const words = base.split(' ').filter(Boolean);
-    let seeds = uniq([
-      ...words, words.join(''), words.join('_'),
-      words.length>1 ? words.slice(-1)[0] : ''
-    ].filter(Boolean));
+    let seeds = uniq([ ...words, words.join(''), words.join('_'), words.length>1 ? words.slice(-1)[0] : '' ].filter(Boolean));
 
     if(aiOn){
       const expanded = aiExpand(words, g);
@@ -194,7 +171,7 @@
       if (words.length>1) out.push(''+words[0]+words[1]);
     });
 
-    out = uniq(out).slice(0, Math.max(5, n*3)); // larger pool for variety
+    out = uniq(out).slice(0, Math.max(5, n*3));
 
     if (platform === 'youtube'){
       return uniq(out).slice(0,n).map(x => x.replace(/_/g,' ').replace(/\s+/g,' '));
@@ -204,7 +181,6 @@
   }
 
   function formatNumber(x){
-    // pretty format with K/M
     if(x >= 1e6) return (x/1e6).toFixed(1).replace(/\.0$/,'') + 'M';
     if(x >= 1e3) return (x/1e3).toFixed(1).replace(/\.0$/,'') + 'K';
     return ''+x;
@@ -221,10 +197,11 @@
       if(showPop.checked){
         const b = document.createElement('span'); b.className='badges';
         const est = popEstimate(tag);
-        const mk = (lbl,val)=>{ const el=document.createElement('span'); el.className='badge'; el.textContent=lbl+': '+formatNumber(val); return el; };
-        b.appendChild(mk('TT', est.tiktok));
-        b.appendChild(mk('IG', est.instagram));
-        b.appendChild(mk('YT', est.youtube));
+        ['tiktok','instagram','youtube'].forEach((k) => {
+          const el=document.createElement('span'); el.className='badge';
+          el.textContent=(k==='tiktok'?'TT':k==='instagram'?'IG':'YT')+': '+formatNumber(est[k]);
+          b.appendChild(el);
+        });
         pill.appendChild(b);
       }
 
@@ -243,7 +220,7 @@
     render(list);
     copyAll.disabled = list.length===0;
     copyAll.onclick = () => {
-      const glue = platform==='youtube' ? ', ' : ' ';
+      const glue = (document.querySelector('.tab[aria-selected="true"]')?.dataset.platform)==='youtube' ? ', ' : ' ';
       navigator.clipboard.writeText(list.join(glue)).then(()=>{
         copyAll.textContent='Copied!'; setTimeout(()=>copyAll.textContent='Copy All',900);
       });
@@ -251,5 +228,6 @@
   });
 })();
 </script>
+<script src="/assets/site.js"></script>
 </body>
 </html>

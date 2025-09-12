@@ -37,7 +37,7 @@
       {href:'/tools/pfp.html', label:'PFP'},
       {href:'/tools/engagement.html', label:'Engagement'}
     ];
-    dd.innerHTML = items.map(function(i){ return '<a href="'+i.href+'" role="menuitem">'+i.label+'</a>'; }).join('\\n');
+    dd.innerHTML = items.map(function(i){ return '<a href="'+i.href+'" role="menuitem">'+i.label+'</a>'; }).join('\n');
   }
 
   var root = document.documentElement;
