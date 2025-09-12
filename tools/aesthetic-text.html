@@ -4,38 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Aesthetic Text Generator • HashHero</title>
-  <meta name="description" content="Stylish Unicode text for bios and captions." />
+  <meta name="description" content="Convert plain text into stylish unicode fonts for captions and bios. Copy in one click." />
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
   <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
   <meta property="og:title" content="Aesthetic Text Generator • HashHero" />
-  <meta property="og:description" content="Stylish Unicode text for bios and captions." />
-  <meta property="og:image" content="/og-tools.png" />
+  <meta property="og:description" content="Bold, italic, script, fraktur, monospace, and more. Copy-ready." />
+  <meta property="og:image" content="/assets/og-aesthetic.png" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://hashhero.app/" />
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"Organization",
-    "url":"https://hashhero.app/",
-    "logo":"https://hashhero.app/assets/logo.svg",
-    "name":"HashHero"
-  }
-  </script>
-  <link rel="stylesheet" href="/assets/hashhero.css" />
-
-
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-
+  <meta property="og:url" content="https://hashhero.app/tools/aesthetic-text.html" />
   <link rel="canonical" href="https://hashhero.app/tools/aesthetic-text.html"/>
+  <link rel="stylesheet" href="/assets/hashhero.css" />
 </head>
 <body>
-  <a href="#main" class="skip-link">Skip to content</a>
-  
-  
-  
-  
   <header class="nav">
     <div class="nav-inner">
       <a class="brand" href="/"><img src="/assets/logo.svg" alt="HashHero logo" /><span>HashHero</span></a>
@@ -62,122 +42,115 @@
       </div>
     </div>
   </header>
-  
-<script>
-(function(){
-  const src = document.getElementById('src');
-  const gen = document.getElementById('gen');
-  const copyAll = document.getElementById('copyAll');
-  const preview = document.getElementById('preview');
-  const results = document.getElementById('results');
-  const normalizeSel = document.getElementById('normalize');
-  const filterSel = document.getElementById('filter');
-  if(!src||!gen||!copyAll||!preview||!results) return;
 
-  const base={lower:'abcdefghijklmnopqrstuvwxyz', upper:'ABCDEFGHIJKLMNOPQRSTUVWXYZ', digits:'0123456789'};
-  const styles={'Bold':{u:'𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙',l:'𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳',d:'𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗'},'Italic':{u:'𝐴𝐵𝐶𝐷𝐸𝐹𝐺𝐻𝐼𝐽𝐾𝐿𝑀𝑁𝑂𝑃𝑄𝑅𝑆𝑇𝑈𝑉𝑊𝑋𝑌𝑍',l:'𝑎𝑏𝑐𝑑𝑒𝑓𝑔ℎ𝑖𝑗𝑘𝑙𝑚𝑛𝑜𝑝𝑞𝑟𝑠𝑡𝑢𝑣𝑤𝑥𝑦𝑧'},'Bold Italic':{u:'𝑨𝑩𝑪𝑫𝑬𝑭𝑮𝑯𝑰𝑱𝑲𝑳𝑴𝑵𝑶𝑷𝑸𝑹𝑺𝑻𝑼𝑽𝑾𝑿𝒀𝒁',l:'𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛'},'Script':{u:'𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵',l:'𝒶𝒷𝒸𝒹ℯ𝒻ℊ𝒽𝒾𝒿𝓀𝓁𝓂𝓃ℴ𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏'},'Fraktur':{u:'𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔎𝔏𝔐𝔑𝔒𝔓𝔔ℜ𝔖𝔗𝔘𝔙𝔚𝔛𝔜ℨ',l:'𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔵𝔶𝔷'},'Monospace':{u:'𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉',l:'𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚗𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣',d:'𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿'},'Double Struck':{u:'𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ',l:'𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫',d:'𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡'},'Small Caps':{u:'ABCDEFGHIJKLMNOPQRSTUVWXYZ',l:'ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ'}};
-  const basic=new Set(['Bold','Italic','Bold Italic','Monospace','Small Caps']);
-  function map(ch, st){const s=styles[st]; const iu=base.upper.indexOf(ch), il=base.lower.indexOf(ch), id=base.digits.indexOf(ch);
-    if(iu!=-1) return s.u?.[iu]||ch; if(il!=-1) return s.l?.[il]||ch; if(id!=-1) return s.d?.[id]||ch; return ch;}
-  function trans(text, st, mode){let out=''; for(const ch of text){ if(mode==='letters' && !(/[A-Za-z]/.test(ch))) {out+=ch; continue;} out+=map(ch,st);} return out;}
-  function render(){const text=src.value||''; preview.textContent=text; results.innerHTML=''; const chosen=(filterSel && filterSel.value==='basic')?[...basic]:Object.keys(styles); let all=[];
-    for(const name of chosen){const t=trans(text,name,(normalizeSel&&normalizeSel.value)||'all'); all.push(name+': '+t);
-      const card=document.createElement('div'); card.className='card'; const h=document.createElement('h3'); h.textContent=name; card.appendChild(h);
-      const p=document.createElement('p'); p.textContent=t; p.style.whiteSpace='pre-wrap'; card.appendChild(p);
-      const b=document.createElement('button'); b.className='btn'; b.textContent='Copy'; b.onclick=()=>navigator.clipboard.writeText(t).then(()=>{b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy',900);}); card.appendChild(b);
-      results.appendChild(card);} if(copyAll){ copyAll.disabled=chosen.length===0; copyAll.onclick=()=>navigator.clipboard.writeText(all.join('\n')).then(()=>{copyAll.textContent='Copied!'; setTimeout(()=>copyAll.textContent='Copy All',900);}); }}
-  if(gen) gen.addEventListener('click', render);
-  if(src) src.addEventListener('input', ()=> preview.textContent=src.value);
-})();
-</script>
+  <main class="page" id="main">
+    <section>
+      <h1>Aesthetic Text</h1>
+      <p class="lead">Type your text → pick styles → copy.</p>
+    </section>
 
+    <div class="row" style="margin-top:14px;">
+      <section class="form" style="flex:1.2">
+        <label for="src">Your text</label>
+        <textarea id="src" rows="5" placeholder="Type something aesthetic..."></textarea>
+        <div class="row">
+          <div style="flex:1">
+            <label for="normalize">Characters</label>
+            <select id="normalize">
+              <option value="all" selected>All characters</option>
+              <option value="letters">Letters only</option>
+            </select>
+          </div>
+          <div style="flex:1">
+            <label for="filter">Styles</label>
+            <select id="filter">
+              <option value="all" selected>All styles</option>
+              <option value="basic">Basic only</option>
+            </select>
+          </div>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button id="gen" class="btn primary">Generate</button>
+          <button id="copyAll" class="btn" disabled>Copy All</button>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3 style="margin-top:0">Preview</h3>
+          <p id="preview" style="white-space:pre-wrap; margin:0; min-height:2em"></p>
+        </div>
+      </section>
 
-<script>
-(function(){
-  function $(sel, root){ return (root||document).querySelector(sel); }
-  function findInput(){
-    return document.getElementById('src') ||
-      $('textarea#text') || $('textarea[name="src"]') ||
-      $('textarea') || $('input[type="text"]') || $('input');
-  }
-  function findButton(id, label){
-    return document.getElementById(id) ||
-      Array.from(document.querySelectorAll('button,input[type="button"],input[type="submit"]'))
-        .find(b => (b.textContent||b.value||'').toLowerCase().includes(label));
-  }
-  function findNode(id, sel, createAfter){
-    let el = document.getElementById(id) || $(sel);
-    if(!el && createAfter){
-      el = document.createElement('div'); el.id = id;
-      el.style.marginTop = '12px';
-      createAfter.parentNode.insertBefore(el, createAfter.nextSibling);
+      <section class="area" style="flex:1">
+        <div class="card" id="out" style="width:100%">
+          <h3 style="margin-top:0">Results</h3>
+          <div id="results"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">© 2025 HashHero — Built for creators.</footer>
+
+  <script>
+  // Tools dropdown + theme (same behavior site-wide)
+  (function() {
+    var menu = document.querySelector('.tools-menu');
+    var toolsBtn = document.getElementById('toolsToggle');
+    var dd = menu ? menu.querySelector('.tools-dropdown') : null;
+    function closeMenu(){ if(menu){ menu.classList.remove('open'); } if(toolsBtn){ toolsBtn.setAttribute('aria-expanded','false'); } }
+    if(toolsBtn && dd){
+      toolsBtn.addEventListener('click', function(e){ e.stopPropagation(); var open = menu.classList.toggle('open'); toolsBtn.setAttribute('aria-expanded', open ? 'true' : 'false'); });
+      document.addEventListener('click', function(e){ if(menu && !menu.contains(e.target)) closeMenu(); });
+      document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeMenu(); });
     }
-    return el;
-  }
-  // DOM hooks
-  const input = findInput();
-  const genBtn = findButton('gen','generate') || findButton('gen','transform');
-  const copyAll = document.getElementById('copyAll') || findButton('copyAll','copy all') || (function(){ const b=document.createElement('button'); b.className='btn'; b.textContent='Copy All'; b.style.marginLeft='8px'; if(genBtn) genBtn.parentNode && genBtn.parentNode.appendChild(b); return b; })();
-  const preview = findNode('preview','.preview', input);
-  const results = findNode('results','#results', preview || input);
-  const normalizeSel = document.getElementById('normalize') || (function(){ const s=document.createElement('select'); s.id='normalize'; s.innerHTML='<option value="all">All characters</option><option value="letters">Letters only</option>'; s.style.marginLeft='8px'; if(genBtn) genBtn.parentNode && genBtn.parentNode.insertBefore(s, genBtn.nextSibling); return s; })();
-  const filterSel = document.getElementById('filter') || (function(){ const s=document.createElement('select'); s.id='filter'; s.innerHTML='<option value="all">All styles</option><option value="basic">Basic</option>'; s.style.marginLeft='8px'; if(genBtn) genBtn.parentNode && genBtn.parentNode.insertBefore(s, genBtn.nextSibling); return s; })();
+    var root = document.documentElement;
+    var tbtn = document.getElementById('themeToggle');
+    function setTheme(t) { if(t === 'light') { root.setAttribute('data-theme','light'); localStorage.setItem('hh_theme','light'); if(tbtn) tbtn.textContent='☀️'; } else { root.setAttribute('data-theme','dark'); localStorage.setItem('hh_theme','dark'); if(tbtn) tbtn.textContent='🌙'; } }
+    var saved = localStorage.getItem('hh_theme');
+    if(saved){ setTheme(saved); } else { var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches; setTheme(prefersLight ? 'light' : 'dark'); }
+    if(tbtn){ tbtn.addEventListener('click', function() { var current = root.getAttribute('data-theme') || 'dark'; setTheme(current === 'dark' ? 'light' : 'dark'); }); }
+  })();
+  </script>
 
-  if(!input || !genBtn || !results){ return; } // bail gracefully
+  <script>
+  (function(){
+    const src = document.getElementById('src');
+    const gen = document.getElementById('gen');
+    const copyAll = document.getElementById('copyAll');
+    const preview = document.getElementById('preview');
+    const results = document.getElementById('results');
+    const normalizeSel = document.getElementById('normalize');
+    const filterSel = document.getElementById('filter');
 
-  const base={lower:'abcdefghijklmnopqrstuvwxyz', upper:'ABCDEFGHIJKLMNOPQRSTUVWXYZ', digits:'0123456789'};
-  const styles={'Bold':{u:'𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙',l:'𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳',d:'𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗'},
-                'Italic':{u:'𝐴𝐵𝐶𝐷𝐸𝐹𝐺𝐻𝐼𝐽𝐾𝐿𝑀𝑁𝑂𝑃𝑄𝑅𝑆𝑇𝑈𝑉𝑊𝑋𝑌𝑍',l:'𝑎𝑏𝑐𝑑𝑒𝑓𝑔ℎ𝑖𝑗𝑘𝑙𝑚𝑛𝑜𝑝𝑞𝑟𝑠𝑡𝑢𝑣𝑤𝑥𝑦𝑧'},
-                'Bold Italic':{u:'𝑨𝑩𝑪𝑫𝑬𝑭𝑮𝑯𝑰𝑱𝑲𝑳𝑴𝑵𝑶𝑷𝑸𝑹𝑺𝑻𝑼𝑽𝑾𝑿𝒀𝒁',l:'𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛'},
-                'Script':{u:'𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵',l:'𝒶𝒷𝒸𝒹ℯ𝒻ℊ𝒽𝒾𝒿𝓀𝓁𝓂𝓃ℴ𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏'},
-                'Fraktur':{u:'𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔎𝔏𝔐𝔑𝔒𝔓𝔔ℜ𝔖𝔗𝔘𝔙𝔚𝔛𝔜ℨ',l:'𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔵𝔶𝔷'},
-                'Monospace':{u:'𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉',l:'𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚗𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣',d:'𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿'},
-                'Double Struck':{u:'𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ',l:'𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫',d:'𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡'},
-                'Small Caps':{u:'ABCDEFGHIJKLMNOPQRSTUVWXYZ',l:'ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ'}};
-  const basic=new Set(['Bold','Italic','Bold Italic','Monospace','Small Caps']);
-  function mapChar(ch, st){
-    const s = styles[st];
-    const U='ABCDEFGHIJKLMNOPQRSTUVWXYZ', L='abcdefghijklmnopqrstuvwxyz', D='0123456789';
-    let i = U.indexOf(ch); if(i>-1) return (s.u||U)[i] || ch;
-    i = L.indexOf(ch); if(i>-1) return (s.l||L)[i] || ch;
-    i = D.indexOf(ch); if(i>-1) return (s.d||D)[i] || ch;
-    return ch;
-  }
-  function transform(text, st, mode){
-    let out='';
-    for(const ch of text){
-      if(mode==='letters' && !(/[A-Za-z]/.test(ch))) { out+=ch; continue; }
-      out += mapChar(ch, st);
+    const base={lower:'abcdefghijklmnopqrstuvwxyz', upper:'ABCDEFGHIJKLMNOPQRSTUVWXYZ', digits:'0123456789'};
+    const styles={'Bold':{u:'𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙',l:'𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳',d:'𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗'},
+                  'Italic':{u:'𝐴𝐵𝐶𝐷𝐸𝐹𝐺𝐻𝐼𝐽𝐾𝐿𝑀𝑁𝑂𝑃𝑄𝑅𝑆𝑇𝑈𝑉𝑊𝑋𝑌𝑍',l:'𝑎𝑏𝑐𝑑𝑒𝑓𝑔ℎ𝑖𝑗𝑘𝑙𝑚𝑛𝑜𝑝𝑞𝑟𝑠𝑡𝑢𝑣𝑤𝑥𝑦𝑧'},
+                  'Bold Italic':{u:'𝑨𝑩𝑪𝑫𝑬𝑭𝑮𝑯𝑰𝑱𝑲𝑳𝑴𝑵𝑶𝑷𝑸𝑹𝑺𝑻𝑼𝑽𝑾𝑿𝒀𝒁',l:'𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛'},
+                  'Script':{u:'𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵',l:'𝒶𝒷𝒸𝒹ℯ𝒻ℊ𝒽𝒾𝒿𝓀𝓁𝓂𝓃ℴ𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏'},
+                  'Fraktur':{u:'𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔎𝔏𝔐𝔑𝔒𝔓𝔔ℜ𝔖𝔗𝔘𝔙𝔚𝔛𝔜ℨ',l:'𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔵𝔶𝔷'},
+                  'Monospace':{u:'𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉',l:'𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚗𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣',d:'𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿'},
+                  'Double Struck':{u:'𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ',l:'𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫',d:'𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡'},
+                  'Small Caps':{u:'ABCDEFGHIJKLMNOPQRSTUVWXYZ',l:'ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ'}};
+    const basic=new Set(['Bold','Italic','Bold Italic','Monospace','Small Caps']);
+
+    function map(ch, st){
+      const s=styles[st]; const iu=base.upper.indexOf(ch), il=base.lower.indexOf(ch), id=base.digits.indexOf(ch);
+      if(iu!=-1) return s.u?.[iu]||ch; if(il!=-1) return s.l?.[il]||ch; if(id!=-1) return s.d?.[id]||ch; return ch;
     }
-    return out;
-  }
-  function render(){
-    const text = (input.value||'').toString();
-    if(preview) preview.textContent = text;
-    if(!results) return;
-    results.innerHTML = '';
-    const chosen = (filterSel && filterSel.value==='basic') ? Array.from(basic) : Object.keys(styles);
-    const all = [];
-    chosen.forEach(name=>{
-      const t = transform(text, name, (normalizeSel&&normalizeSel.value)||'all');
-      all.push(name+': '+t);
-      const card=document.createElement('div'); card.className='card';
-      const h=document.createElement('h3'); h.textContent=name; card.appendChild(h);
-      const p=document.createElement('p'); p.textContent=t; p.style.whiteSpace='pre-wrap'; card.appendChild(p);
-      const b=document.createElement('button'); b.className='btn'; b.textContent='Copy';
-      b.onclick=()=>navigator.clipboard.writeText(t).then(()=>{b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy',900);});
-      card.appendChild(b);
-      results.appendChild(card);
-    });
-    if(copyAll){
-      copyAll.disabled = chosen.length===0;
-      copyAll.onclick = ()=>navigator.clipboard.writeText(all.join('\n')).then(()=>{copyAll.textContent='Copied!'; setTimeout(()=>copyAll.textContent='Copy All',900);});
+    function trans(text, st, mode){
+      let out=''; for(const ch of text){ if(mode==='letters' && !(/[A-Za-z]/.test(ch))) {out+=ch; continue;} out+=map(ch,st);} return out;
     }
-  }
-  if(genBtn){ genBtn.addEventListener('click', render); }
-  if(input){ input.addEventListener('input', ()=> preview && (preview.textContent=input.value||'')); }
-})();
-</script>
-
+    function render(){
+      const text=src.value||''; preview.textContent=text; results.innerHTML=''; const chosen=(filterSel.value==='basic')?[...basic]:Object.keys(styles); let all=[];
+      for(const name of chosen){ const t=trans(text,name,normalizeSel.value);
+        const card=document.createElement('div'); card.className='card'; const h=document.createElement('h3'); h.textContent=name; card.appendChild(h);
+        const p=document.createElement('p'); p.textContent=t; p.style.whiteSpace='pre-wrap'; card.appendChild(p);
+        const b=document.createElement('button'); b.className='btn'; b.textContent='Copy'; b.onclick=()=>navigator.clipboard.writeText(t).then(()=>{b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy',900);}); card.appendChild(b);
+        results.appendChild(card); all.push(name+': '+t); }
+      copyAll.disabled=chosen.length===0; copyAll.onclick=()=>navigator.clipboard.writeText(all.join('\n')).then(()=>{copyAll.textContent='Copied!'; setTimeout(()=>copyAll.textContent='Copy All',900);});
+    }
+    gen.addEventListener('click', render);
+    src.addEventListener('input', ()=> preview.textContent=src.value);
+  })();
+  </script>
 </body>
 </html>
