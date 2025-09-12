@@ -26,59 +26,79 @@
 </head>
 <body>
   
+  
   <header class="nav">
     <div class="nav-inner">
-      <a class="brand" href="/"><img src="/assets/logo.svg" alt="HashHero logo"/><span>HashHero</span></a>
-      <nav class="nav-links">
-        <a href="/tools/qr.html">QR</a>
-        <a href="/tools/meme.html">Meme</a>
-        <a href="/tools/hashtags.html">Hashtags</a>
-        <a href="/tools/gif.html">GIF</a>
-        <a href="/tools/polls.html">Polls</a>
-        <a href="/tools/engagement.html">Engagement</a>
-        <a href="/tools/aesthetic-text.html">Aesthetic</a>
-        <a href="/tools/captions.html">Captions</a>
-        <a href="/tools/pfp.html">PFP</a>
-        <a href="/tools/thumbnail.html">Thumbnail</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="container">
-    <section class="hero">
-      <div>
-        <span class="badge">FREE CREATOR TOOLS</span>
-        <h1>Build your link‑in‑bio hub. Ship fast — look pro.</h1>
-        <p class="lead">All-in-one tools: QR, memes, hashtags, GIFs, polls, aesthetic text, engagement rate, and captions — right in your browser.</p>
-        <div class="cta">
-          <a class="btn primary" href="/tools/qr.html">Start with QR</a>
-          <a class="btn" href="/tools/captions.html">Generate Captions</a>
+      <a class="brand" href="/"><img src="/assets/logo.svg" alt="HashHero logo" /><span>HashHero</span></a>
+      <div class="tools-menu">
+        <button class="tools-button">Tools ▾</button>
+        <div class="tools-dropdown">
+          <a href="/tools/qr.html">QR</a>
+<a href="/tools/meme.html">Meme</a>
+<a href="/tools/hashtags.html">Hashtags</a>
+<a href="/tools/gif.html">GIF</a>
+<a href="/tools/polls.html">Polls</a>
+<a href="/tools/engagement.html">Engagement</a>
+<a href="/tools/aesthetic-text.html">Aesthetic</a>
+<a href="/tools/captions.html">Captions</a>
+<a href="/tools/pfp.html">PFP</a>
+<a href="/tools/thumbnail.html">Thumbnail</a>
         </div>
       </div>
-      <div class="card">
-        <h3>What’s included</h3>
-        <ul style="margin:8px 0 0 18px; line-height:1.6; color:var(--muted)">
-          <li>Zero logins, zero watermarks</li>
-          <li>Fast, privacy-friendly, runs in-browser</li>
-          <li>Perfect for TikTok, IG, and Shorts</li>
-        </ul>
+    </div>
+  </header>
+  <script>
+    (function() {
+      var btn = document.querySelector('.tools-button');
+      var dd = document.querySelector('.tools-dropdown');
+      if(btn && dd) {
+        btn.addEventListener('click', function() {
+          dd.style.display = (dd.style.display === 'flex') ? 'none' : 'flex';
+        });
+        document.addEventListener('click', function(e) {
+          if(!dd.contains(e.target) && !btn.contains(e.target)) dd.style.display = 'none';
+        });
+      }
+    })();
+  </script>
+
+  <main class="container">
+    <section class="backdrop-panel hero-center">
+      <h1 class="hero-title">HashHero — Free Creator Toolkit</h1>
+      <p class="hero-sub">Simple tools to make your content pop. No logins, no paywalls. Built for TikTok, Instagram & YouTube creators.</p>
+      <div class="hero-cta">
+        <a class="btn primary" href="/tools/captions.html">Generate Captions</a>
+        <a class="btn" href="#browse">Browse All Tools</a>
       </div>
     </section>
-
-    <section class="section">
+    <section id="browse" class="backdrop-panel section-wrap">
+      <h2 class="section-title">🎥 Content Tools</h2>
       <div class="grid">
-        <a class="card" href="/tools/qr.html"><h3>QR Code Generator</h3><p>Create branded QR codes with custom colors. Download instantly.</p></a>
-        <a class="card" href="/tools/meme.html"><h3>Meme Maker</h3><p>Classic top/bottom text memes, no watermark. PNG download.</p></a>
-        <a class="card" href="/tools/hashtags.html"><h3>Hashtag Ideas</h3><p>Keyword-based sets for TikTok, IG, and Shorts — one-click copy.</p></a>
-        <a class="card" href="/tools/gif.html"><h3>GIF Maker</h3><p>Turn multiple images into a looping GIF, in your browser.</p></a>
-        <a class="card" href="/tools/polls.html"><h3>Polls</h3><p>Create and share quick polls. No login required.</p></a>
-        <a class="card" href="/tools/engagement.html"><h3>Engagement Calculator</h3><p>ER by Followers & Views with weighted interactions.</p></a>
-        <a class="card" href="/tools/aesthetic-text.html"><h3>Aesthetic Text</h3><p>Stylish Unicode fonts for bios & captions. Copy instantly.</p></a>
-        <a class="card" href="/tools/captions.html"><h3>Caption Generator</h3><p>Instant post ideas + ready-to-use captions.</p></a>
-        <div class="card"><h3>Coming Soon</h3><p>Profile Pic Maker, Link-in-Bio themes, and more.</p></div>
+        <a class="card" href="/tools/meme.html"><h3>Meme Maker</h3><p>Top/bottom text PNG — no watermark.</p></a>
+        <a class="card" href="/tools/aesthetic-text.html"><h3>Aesthetic Text</h3><p>Stylish Unicode fonts for bios & captions.</p></a>
+        <a class="card" href="/tools/thumbnail.html"><h3>YouTube Thumbnail</h3><p>Big title overlay with outline & shadow.</p></a>
+        <a class="card" href="/tools/captions.html"><h3>Caption Generator</h3><p>Instant hooks & captions by tone.</p></a>
+      </div>
+    </section>
+    <section class="backdrop-panel section-wrap">
+      <h2 class="section-title">📊 Growth Tools</h2>
+      <div class="grid">
+        <a class="card" href="/tools/hashtags.html"><h3>Hashtag Ideas</h3><p>Keyword-based sets — one‑click copy.</p></a>
+        <a class="card" href="/tools/engagement.html"><h3>Engagement Calculator</h3><p>ER by Followers & Views.</p></a>
+        <a class="card" href="/tools/polls.html"><h3>Polls</h3><p>Create & share quick polls.</p></a>
+        <a class="card" href="/tools/pfp.html"><h3>Profile Pic Maker</h3><p>Circle crop + border + export.</p></a>
+      </div>
+    </section>
+    <section class="backdrop-panel section-wrap">
+      <h2 class="section-title">📎 Utility</h2>
+      <div class="grid">
+        <a class="card" href="/tools/qr.html"><h3>QR Code Generator</h3><p>Branded QR in seconds — PNG download.</p></a>
+        <a class="card" href="/tools/gif.html"><h3>GIF Maker</h3><p>Turn images into a smooth GIF.</p></a>
+        <div class="card"><h3>Coming Soon</h3><p>Link UTM Builder & more.</p></div>
       </div>
     </section>
   </main>
+
   <footer class="footer">© 2025 HashHero — Built for creators.</footer>
 </body>
 </html>

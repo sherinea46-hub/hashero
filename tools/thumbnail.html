@@ -15,25 +15,42 @@
   <link rel="stylesheet" href="/assets/hashhero.css" />
 </head>
 <body>
+  
   <header class="nav">
     <div class="nav-inner">
       <a class="brand" href="/"><img src="/assets/logo.svg" alt="HashHero logo" /><span>HashHero</span></a>
-      <nav class="nav-links">
-        <a href="/tools/qr.html">QR</a>
-        <a href="/tools/meme.html">Meme</a>
-        <a href="/tools/hashtags.html">Hashtags</a>
-        <a href="/tools/gif.html">GIF</a>
-        <a href="/tools/polls.html">Polls</a>
-        <a href="/tools/engagement.html">Engagement</a>
-        <a href="/tools/aesthetic-text.html">Aesthetic</a>
-        <a href="/tools/captions.html">Captions</a>
-        <a href="/tools/pfp.html">PFP</a>
-        <a href="/tools/thumbnail.html" class="active">Thumbnail</a>
-      </nav>
+      <div class="tools-menu">
+        <button class="tools-button">Tools ▾</button>
+        <div class="tools-dropdown">
+          <a href="/tools/qr.html">QR</a>
+<a href="/tools/meme.html">Meme</a>
+<a href="/tools/hashtags.html">Hashtags</a>
+<a href="/tools/gif.html">GIF</a>
+<a href="/tools/polls.html">Polls</a>
+<a href="/tools/engagement.html">Engagement</a>
+<a href="/tools/aesthetic-text.html">Aesthetic</a>
+<a href="/tools/captions.html">Captions</a>
+<a href="/tools/pfp.html">PFP</a>
+<a href="/tools/thumbnail.html">Thumbnail</a>
+        </div>
+      </div>
     </div>
   </header>
-
-  <main class="page">
+  <script>
+    (function() {
+      var btn = document.querySelector('.tools-button');
+      var dd = document.querySelector('.tools-dropdown');
+      if(btn && dd) {
+        btn.addEventListener('click', function() {
+          dd.style.display = (dd.style.display === 'flex') ? 'none' : 'flex';
+        });
+        document.addEventListener('click', function(e) {
+          if(!dd.contains(e.target) && !btn.contains(e.target)) dd.style.display = 'none';
+        });
+      }
+    })();
+  </script>
+<main class="page">
     <section>
       <h1>YouTube Thumbnail Text Overlay</h1>
       <p class="lead">Generate 1280×720 thumbnails with huge headline text, outline, shadow, and optional background image.</p>
