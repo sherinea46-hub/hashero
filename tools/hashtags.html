@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Hashtag Generator • HashHero</title>
-  <meta name="description" content="Generate smart hashtags for TikTok, Instagram, and YouTube. Copy individual tags or copy all." />
+  <meta name="description" content="Generate smart hashtags for TikTok, Instagram, and YouTube. Copy individual tags, copy all, AI assist, popularity hints." />
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
   <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
   <meta property="og:title" content="Hashtag Generator • HashHero" />
-  <meta property="og:description" content="Platform‑tailored hashtag sets with one‑click copy." />
+  <meta property="og:description" content="Platform‑tailored hashtag sets with one‑click copy, AI assist and popularity hints." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://hashhero.app/tools/hashtags.html" />
   <link rel="stylesheet" href="/assets/hashhero.css" />
@@ -20,6 +20,9 @@
     .pill{display:inline-flex; align-items:center; gap:8px; padding:9px 12px; border:1px solid var(--line); border-radius:999px; margin:6px 8px 0 0}
     .pill button{padding:6px 10px; border-radius:999px}
     .hint{color:var(--muted); font-size:12px}
+    .tiny{font-size:11px; opacity:.9}
+    .badges{display:inline-flex; gap:6px; margin-left:8px}
+    .badge{display:inline-flex; align-items:center; gap:4px; padding:2px 6px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.06)}
   </style>
 </head>
 <body>
@@ -31,7 +34,6 @@
           <button id="toolsToggle" class="tools-button" aria-haspopup="true" aria-expanded="false">Tools ▾</button>
           <div class="tools-dropdown" role="menu">
             <a href="/tools/meme.html" role="menuitem">Meme</a>
-            <a href="/tools/aesthetic-text.html" role="menuitem">Aesthetic</a>
             <a href="/tools/thumbnail.html" role="menuitem">Thumbnail</a>
             <a href="/tools/captions.html" role="menuitem">Captions</a>
             <a href="/tools/username.html" role="menuitem">Username</a>
@@ -53,7 +55,7 @@
   <main class="page" id="main">
     <section>
       <h1>Hashtag Generator</h1>
-      <p class="lead">Tailored sets for <strong>TikTok</strong>, <strong>Instagram</strong>, and <strong>YouTube</strong>. Copy an individual tag or copy them all.</p>
+      <p class="lead">Tailored sets for <strong>TikTok</strong>, <strong>Instagram</strong>, and <strong>YouTube</strong>. AI suggestions + popularity hints. Copy an individual tag or copy them all.</p>
     </section>
 
     <div class="row" style="margin-top:14px;">
@@ -76,6 +78,22 @@
             <p class="hint">Instagram supports up to 30; TikTok ~3–5; YouTube uses tags (no #) up to 500 chars total.</p>
           </div>
         </div>
+
+        <div class="form-row">
+          <div style="flex:1; min-width:220px">
+            <label for="goal">Goal</label>
+            <select id="goal">
+              <option value="balanced" selected>Balanced reach</option>
+              <option value="niche">Niche discovery</option>
+              <option value="broad">Max reach</option>
+            </select>
+          </div>
+          <div style="flex:1; min-width:220px; display:flex; align-items:flex-end; gap:10px">
+            <label class="tiny"><input type="checkbox" id="ai" checked /> AI Assist</label>
+            <label class="tiny"><input type="checkbox" id="showPop" checked /> Show popularity</label>
+          </div>
+        </div>
+
         <div class="row" style="margin-top:12px">
           <button id="gen" class="btn primary">Generate</button>
           <button id="copyAll" class="btn" disabled>Copy All</button>
@@ -89,6 +107,8 @@
         </div>
       </section>
     </div>
+
+    <p class="hint">Popularity is an estimate (not live). For live counts, connect a server API later.</p>
   </main>
 
   <footer class="footer">© 2025 HashHero — Built for creators.</footer>
@@ -97,6 +117,9 @@
 (function(){
   const topic = document.getElementById('topic');
   const count = document.getElementById('count');
+  const goal = document.getElementById('goal');
+  const ai = document.getElementById('ai');
+  const showPop = document.getElementById('showPop');
   const gen = document.getElementById('gen');
   const copyAll = document.getElementById('copyAll');
   const wrap = document.getElementById('wrap');
@@ -114,23 +137,56 @@
   }));
 
   function sluggify(s){
-    return s.toLowerCase()
-      .replace(/[^a-z0-9\s]/g,' ')
-      .replace(/\s+/g,' ')
-      .trim();
+    return s.toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
   }
   function uniq(arr){ return Array.from(new Set(arr)); }
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
-  function makeTags(topic, n){
+  const modifiers = {
+    broad:['trending','viral','best','top','howto','tips','daily'],
+    niche:['micro','beginner','budget','aesthetic','minimal','home','gym','travel','morning','night','routine','vegan','pro'],
+    neutral:['guide','ideas','setup','hack','hacks','vlog','shorts','reels']
+  };
+
+  // Naive "AI Assist": expands the topic with modifiers and reshapes by platform & goal
+  function aiExpand(baseWords, g){
+    let parts = [];
+    const pool = g==='broad' ? modifiers.broad
+               : g==='niche' ? modifiers.niche
+               : modifiers.neutral.concat(modifiers.broad.slice(0,2), modifiers.niche.slice(0,2));
+    for(let i=0;i<Math.min(8, pool.length); i++){
+      parts.push(pick(pool));
+    }
+    return uniq(parts.concat(baseWords));
+  }
+
+  // Popularity estimator (deterministic pseudo-counts per platform)
+  function hashCode(str){ let h=0; for(let i=0;i<str.length;i++){ h=((h<<5)-h)+str.charCodeAt(i); h|=0; } return Math.abs(h); }
+  function popEstimate(tag){
+    const base = tag.replace(/^#/,'').toLowerCase();
+    const h = hashCode(base);
+    // ranges chosen per platform scale (fake but plausible-ish orders of magnitude)
+    return {
+      tiktok:  (h % 5000000) + 5000,       // 5K - 5M
+      instagram: (h % 2000000) + 2000,     // 2K - 2M
+      youtube: (h % 500000) + 500          // 500 - 500K (tags count)
+    };
+  }
+
+  function makeTags(topic, n, g, aiOn){
     const base = sluggify(topic);
     const words = base.split(' ').filter(Boolean);
-    const seeds = uniq([
-      ...words,
-      words.join(''),
-      words.join('_'),
-      words.length>1 ? words.slice(-1)[0] : '',
-      'viral','trending','2025','daily','tips','howto'
+    let seeds = uniq([
+      ...words, words.join(''), words.join('_'),
+      words.length>1 ? words.slice(-1)[0] : ''
     ].filter(Boolean));
+
+    if(aiOn){
+      const expanded = aiExpand(words, g);
+      seeds = uniq(seeds.concat(expanded, expanded.map(w=>words[0]? words[0]+w : w)));
+    }else{
+      seeds = uniq(seeds.concat(['tips','guide','daily','2025']));
+    }
 
     let out = [];
     seeds.forEach(s => {
@@ -138,7 +194,7 @@
       if (words.length>1) out.push(''+words[0]+words[1]);
     });
 
-    out = uniq(out).slice(0, Math.max(5, n*2));
+    out = uniq(out).slice(0, Math.max(5, n*3)); // larger pool for variety
 
     if (platform === 'youtube'){
       return uniq(out).slice(0,n).map(x => x.replace(/_/g,' ').replace(/\s+/g,' '));
@@ -147,15 +203,35 @@
     }
   }
 
+  function formatNumber(x){
+    // pretty format with K/M
+    if(x >= 1e6) return (x/1e6).toFixed(1).replace(/\.0$/,'') + 'M';
+    if(x >= 1e3) return (x/1e3).toFixed(1).replace(/\.0$/,'') + 'K';
+    return ''+x;
+  }
+
   function render(list){
     wrap.innerHTML='';
     const frag = document.createDocumentFragment();
     list.forEach(tag => {
       const pill = document.createElement('div'); pill.className='pill';
       const span = document.createElement('span'); span.textContent = tag;
+      pill.appendChild(span);
+
+      if(showPop.checked){
+        const b = document.createElement('span'); b.className='badges';
+        const est = popEstimate(tag);
+        const mk = (lbl,val)=>{ const el=document.createElement('span'); el.className='badge'; el.textContent=lbl+': '+formatNumber(val); return el; };
+        b.appendChild(mk('TT', est.tiktok));
+        b.appendChild(mk('IG', est.instagram));
+        b.appendChild(mk('YT', est.youtube));
+        pill.appendChild(b);
+      }
+
       const btn = document.createElement('button'); btn.className='btn'; btn.textContent='Copy';
       btn.onclick = () => navigator.clipboard.writeText(tag).then(()=>{ btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy',800); });
-      pill.appendChild(span); pill.appendChild(btn);
+      pill.appendChild(btn);
+
       frag.appendChild(pill);
     });
     wrap.appendChild(frag);
@@ -163,8 +239,7 @@
 
   gen.addEventListener('click', () => {
     const n = Math.max(3, Math.min(30, parseInt(count.value)||15));
-    const topicVal = topic.value || 'creator tools';
-    const list = makeTags(topicVal, n);
+    const list = makeTags(topic.value || 'creator tools', n, goal.value, ai.checked);
     render(list);
     copyAll.disabled = list.length===0;
     copyAll.onclick = () => {
