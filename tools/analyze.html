@@ -4,11 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>HashHero — Word Analyzer</title>
-<style>
-/* Critical theme (inline) — prevents white pages if stylesheet fails */
-html,body{margin:0;padding:0;background:#0b0f19;color:#e6e9f5;font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";}
-a{color:#22d3ee}
-</style>
+<style>html,body{margin:0;padding:0;background:#0b0f19;color:#e6e9f5;font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial}</style>
 <link rel="stylesheet" href="../assets/style.css"/>
 </head>
 <body>
@@ -18,17 +14,40 @@ a{color:#22d3ee}
   <div class="brand">
     <div class="logo"></div>
     <div>
-      <div style="font-weight:800; font-size:18px">HashHero</div>
-      <div class="muted" style="font-size:12px">Hashtags First</div>
+      <h1>HashHero</h1>
+      <div class="kicker">Hashtags First</div>
     </div>
   </div>
-  <div class="row"><a class="badge muted" href="index.html">Hashtag Generator</a><a class="badge muted" href="tools/captions.html">Caption Generator</a><a class="badge muted" href="tools/utm.html">UTM Builder</a><a class="badge muted" href="tools/linkinbio.html">Link‑in‑Bio</a><a class="badge muted" href="tools/groups.html">Saved Groups</a><a class="badge muted" href="tools/engage.html">Engagement Timer</a><a class="badge muted" href="tools/hashtagify.html">Hashtagify</a><a class="badge" href="tools/analyze.html">Word Analyzer</a></div>
+  <div class="badges"><a class="badge" href="index.html">Generator</a><a class="badge" href="tools/captions.html">Captions</a><a class="badge" href="tools/utm.html">UTM</a><a class="badge" href="tools/linkinbio.html">Link-in-Bio</a><a class="badge" href="tools/groups.html">Groups</a><a class="badge" href="tools/engage.html">Timer</a><a class="badge" href="tools/hashtagify.html">Hashtagify</a><a class="badge active" href="tools/analyze.html">Analyzer</a></div>
 </div>
-<h1>Word Analyzer</h1>
 
-<div class="card"><p>Tool content</p></div>
-<footer class="muted">© 2025 HashHero — unified dark theme.</footer>
+
+    <div class="card">
+      <div class="kicker">Word Analyzer</div>
+      <h2>Word Analyzer</h2>
+      
+<label>Paste caption or transcript</label>
+<textarea id="analyzeInput" rows="8" class="input" placeholder="Paste content to analyze most frequent words"></textarea>
+<div class="row" style="margin-top:10px"><button class="btn" id="analyzeBtn">Analyze</button></div>
+<table style="margin-top:12px;width:100%;border-collapse:collapse">
+<thead><tr><th style="text-align:left">Word</th><th>Count</th></tr></thead>
+<tbody id="analyzeTable"></tbody>
+</table>
+
+    </div>
+    
+<footer>© 2025 HashHero</footer>
 </div>
-<script src="../assets/app.js"></script>
+
+<script>
+(function(){
+  function inject(src, onload){ var s=document.createElement('script'); s.src=src; s.onload=onload; document.body.appendChild(s); }
+  // try primary path
+  inject('../assets/app.js', function(){
+    if(!window.__hashhero_loaded){ inject('assets/app.js'); }
+  });
+})();
+</script>
+
 </body>
 </html>

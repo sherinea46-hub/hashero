@@ -4,11 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>HashHero — Hashtag Generator</title>
-<style>
-/* Critical theme (inline) — prevents white pages if stylesheet fails */
-html,body{margin:0;padding:0;background:#0b0f19;color:#e6e9f5;font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";}
-a{color:#22d3ee}
-</style>
+<style>html,body{margin:0;padding:0;background:#0b0f19;color:#e6e9f5;font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial}</style>
 <link rel="stylesheet" href="assets/style.css"/>
 </head>
 <body>
@@ -18,93 +14,101 @@ a{color:#22d3ee}
   <div class="brand">
     <div class="logo"></div>
     <div>
-      <div style="font-weight:800; font-size:18px">HashHero</div>
-      <div class="muted" style="font-size:12px">Hashtags First</div>
+      <h1>HashHero</h1>
+      <div class="kicker">Hashtags First</div>
     </div>
   </div>
-  <div class="row"><a class="badge" href="index.html">Hashtag Generator</a><a class="badge muted" href="tools/captions.html">Caption Generator</a><a class="badge muted" href="tools/utm.html">UTM Builder</a><a class="badge muted" href="tools/linkinbio.html">Link‑in‑Bio</a><a class="badge muted" href="tools/groups.html">Saved Groups</a><a class="badge muted" href="tools/engage.html">Engagement Timer</a><a class="badge muted" href="tools/hashtagify.html">Hashtagify</a><a class="badge muted" href="tools/analyze.html">Word Analyzer</a></div>
+  <div class="badges"><a class="badge active" href="index.html">Generator</a><a class="badge" href="tools/captions.html">Captions</a><a class="badge" href="tools/utm.html">UTM</a><a class="badge" href="tools/linkinbio.html">Link-in-Bio</a><a class="badge" href="tools/groups.html">Groups</a><a class="badge" href="tools/engage.html">Timer</a><a class="badge" href="tools/hashtagify.html">Hashtagify</a><a class="badge" href="tools/analyze.html">Analyzer</a></div>
 </div>
-<h1>Hashtag Generator</h1>
 
-<div class="card">
-      <div class="grid grid-2">
-        <div>
-          <label>Description / Keywords</label>
-          <textarea id="desc" rows="6" placeholder="e.g., Travel vlog Europe, hidden cafes in Paris, budget tips, cinematic b‑roll"></textarea>
-          <div class="grid grid-3" style="margin-top:10px">
-            <div>
-              <label>Platform Preset</label>
-              <select id="platform" class="input">
-                <option>Instagram</option>
-                <option>TikTok</option>
-                <option>YouTube Shorts</option>
-                <option>X (Twitter)</option>
-              </select>
-            </div>
-            <div>
-              <label>Max Tags</label>
-              <input id="limit" class="input" type="number" value="25" min="1" max="60"/>
-            </div>
-            <div>
-              <label>Bias</label>
-              <select id="bias" class="input">
-                <option value="none">None</option>
-                <option value="trending">Trending</option>
-                <option value="niche">Niche / Long‑tail</option>
-                <option value="mix">Balanced Mix</option>
-              </select>
-            </div>
-          </div>
-          <div class="row" style="margin-top:12px">
-            <button class="btn" id="generate">Generate</button>
-            <button class="btn secondary" id="clear">Clear</button>
-          </div>
-          <div class="note" style="margin-top:12px">
-            <b>Tips:</b> Use phrases (“street food Tokyo”), audience (“beginners”), format (“cinematic b‑roll”), and location (“Paris 2025”).
-          </div>
+
+<div class="hero">
+  <div class="card">
+    <div class="kicker">Smart Hashtag Generator</div>
+    <h2>Hashtag Generator</h2>
+    <p>Type a topic or a detailed description. Choose platform and bias to shape the output.</p>
+    <div class="grid grid-3">
+      <div>
+        <label>Description</label>
+        <textarea id="desc" rows="5" placeholder="e.g., Travel vlog Paris cafe hunt, cinematic b-roll, budget tips" class="input"></textarea>
+      </div>
+      <div>
+        <label>Preset</label>
+        <select id="platform" class="input">
+          <option>Instagram</option>
+          <option>TikTok</option>
+          <option>YouTube Shorts</option>
+          <option>X (Twitter)</option>
+        </select>
+        <div class="hr"></div>
+        <label>Bias</label>
+        <select id="bias" class="input">
+          <option value="mix" selected>Balanced Mix</option>
+          <option value="trending">Trending</option>
+          <option value="niche">Niche</option>
+          <option value="none">None</option>
+        </select>
+        <div class="hr"></div>
+        <label>Max Tags</label>
+        <input id="limit" type="number" min="1" max="60" value="25" class="input"/>
+      </div>
+      <div>
+        <div class="row" style="margin-top:26px">
+          <button class="btn" id="generate">Generate</button>
+          <button class="btn secondary" id="clear">Clear</button>
         </div>
-        <div>
-          <div class="row">
-            <div class="badge"><span>Output</span></div>
-            <button class="btn secondary" id="copyAll">Copy All</button>
-          </div>
-          <div id="tags" style="margin-top:10px"></div>
-          <hr/>
-          <div class="grid grid-2">
-            <div>
-              <label>Format</label>
-              <select id="format" class="input">
-                <option value="hash">#prefixed</option>
-                <option value="plain">plain words</option>
-                <option value="comma">comma separated</option>
-                <option value="newline">one per line</option>
-              </select>
-            </div>
-            <div>
-              <label>Saved Group Name</label>
-              <div class="row">
-                <input id="groupName" class="input" placeholder="e.g., paris_travel_vlog"/>
-                <button class="btn secondary" id="saveGroup">Save</button>
-              </div>
-              <small class="muted">Saved to your browser only.</small>
-            </div>
-          </div>
+        <div class="note" style="margin-top:12px">
+          <b>Tip:</b> Add location, format (e.g., cinematic), and audience (beginners) for better relevance.
         </div>
       </div>
     </div>
-<div class="card" style="margin-top:14px">
-  <h3>Add‑on Tools</h3>
-  <div class="row">
-    <a class="badge" href="tools/captions.html">Caption Generator</a>
-    <a class="badge" href="tools/utm.html">UTM Builder</a>
-    <a class="badge" href="tools/linkinbio.html">Link‑in‑Bio</a>
-    <a class="badge" href="tools/groups.html">Saved Groups</a>
-    <a class="badge" href="tools/engage.html">Engagement Timer</a>
-    <a class="badge" href="tools/hashtagify.html">Hashtagify</a>
-    <a class="badge" href="tools/analyze.html">Word Analyzer</a>
+  </div>
+  <div class="card">
+    <div class="section-title">
+      <h3>Output</h3>
+      <button class="btn secondary" id="copyAll">Copy All</button>
+    </div>
+    <div id="tags"></div>
+    <div class="hr"></div>
+    <div class="grid grid-2">
+      <div>
+        <label>Format</label>
+        <select id="format" class="input">
+          <option value="hash">#prefixed</option>
+          <option value="plain">plain words</option>
+          <option value="comma">comma separated</option>
+          <option value="newline">one per line</option>
+        </select>
+      </div>
+      <div>
+        <label>Save Group</label>
+        <div class="row">
+          <input id="groupName" class="input" placeholder="e.g., paris_travel_vlog"/>
+          <button class="btn secondary" id="saveGroup">Save</button>
+        </div>
+        <small class="kicker">Saved locally in your browser</small>
+      </div>
+    </div>
   </div>
 </div>
-<footer class="muted">© 2025 HashHero — unified dark theme.</footer>
+
+<div class="card" style="margin-top:16px">
+  <div class="section-title">
+    <h3>Add‑on Tools</h3>
+    <div class="kicker">All offline · same theme</div>
+  </div>
+  <div class="tool-grid">
+    <div class="tool-card"><h4>Caption Generator</h4><p>Instant hooks & tones.</p><a href="tools/captions.html">Open</a></div>
+    <div class="tool-card"><h4>UTM Builder</h4><p>Build campaign links.</p><a href="tools/utm.html">Open</a></div>
+    <div class="tool-card"><h4>Link‑in‑Bio</h4><p>Export a mini page.</p><a href="tools/linkinbio.html">Open</a></div>
+    <div class="tool-card"><h4>Saved Groups</h4><p>Load or delete sets.</p><a href="tools/groups.html">Open</a></div>
+    <div class="tool-card"><h4>Engagement Timer</h4><p>Pomodoro for creators.</p><a href="tools/engage.html">Open</a></div>
+    <div class="tool-card"><h4>Hashtagify</h4><p>Turn text into tags.</p><a href="tools/hashtagify.html">Open</a></div>
+    <div class="tool-card"><h4>Analyzer</h4><p>Word frequency table.</p><a href="tools/analyze.html">Open</a></div>
+  </div>
+</div>
+
+<footer>© 2025 HashHero</footer>
 </div>
 <script src="assets/app.js"></script>
 </body>
