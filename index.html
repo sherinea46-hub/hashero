@@ -1,5 +1,6 @@
 <!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
-<title>HashHero — SPA</title><link rel=stylesheet href="assets/style.css"><style>html,body{background:#0b0f19;color:#e6e9f5;margin:0;padding:0}</style></head>
+<title>HashHero — SPA</title><link rel=stylesheet href="assets/style.css"><style>html,body{background:#0b0f19;color:#e6e9f5;margin:0;padding:0}</style><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-MBd4G7Yx3pCqk0s2G2tWm9M3+eQ39Jv3P2LwQ7OQm9v5EJ6Xl6xk0lT1YwbnT7e2V6jzW8D5s0h2wG3rG8fKxw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
 <body>
 <div class="container">
   <div class="nav">
@@ -11,7 +12,7 @@
       <a class="badge" href="#linkinbio">Link-in-Bio</a>
       <a class="badge" href="#groups">Groups</a>
       <a class="badge" href="#timer">Timer</a>
-      <a class="badge" href="#hashtagify">Hashtagify</a>
+      <a class="badge" href="#qr">QR Code</a>
       <a class="badge" href="#analyzer">Analyzer</a>
       <a class="badge" href="#usage">Usage</a>
     </div>
@@ -132,7 +133,47 @@
 
   <section id="timer" class="section"><div class="card"><div class="kicker">Engagement Timer</div><h2>Engagement Timer</h2><div class="grid grid-2"><div><label>Work minutes</label><input id="workMin" class="input" type="number" value="25" min="1" /><div class="row" style="margin-top:10px"><button class="btn" id="timerStart">Start</button><button class="btn secondary" id="timerStop">Stop</button></div></div><div class="card" style="text-align:center"><div class="kicker">Remaining</div><div id="timerDisp" style="font-size:48px; font-weight:800">00:00</div><div class="kicker">When it ends: engage for 5 minutes.</div></div></div></div></section>
 
-  <section id="hashtagify" class="section"><div class="card"><div class="kicker">Hashtagify</div><h2>Hashtagify</h2><label>Text</label><textarea id="hashifyInput" rows="5" class="input" placeholder="Turn these words into hashtags"></textarea><div class="row" style="margin-top:10px"><button class="btn" id="hashifyBtn">Hashtagify</button></div><label>Result</label><textarea id="hashifyOut" rows="5" class="input" placeholder="#result will appear here"></textarea><div class="row" style="margin-top:10px"><button class="btn secondary" id="copyHashify">Copy</button></div></div></section>
+  
+  <section id="qr" class="section">
+    <div class="card">
+      <div class="kicker">QR Code</div>
+      <h2>QR Code Generator</h2>
+      <div class="grid grid-2">
+        <div>
+          <label>Text / URL</label>
+          <textarea id="qrText" rows="5" class="input" placeholder="https://your-site.com or any text"></textarea>
+          <div class="grid grid-3" style="margin-top:10px">
+            <div>
+              <label>Size</label>
+              <input id="qrSize" class="input" type="number" value="256" min="128" max="512"/>
+            </div>
+            <div>
+              <label>Margin</label>
+              <input id="qrMargin" class="input" type="number" value="2" min="0" max="16"/>
+            </div>
+            <div>
+              <label>ECC</label>
+              <select id="qrEcc" class="input">
+                <option value="L">L (7%)</option>
+                <option value="M" selected>M (15%)</option>
+                <option value="Q">Q (25%)</option>
+                <option value="H">H (30%)</option>
+              </select>
+            </div>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <button class="btn" id="qrGenerate">Generate</button>
+            <button class="btn secondary" id="qrDownload">Download PNG</button>
+          </div>
+          <p class="note" style="margin-top:10px">Paste your profile link (Instagram, TikTok, YouTube, website, etc.). Choose size and error correction. Works offline with the QR library; if the CDN is blocked, it will fetch an image from a public QR API.</p>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center">
+          <div id="qrPreview" class="card" style="background:#0b0f19;padding:16px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+    
 
   <section id="analyzer" class="section"><div class="card"><div class="kicker">Word Analyzer</div><h2>Word Analyzer</h2><label>Paste caption or transcript</label><textarea id="analyzeInput" rows="8" class="input" placeholder="Paste content to analyze most frequent words"></textarea><div class="row" style="margin-top:10px"><button class="btn" id="analyzeBtn">Analyze</button></div><table style="margin-top:12px"><thead><tr><th>Word</th><th>Count</th></tr></thead><tbody id="analyzeTable"></tbody></table></div></section>
   <section id="usage" class="section">
@@ -230,7 +271,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   const uniq=a=>[...new Set(a)];const tok=s=>(s||'').toLowerCase().replace(/[^a-z0-9\s\-]/g,' ').split(/\s+/).filter(Boolean);
   if($('#capGen')){$('#capGen').addEventListener('click',()=>{const ks=tok($('#capPrompt').value).slice(0,8),tone=$('#capTone').value,emoji=['✨','🔥','🎬','📍','🍽️','🌆','💡','🎒','🧭'];const ideas=[];for(let i=0;i<9;i++){const bits=ks.slice(0,3+(i%3)).map(s=>s[0].toUpperCase()+s.slice(1)).join(' · ');let s=tone==='Story/Hook'?`Once upon a moment: ${bits}`:tone==='Tips/List'?`Pro tips: ${bits}`:`${bits}`;ideas.push(`${s} ${emoji[i%emoji.length]}`.trim())}$('#capOut').innerHTML=ideas.map(x=>`<div class="tag copyCap" title="Click to copy">${x}</div>`).join('');document.querySelectorAll('.copyCap').forEach(ch=>ch.addEventListener('click',()=>navigator.clipboard.writeText(ch.textContent)));});}
   if($('#utmBuild')){$('#utmBuild').addEventListener('click',()=>{const base=$('#baseUrl').value.trim();if(!base)return alert('Base URL required');const qs=new URLSearchParams({utm_source:$('#utm_source').value.trim(),utm_medium:$('#utm_medium').value.trim(),utm_campaign:$('#utm_campaign').value.trim(),utm_term:$('#utm_term').value.trim(),utm_content:$('#utm_content').value.trim()});$('#utmResult').value=(base.includes('?')?base+'&':base+'?')+qs.toString()});$('#copyUtm')?.addEventListener('click',()=>navigator.clipboard.writeText($('#utmResult').value));}
-  if($('#libAdd')){$('#libAdd').addEventListener('click',()=>{const n=$('#libName').value.trim(),u=$('#libUrl').value.trim();if(!n||!u)return alert('Add both Label and URL');const row=document.createElement('div');row.className='row';row.innerHTML=`<input class="input libName" value="${n}"/><input class="input libUrl" value="${u}"/><button class="btn secondary libDel">Delete</button>`;$('#libList').appendChild(row);row.querySelector('.libDel').addEventListener('click',()=>row.remove());$('#libName').value='';$('#libUrl').value='' });$('#libExport')?.addEventListener('click',()=>{const title=$('#pageTitle').value.trim()||'My Links';const items=[...document.querySelectorAll('#libList .row')].map(r=>({name:r.querySelector('.libName').value,url:r.querySelector('.libUrl').value})).filter(x=>x.name&&x.url);if(!items.length)return alert('Add at least one link');const html=`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><style>body{font-family:sans-serif;background:#0b0f19;color:#e6e9f5;padding:24px}a{display:block;background:#11162a;color:#e6e9f5;border:1px solid rgba(255,255,255,.12);padding:14px 16px;border-radius:12px;margin:10px 0;text-decoration:none}</style></head><body><h1>${title}</h1>${items.map(i=>`<a href="${i.url}" target="_blank">${i.name}</a>`).join("")}</body></html>`;const blob=new Blob([html],{type:'text/html'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='linkinbio.html';a.click();URL.revokeObjectURL(url)});}
+  if($('#libAdd')){$('#libAdd').addEventListener('click',()=>{const n=$('#libName').value.trim(),u=$('#libUrl').value.trim();if(!n||!u)return alert('Add both Label and URL');const row=document.createElement('div');row.className='row';row.innerHTML=`<input class="input libName" value="${n}"/><input class="input libUrl" value="${u}"/><button class="btn secondary libDel">Delete</button>`;$('#libList').appendChild(row);row.querySelector('.libDel').addEventListener('click',()=>row.remove());$('#libName').value='';$('#libUrl').value='' });$('#libExport')?.addEventListener('click',()=>{const title=$('#pageTitle').value.trim()||'My Links';const items=[...document.querySelectorAll('#libList .row')].map(r=>({name:r.querySelector('.libName').value,url:r.querySelector('.libUrl').value})).filter(x=>x.name&&x.url);if(!items.length)return alert('Add at least one link');const html=`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><style>body{font-family:sans-serif;background:#0b0f19;color:#e6e9f5;padding:24px}a{display:block;background:#11162a;color:#e6e9f5;border:1px solid rgba(255,255,255,.12);padding:14px 16px;border-radius:12px;margin:10px 0;text-decoration:none}</style><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-MBd4G7Yx3pCqk0s2G2tWm9M3+eQ39Jv3P2LwQ7OQm9v5EJ6Xl6xk0lT1YwbnT7e2V6jzW8D5s0h2wG3rG8fKxw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head><body><h1>${title}</h1>${items.map(i=>`<a href="${i.url}" target="_blank">${i.name}</a>`).join("")}</body></html>`;const blob=new Blob([html],{type:'text/html'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='linkinbio.html';a.click();URL.revokeObjectURL(url)});}
   if($('#groupsList')){const render=()=>{const all=(JSON.parse(localStorage.getItem('hashhero_groups')||'[]')).sort((a,b)=>b.ts-a.ts);$('#groupsList').innerHTML=all.map(g=>`<tr><td>${g.name}</td><td>${g.tags.length}</td><td><button class="btn secondary load" data-n="${g.name}">Load</button> <button class="btn secondary del" data-n="${g.name}">Delete</button></td></tr>`).join('');document.querySelectorAll('.load').forEach(b=>b.addEventListener('click',()=>{localStorage.setItem('hashhero_active_group',b.dataset.n);alert("Loaded '"+b.dataset.n+"'")}));document.querySelectorAll('.del').forEach(b=>b.addEventListener('click',()=>{const all=JSON.parse(localStorage.getItem('hashhero_groups')||'[]');const i=all.findIndex(x=>x.name===b.dataset.n);if(i>=0){all.splice(i,1);localStorage.setItem('hashhero_groups',JSON.stringify(all));render();}}));};render();
     // --- Export groups ---
     $('#exportGroups')?.addEventListener('click', ()=>{
@@ -296,7 +338,49 @@ document.addEventListener('DOMContentLoaded',()=>{
       reader.readAsText(file);
     });
   }
-  if($('#timerStart')){let t=null,remain=0;const show=()=>$('#timerDisp').textContent=new Date(remain*1000).toISOString().substring(14,19);$('#timerStart').addEventListener('click',()=>{remain=parseInt($('#workMin').value||'25',10)*60;clearInterval(t);show();t=setInterval(()=>{remain--;show();if(remain<=0){clearInterval(t);alert('Time! Engage for 5 minutes.')}},1000)});$('#timerStop').addEventListener('click',()=>clearInterval(t));}
+  
+  // --- QR Code tool ---
+  (function(){
+    const $ = s=>document.querySelector(s);
+    function clearPreview(){ const box=$('#qrPreview'); if(!box) return; box.innerHTML=''; }
+    function makeQR(){
+      const text = ($('#qrText')?.value||'').trim();
+      const size = Math.max(128, Math.min(512, parseInt($('#qrSize')?.value||'256',10)));
+      const margin = Math.max(0, Math.min(16, parseInt($('#qrMargin')?.value||'2',10)));
+      const ecc = ($('#qrEcc')?.value||'M');
+      const box = $('#qrPreview'); if(!box) return;
+      box.innerHTML='';
+      if(!text){ box.innerHTML='<div class="kicker">Enter text or a URL to generate a QR code.</div>'; return; }
+      if(window.QRCode){
+        const qr = new QRCode(box, { text, width:size, height:size, correctLevel: QRCode.CorrectLevel[ecc] || QRCode.CorrectLevel.M });
+        // apply margin by wrapping box padding
+        box.style.padding = (8+margin*2)+'px';
+      }else{
+        const url = 'https://api.qrserver.com/v1/create-qr-code/?' + new URLSearchParams({ size: size+'x'+size, data: text, margin: String(margin), ecc });
+        const img = new Image(); img.alt='QR'; img.width=size; img.height=size; img.src=url; box.appendChild(img);
+      }
+    }
+    function downloadPNG(){
+      const box = document.getElementById('qrPreview');
+      if(!box) return;
+      // Try canvas inside qrcodejs first
+      const canvas = box.querySelector('canvas');
+      if(canvas){
+        const a=document.createElement('a'); a.href = canvas.toDataURL('image/png'); a.download='hashhero_qr.png'; a.click(); return;
+      }
+      // Fallback: if there's an <img>, just open it in a new tab (user can save)
+      const img = box.querySelector('img');
+      if(img){ window.open(img.src, '_blank'); return; }
+      alert('Generate a QR first.');
+    }
+    document.addEventListener('DOMContentLoaded', ()=>{
+      $('#qrGenerate')?.addEventListener('click', makeQR);
+      $('#qrDownload')?.addEventListener('click', downloadPNG);
+    });
+  })();
+
+  if($('#timerStart')){
+    let t=null,remain=0;const show=()=>$('#timerDisp').textContent=new Date(remain*1000).toISOString().substring(14,19);$('#timerStart').addEventListener('click',()=>{remain=parseInt($('#workMin').value||'25',10)*60;clearInterval(t);show();t=setInterval(()=>{remain--;show();if(remain<=0){clearInterval(t);alert('Time! Engage for 5 minutes.')}},1000)});$('#timerStop').addEventListener('click',()=>clearInterval(t));}
   if($('#hashifyBtn')){$('#hashifyBtn').addEventListener('click',()=>{$('#hashifyOut').value=[...new Set(($('#hashifyInput').value||'').toLowerCase().replace(/[^a-z0-9\s\-]/g,' ').split(/\s+/).filter(Boolean))].map(w=>'#'+w).join(' ')});$('#copyHashify')?.addEventListener('click',()=>navigator.clipboard.writeText($('#hashifyOut').value));}
   if($('#analyzeBtn')){$('#analyzeBtn').addEventListener('click',()=>{const words=($('#analyzeInput').value||'').toLowerCase().replace(/[^a-z0-9\s\-]/g,' ').split(/\s+/).filter(Boolean);const freq={};words.forEach(w=>freq[w]=(freq[w]||0)+1);const rows=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,120);$('#analyzeTable').innerHTML=rows.map(([w,c])=>`<tr><td>${w}</td><td>${c}</td></tr>`).join('')});}
 });
