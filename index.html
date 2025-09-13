@@ -340,16 +340,17 @@ document.addEventListener('DOMContentLoaded',()=>{
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question, history })
       });
-      const data = await resp.json();
-      if (data && data.answer){
-        aEl.textContent = data.answer;
-        history.push({ role: 'user', content: question });
-        history.push({ role: 'assistant', content: data.answer });
-      } else {
-        aEl.textContent = (data && data.error) ? data.error : 'Sorry—no answer.';
+      const text = await resp.text();
+      let data = null; try { data = JSON.parse(text); } catch(e) {}
+      if (!resp.ok) {
+        aEl.textContent = (data && (data.error || data.detail)) || text || ('HTTP ' + resp.status);
+        return;
       }
+      aEl.textContent = (data && data.answer) || 'No answer';
+      history.push({ role: 'user', content: question });
+      history.push({ role: 'assistant', content: aEl.textContent });
     }catch(e){
-      aEl.textContent = 'Network error — please try again.';
+      aEl.textContent = 'Network error — ' + (e && e.message || e);
     }finally{
       setStatus(false); btn.disabled = false;
     }
