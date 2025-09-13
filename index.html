@@ -13,6 +13,7 @@
       <a class="badge" href="#timer">Timer</a>
       <a class="badge" href="#hashtagify">Hashtagify</a>
       <a class="badge" href="#analyzer">Analyzer</a>
+      <a class="badge" href="#ask">AMA</a>
       <a class="badge" href="#usage">Usage</a>
     </div>
   </div>
@@ -148,6 +149,22 @@
       <p class="note">Tip: Use descriptive names like <code>paris_travel_vlog</code> or <code>gym_beginner_routine</code> for faster recall.</p>
     </div>
   </section>
+  <section id="ask" class="section">
+    <div class="card">
+      <div class="kicker">Ask Me Anything</div>
+      <h2>AMA</h2>
+      <label>Your question</label>
+      <textarea id="amaQ" rows="5" class="input" placeholder="Ask about hashtags, captions, growth, QR usage, etc."></textarea>
+      <div class="row" style="margin-top:12px">
+        <button class="btn" id="amaAsk">Ask</button>
+        <label class="kicker" id="amaStatus" style="display:none">Thinking…</label>
+      </div>
+      <div class="hr"></div>
+      <label>Answer</label>
+      <div id="amaA" class="note" style="min-height:90px"></div>
+    </div>
+  </section>
+
 
 
   <footer>© 2025 HashHero — SPA (Vercel + GitHub Pages safe)</footer>
@@ -302,4 +319,48 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 </script>
 
-</body></html>
+
+<script>
+(function(){
+  function $(s){ return document.querySelector(s); }
+  function setStatus(v){ var s=$('#amaStatus'); if(s) s.style.display = v ? 'inline-flex' : 'none'; }
+  var history = [];
+
+  async function ask(){
+    var qEl = $('#amaQ'), aEl = $('#amaA'), btn = $('#amaAsk');
+    if(!qEl || !aEl || !btn) return;
+    var question = (qEl.value || '').trim();
+    if(!question){ alert('Type a question first.'); return; }
+    aEl.textContent = '';
+    setStatus(true); btn.disabled = true;
+
+    try{
+      const resp = await fetch('/api/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question, history })
+      });
+      const data = await resp.json();
+      if (data && data.answer){
+        aEl.textContent = data.answer;
+        history.push({ role: 'user', content: question });
+        history.push({ role: 'assistant', content: data.answer });
+      } else {
+        aEl.textContent = (data && data.error) ? data.error : 'Sorry—no answer.';
+      }
+    }catch(e){
+      aEl.textContent = 'Network error — please try again.';
+    }finally{
+      setStatus(false); btn.disabled = false;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    var btn = document.getElementById('amaAsk');
+    if(btn){ btn.addEventListener('click', ask); }
+  });
+})();
+</script>
+
+</body>
+</html>
