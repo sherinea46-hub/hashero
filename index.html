@@ -1,76 +1,111 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>HashHero — Hashtag Generator</title>
-  <link rel="stylesheet" href="assets/hashhero.css">
-  <script>(function(){var s=document.createElement('script');s.src='assets/nav.js?v=min';s.defer=true;document.head.appendChild(s);}());</script>
-  <style>
-    body{font-family:Inter,system-ui,Arial,sans-serif;margin:0;background:#0b1020;color:#eaf2ff}
-    main{max-width:1200px;margin:48px auto;padding:0 16px}
-    .hero{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:start}
-    .tool.card{background:rgba(255,255,255,.04);border:1px solid #20304d;border-radius:16px;padding:20px}
-    .grid.two{display:grid;grid-template-columns:1fr auto;gap:12px}
-    .grid.three{display:grid;grid-template-columns:1fr 180px auto;gap:12px}
-    input#kw, select#platform{padding:14px 16px;border-radius:12px;border:1px solid #20304d;background:rgba(255,255,255,.06);color:#eaf2ff}
-    .btn{padding:12px 16px;border-radius:12px;border:1px solid #20304d;background:rgba(255,255,255,.04);color:#eaf2ff;cursor:pointer}
-    .btn.ghost{background:transparent}
-    .results{margin-top:16px;border:1px solid #20304d;border-radius:12px;background:rgba(255,255,255,.02)}
-    .hh-row{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #20304d}
-    .hh-row:last-child{border-bottom:0}
-    .hh-tag{font-weight:600}
-    .addons .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-    .cardLink{display:block;padding:16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid #20304d;text-decoration:none;color:inherit}
-    @media(max-width:900px){.hero{grid-template-columns:1fr}.grid.three{grid-template-columns:1fr 1fr}.addons .grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>HashHero — Hashtag Generator</title>
+<style>
+/* Critical theme (inline) — prevents white pages if stylesheet fails */
+html,body{margin:0;padding:0;background:#0b0f19;color:#e6e9f5;font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";}
+a{color:#22d3ee}
+</style>
+<link rel="stylesheet" href="assets/style.css"/>
 </head>
 <body>
-  <div id="site-nav"></div>
-  <main>
-    <section class="hero">
-      <div>
-        <h1 style="font-size:48px;line-height:1.1;margin:0 0 12px">Hashtag Generator</h1>
-        <p style="opacity:.9;margin:0 0 18px">Type a topic or a longer description. Choose a platform bias if you like.</p>
-        <ul style="opacity:.8;margin:0 0 10px 20px">
-          <li>Smart mode for descriptions (AI when available), fast mode otherwise.</li>
-          <li>Platform bias: limits & style tuned for TikTok, Instagram, Facebook, X, or YouTube.</li>
-        </ul>
-      </div>
+<div class="container">
 
-      <div class="tool card hero-tool">
-        <div class="grid three">
-          <input id="kw" type="text" placeholder="e.g., travel vlog in Italy with food reviews" />
-          <select id="platform" aria-label="Platform bias">
-            <option value="auto" selected>Auto (Balanced)</option>
-            <option value="tiktok">TikTok</option>
-            <option value="instagram">Instagram</option>
-            <option value="facebook">Facebook</option>
-            <option value="x">X</option>
-            <option value="youtube">YouTube</option>
-          </select>
-          <button id="generate" class="btn">Generate</button>
+<div class="nav">
+  <div class="brand">
+    <div class="logo"></div>
+    <div>
+      <div style="font-weight:800; font-size:18px">HashHero</div>
+      <div class="muted" style="font-size:12px">Hashtags First</div>
+    </div>
+  </div>
+  <div class="row"><a class="badge" href="index.html">Hashtag Generator</a><a class="badge muted" href="tools/captions.html">Caption Generator</a><a class="badge muted" href="tools/utm.html">UTM Builder</a><a class="badge muted" href="tools/linkinbio.html">Link‑in‑Bio</a><a class="badge muted" href="tools/groups.html">Saved Groups</a><a class="badge muted" href="tools/engage.html">Engagement Timer</a><a class="badge muted" href="tools/hashtagify.html">Hashtagify</a><a class="badge muted" href="tools/analyze.html">Word Analyzer</a></div>
+</div>
+<h1>Hashtag Generator</h1>
+
+<div class="card">
+      <div class="grid grid-2">
+        <div>
+          <label>Description / Keywords</label>
+          <textarea id="desc" rows="6" placeholder="e.g., Travel vlog Europe, hidden cafes in Paris, budget tips, cinematic b‑roll"></textarea>
+          <div class="grid grid-3" style="margin-top:10px">
+            <div>
+              <label>Platform Preset</label>
+              <select id="platform" class="input">
+                <option>Instagram</option>
+                <option>TikTok</option>
+                <option>YouTube Shorts</option>
+                <option>X (Twitter)</option>
+              </select>
+            </div>
+            <div>
+              <label>Max Tags</label>
+              <input id="limit" class="input" type="number" value="25" min="1" max="60"/>
+            </div>
+            <div>
+              <label>Bias</label>
+              <select id="bias" class="input">
+                <option value="none">None</option>
+                <option value="trending">Trending</option>
+                <option value="niche">Niche / Long‑tail</option>
+                <option value="mix">Balanced Mix</option>
+              </select>
+            </div>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <button class="btn" id="generate">Generate</button>
+            <button class="btn secondary" id="clear">Clear</button>
+          </div>
+          <div class="note" style="margin-top:12px">
+            <b>Tips:</b> Use phrases (“street food Tokyo”), audience (“beginners”), format (“cinematic b‑roll”), and location (“Paris 2025”).
+          </div>
         </div>
-        <div class="actions" style="text-align:right;margin-top:12px">
-          <button id="copyAllBtn" class="btn ghost">Copy All</button>
+        <div>
+          <div class="row">
+            <div class="badge"><span>Output</span></div>
+            <button class="btn secondary" id="copyAll">Copy All</button>
+          </div>
+          <div id="tags" style="margin-top:10px"></div>
+          <hr/>
+          <div class="grid grid-2">
+            <div>
+              <label>Format</label>
+              <select id="format" class="input">
+                <option value="hash">#prefixed</option>
+                <option value="plain">plain words</option>
+                <option value="comma">comma separated</option>
+                <option value="newline">one per line</option>
+              </select>
+            </div>
+            <div>
+              <label>Saved Group Name</label>
+              <div class="row">
+                <input id="groupName" class="input" placeholder="e.g., paris_travel_vlog"/>
+                <button class="btn secondary" id="saveGroup">Save</button>
+              </div>
+              <small class="muted">Saved to your browser only.</small>
+            </div>
+          </div>
         </div>
-        <div id="results" class="results"></div>
       </div>
-    </section>
-
-    <section class="addons" style="margin-top:40px">
-      <h2 style="margin:0 0 12px">Add‑on Tools</h2>
-      <div class="grid">
-        <a class="cardLink" href="tools/captions.html"><strong>Caption Generator</strong><br><span style="opacity:.85">Instant hooks & captions by tone.</span></a>
-        <a class="cardLink" href="tools/username.html"><strong>Username Ideas</strong><br><span style="opacity:.85">Trendy names by vibe — one‑click copy.</span></a>
-        <a class="cardLink" href="tools/thumbnail.html"><strong>YouTube Thumbnail</strong><br><span style="opacity:.85">Big title overlay with outline & shadow.</span></a>
-        <a class="cardLink" href="tools/meme.html"><strong>Meme Maker</strong><br><span style="opacity:.85">Top/bottom text PNG — no watermark.</span></a>
-        <a class="cardLink" href="tools/emoji-combos.html"><strong>Emoji Combos</strong><br><span style="opacity:.85">Aesthetic emoji strings for bios & captions.</span></a>
-        <a class="cardLink" href="tools/engagement.html"><strong>Engagement Calculator</strong><br><span style="opacity:.85">ER by Followers & Views.</span></a>
-      </div>
-    </section>
-  </main>
-
-  <script src="assets/generator.smart.js?v=platform" defer></script>
+    </div>
+<div class="card" style="margin-top:14px">
+  <h3>Add‑on Tools</h3>
+  <div class="row">
+    <a class="badge" href="tools/captions.html">Caption Generator</a>
+    <a class="badge" href="tools/utm.html">UTM Builder</a>
+    <a class="badge" href="tools/linkinbio.html">Link‑in‑Bio</a>
+    <a class="badge" href="tools/groups.html">Saved Groups</a>
+    <a class="badge" href="tools/engage.html">Engagement Timer</a>
+    <a class="badge" href="tools/hashtagify.html">Hashtagify</a>
+    <a class="badge" href="tools/analyze.html">Word Analyzer</a>
+  </div>
+</div>
+<footer class="muted">© 2025 HashHero — unified dark theme.</footer>
+</div>
+<script src="assets/app.js"></script>
 </body>
 </html>
