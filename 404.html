@@ -1,0 +1,9 @@
+<!doctype html><meta charset="utf-8">
+<script>
+// Send any 404 to SPA route based on path
+var path = location.pathname.replace(/^\/+/,''); // remove leading /
+if (!path) path = 'generator';
+// crude mapping: tools/* to section names
+path = path.replace(/^tools\//,'').replace(/\.html$/,'');
+location.replace('/#' + (path || 'generator'));
+</script>

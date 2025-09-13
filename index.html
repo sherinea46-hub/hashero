@@ -1,115 +1,461 @@
+
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>HashHero — Hashtag Generator</title>
-<style>html,body{margin:0;padding:0;background:#0b0f19;color:#e6e9f5;font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial}</style>
+<title>HashHero — SPA</title>
 <link rel="stylesheet" href="assets/style.css"/>
+<style>html,body{background:#0b0f19;color:#e6e9f5;margin:0;padding:0}</style>
 </head>
 <body>
+
+<!-- Self-healing redirect for old deep-links like /tools/*.html -->
+<script>
+(function () {
+  var p = location.pathname;
+  var map = {
+    "/tools/captions.html": "#captions",
+    "/tools/utm.html": "#utm",
+    "/tools/linkinbio.html": "#linkinbio",
+    "/tools/groups.html": "#groups",
+    "/tools/engage.html": "#timer",
+    "/tools/hashtagify.html": "#hashtagify",
+    "/tools/analyze.html": "#analyzer",
+    "/index.html": "#generator",
+    "/": "#generator"
+  };
+  if (map[p]) {
+    if (location.hash !== map[p]) location.replace("/" + map[p]);
+  } else if (/^\/tools\//.test(p)) {
+    location.replace("/#generator");
+  }
+})();
+</script>
+
 <div class="container">
-
-<div class="nav">
-  <div class="brand">
-    <div class="logo"></div>
-    <div>
-      <h1>HashHero</h1>
-      <div class="kicker">Hashtags First</div>
+  <div class="nav">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <h1>HashHero</h1>
+        <div class="kicker">Hashtags First</div>
+      </div>
+    </div>
+    <div class="badges">
+      <a class="badge" href="#generator">Generator</a>
+      <a class="badge" href="#captions">Captions</a>
+      <a class="badge" href="#utm">UTM</a>
+      <a class="badge" href="#linkinbio">Link-in-Bio</a>
+      <a class="badge" href="#groups">Groups</a>
+      <a class="badge" href="#timer">Timer</a>
+      <a class="badge" href="#hashtagify">Hashtagify</a>
+      <a class="badge" href="#analyzer">Analyzer</a>
     </div>
   </div>
-  <div class="badges"><a class="badge active" href="index.html">Generator</a><a class="badge" href="tools/captions.html">Captions</a><a class="badge" href="tools/utm.html">UTM</a><a class="badge" href="tools/linkinbio.html">Link-in-Bio</a><a class="badge" href="tools/groups.html">Groups</a><a class="badge" href="tools/engage.html">Timer</a><a class="badge" href="tools/hashtagify.html">Hashtagify</a><a class="badge" href="tools/analyze.html">Analyzer</a></div>
-</div>
 
-
-<div class="hero">
-  <div class="card">
-    <div class="kicker">Smart Hashtag Generator</div>
-    <h2>Hashtag Generator</h2>
-    <p>Type a topic or a detailed description. Choose platform and bias to shape the output.</p>
-    <div class="grid grid-3">
-      <div>
-        <label>Description</label>
-        <textarea id="desc" rows="5" placeholder="e.g., Travel vlog Paris cafe hunt, cinematic b-roll, budget tips" class="input"></textarea>
+  <!-- Generator -->
+  <section id="generator" class="section active">
+    <div class="hero">
+      <div class="card">
+        <div class="kicker">Smart Hashtag Generator</div>
+        <h2>Hashtag Generator</h2>
+        <p>Type a topic or a detailed description. Choose platform and bias to shape the output.</p>
+        <div class="grid grid-3">
+          <div>
+            <label>Description</label>
+            <textarea id="desc" rows="5" placeholder="e.g., Travel vlog Paris cafe hunt, cinematic b-roll, budget tips" class="input"></textarea>
+          </div>
+          <div>
+            <label>Preset</label>
+            <select id="platform" class="input">
+              <option>Instagram</option>
+              <option>TikTok</option>
+              <option>YouTube Shorts</option>
+              <option>X (Twitter)</option>
+            </select>
+            <div class="hr"></div>
+            <label>Bias</label>
+            <select id="bias" class="input">
+              <option value="mix" selected>Balanced Mix</option>
+              <option value="trending">Trending</option>
+              <option value="niche">Niche</option>
+              <option value="none">None</option>
+            </select>
+            <div class="hr"></div>
+            <label>Max Tags</label>
+            <input id="limit" type="number" min="1" max="60" value="25" class="input"/>
+          </div>
+          <div>
+            <div class="row" style="margin-top:26px">
+              <button class="btn" id="generate">Generate</button>
+              <button class="btn secondary" id="clear">Clear</button>
+            </div>
+            <div class="note" style="margin-top:12px">
+              <b>Tip:</b> Add location, format (e.g., cinematic), and audience (beginners) for better relevance.
+            </div>
+          </div>
+        </div>
       </div>
-      <div>
-        <label>Preset</label>
-        <select id="platform" class="input">
-          <option>Instagram</option>
-          <option>TikTok</option>
-          <option>YouTube Shorts</option>
-          <option>X (Twitter)</option>
-        </select>
+      <div class="card">
+        <div class="section-title">
+          <h3>Output</h3>
+          <button class="btn secondary" id="copyAll">Copy All</button>
+        </div>
+        <div id="tags"></div>
         <div class="hr"></div>
-        <label>Bias</label>
-        <select id="bias" class="input">
-          <option value="mix" selected>Balanced Mix</option>
-          <option value="trending">Trending</option>
-          <option value="niche">Niche</option>
-          <option value="none">None</option>
-        </select>
-        <div class="hr"></div>
-        <label>Max Tags</label>
-        <input id="limit" type="number" min="1" max="60" value="25" class="input"/>
-      </div>
-      <div>
-        <div class="row" style="margin-top:26px">
-          <button class="btn" id="generate">Generate</button>
-          <button class="btn secondary" id="clear">Clear</button>
-        </div>
-        <div class="note" style="margin-top:12px">
-          <b>Tip:</b> Add location, format (e.g., cinematic), and audience (beginners) for better relevance.
+        <div class="grid grid-2">
+          <div>
+            <label>Format</label>
+            <select id="format" class="input">
+              <option value="hash">#prefixed</option>
+              <option value="plain">plain words</option>
+              <option value="comma">comma separated</option>
+              <option value="newline">one per line</option>
+            </select>
+          </div>
+          <div>
+            <label>Save Group</label>
+            <div class="row">
+              <input id="groupName" class="input" placeholder="e.g., paris_travel_vlog"/>
+              <button class="btn secondary" id="saveGroup">Save</button>
+            </div>
+            <small class="kicker">Saved locally in your browser</small>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="card">
-    <div class="section-title">
-      <h3>Output</h3>
-      <button class="btn secondary" id="copyAll">Copy All</button>
-    </div>
-    <div id="tags"></div>
-    <div class="hr"></div>
-    <div class="grid grid-2">
-      <div>
-        <label>Format</label>
-        <select id="format" class="input">
-          <option value="hash">#prefixed</option>
-          <option value="plain">plain words</option>
-          <option value="comma">comma separated</option>
-          <option value="newline">one per line</option>
-        </select>
-      </div>
-      <div>
-        <label>Save Group</label>
-        <div class="row">
-          <input id="groupName" class="input" placeholder="e.g., paris_travel_vlog"/>
-          <button class="btn secondary" id="saveGroup">Save</button>
+  </section>
+
+  <!-- Captions -->
+  <section id="captions" class="section">
+    <div class="card">
+      <div class="kicker">Caption Generator</div>
+      <h2>Caption Generator</h2>
+      <label>Describe your post</label>
+      <textarea id="capPrompt" rows="5" class="input" placeholder="e.g., Cozy Paris cafe hunt, cinematic b-roll, budget itinerary"></textarea>
+      <div class="grid grid-2" style="margin-top:10px">
+        <div>
+          <label>Style</label>
+          <select id="capTone" class="input">
+            <option>Short & Punchy</option>
+            <option>Story/Hook</option>
+            <option>Tips/List</option>
+          </select>
         </div>
-        <small class="kicker">Saved locally in your browser</small>
+        <div class="note">Click any idea to copy.</div>
+      </div>
+      <div class="row" style="margin-top:12px"><button class="btn" id="capGen">Generate</button></div>
+      <div id="capOut" style="margin-top:12px"></div>
+    </div>
+  </section>
+
+  <!-- UTM -->
+  <section id="utm" class="section">
+    <div class="card">
+      <div class="kicker">UTM Builder</div>
+      <h2>UTM Builder</h2>
+      <div class="grid grid-2">
+        <div>
+          <label>Base URL</label>
+          <input id="baseUrl" class="input" placeholder="https://example.com/landing"/>
+          <div class="grid grid-2" style="margin-top:10px">
+            <div><label>utm_source</label><input id="utm_source" class="input" placeholder="instagram"/></div>
+            <div><label>utm_medium</label><input id="utm_medium" class="input" placeholder="social"/></div>
+            <div><label>utm_campaign</label><input id="utm_campaign" class="input" placeholder="launch_q4"/></div>
+            <div><label>utm_term</label><input id="utm_term" class="input" placeholder="travel vlog"/></div>
+            <div><label>utm_content</label><input id="utm_content" class="input" placeholder="video1"/></div>
+          </div>
+          <div class="row" style="margin-top:12px"><button class="btn" id="utmBuild">Build URL</button></div>
+        </div>
+        <div>
+          <label>Result</label>
+          <textarea id="utmResult" rows="7" class="input" placeholder="Built URL will appear here"></textarea>
+          <div class="row" style="margin-top:10px"><button class="btn secondary" id="copyUtm">Copy</button></div>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
+
+  <!-- Link-in-Bio -->
+  <section id="linkinbio" class="section">
+    <div class="card">
+      <div class="kicker">Link-in-Bio</div>
+      <h2>Link-in-Bio</h2>
+      <div class="grid grid-2">
+        <div>
+          <label>Page Title</label>
+          <input id="pageTitle" class="input" placeholder="My Links"/>
+          <div class="row" style="margin-top:10px">
+            <input id="libName" class="input" placeholder="Label (e.g., YouTube)"/>
+            <input id="libUrl" class="input" placeholder="https://..."/>
+            <button class="btn" id="libAdd">Add</button>
+          </div>
+          <div id="libList" style="margin-top:10px"></div>
+        </div>
+        <div>
+          <div class="note">Add items then export a portable HTML page.</div>
+          <button class="btn" id="libExport">Export HTML</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Groups -->
+  <section id="groups" class="section">
+    <div class="card">
+      <div class="kicker">Saved Groups</div>
+      <h2>Saved Groups</h2>
+      <table>
+        <thead><tr><th>Name</th><th>Tags</th><th>Actions</th></tr></thead>
+        <tbody id="groupsList"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Timer -->
+  <section id="timer" class="section">
+    <div class="card">
+      <div class="kicker">Engagement Timer</div>
+      <h2>Engagement Timer</h2>
+      <div class="grid grid-2">
+        <div>
+          <label>Work minutes</label>
+          <input id="workMin" class="input" type="number" value="25" min="1" />
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="timerStart">Start</button>
+            <button class="btn secondary" id="timerStop">Stop</button>
+          </div>
+        </div>
+        <div class="card" style="text-align:center">
+          <div class="kicker">Remaining</div>
+          <div id="timerDisp" style="font-size:48px; font-weight:800">00:00</div>
+          <div class="kicker">When it ends: engage for 5 minutes.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hashtagify -->
+  <section id="hashtagify" class="section">
+    <div class="card">
+      <div class="kicker">Hashtagify</div>
+      <h2>Hashtagify</h2>
+      <label>Text</label>
+      <textarea id="hashifyInput" rows="5" class="input" placeholder="Turn these words into hashtags"></textarea>
+      <div class="row" style="margin-top:10px"><button class="btn" id="hashifyBtn">Hashtagify</button></div>
+      <label>Result</label>
+      <textarea id="hashifyOut" rows="5" class="input" placeholder="#result will appear here"></textarea>
+      <div class="row" style="margin-top:10px"><button class="btn secondary" id="copyHashify">Copy</button></div>
+    </div>
+  </section>
+
+  <!-- Analyzer -->
+  <section id="analyzer" class="section">
+    <div class="card">
+      <div class="kicker">Word Analyzer</div>
+      <h2>Word Analyzer</h2>
+      <label>Paste caption or transcript</label>
+      <textarea id="analyzeInput" rows="8" class="input" placeholder="Paste content to analyze most frequent words"></textarea>
+      <div class="row" style="margin-top:10px"><button class="btn" id="analyzeBtn">Analyze</button></div>
+      <table style="margin-top:12px">
+        <thead><tr><th>Word</th><th>Count</th></tr></thead>
+        <tbody id="analyzeTable"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>© 2025 HashHero — SPA (Vercel + GitHub Pages safe)</footer>
 </div>
 
-<div class="card" style="margin-top:16px">
-  <div class="section-title">
-    <h3>Add‑on Tools</h3>
-    <div class="kicker">All offline · same theme</div>
-  </div>
-  <div class="tool-grid">
-    <div class="tool-card"><h4>Caption Generator</h4><p>Instant hooks & tones.</p><a href="tools/captions.html">Open</a></div>
-    <div class="tool-card"><h4>UTM Builder</h4><p>Build campaign links.</p><a href="tools/utm.html">Open</a></div>
-    <div class="tool-card"><h4>Link‑in‑Bio</h4><p>Export a mini page.</p><a href="tools/linkinbio.html">Open</a></div>
-    <div class="tool-card"><h4>Saved Groups</h4><p>Load or delete sets.</p><a href="tools/groups.html">Open</a></div>
-    <div class="tool-card"><h4>Engagement Timer</h4><p>Pomodoro for creators.</p><a href="tools/engage.html">Open</a></div>
-    <div class="tool-card"><h4>Hashtagify</h4><p>Turn text into tags.</p><a href="tools/hashtagify.html">Open</a></div>
-    <div class="tool-card"><h4>Analyzer</h4><p>Word frequency table.</p><a href="tools/analyze.html">Open</a></div>
-  </div>
-</div>
+<script>
+// Router & active state
+function setActive(hash){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  const id = (hash||'#generator').replace('#','');
+  const el = document.getElementById(id);
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.badge').forEach(b=> b.classList.toggle('active', b.getAttribute('href')===('#'+id)));
+}
+window.addEventListener('hashchange', ()=> setActive(location.hash));
+document.addEventListener('DOMContentLoaded', ()=> setActive(location.hash));
 
-<footer>© 2025 HashHero</footer>
-</div>
-<script src="assets/app.js"></script>
+// Helpers
+const $ = s=>document.querySelector(s);
+const el=(t,c,tx)=>{const e=document.createElement(t); if(c) e.className=c; if(tx) e.textContent=tx; return e;};
+const copy = async t => { try{ await navigator.clipboard.writeText(t); alert("Copied!"); }catch(e){ alert("Copy failed"); }};
+const stop = new Set("a,an,the,and,or,if,of,in,on,for,to,with,by,at,from,this,that,these,those,as,be,is,are,was,were,am,will,can,how,what,when,where,why,who,your,my,our,their,it's,its,into,about,over,under,vs,via".split(","));
+const uniq = a=>[...new Set(a)];
+const tokens = s => (s||"").toLowerCase().replace(/[^a-z0-9\s\-]/g," ").split(/\s+/).filter(w=>w && !stop.has(w) && w.length>2);
+const trending = ["viral","trending","fyp","foryou","explore","instadaily","reels","shorts","creator"];
+
+// Tag synthesis
+function synthesize(desc, {bias="mix", limit=25, platform="Instagram"}){
+  const ks = uniq(tokens(desc));
+  let pool = uniq([...ks]);
+  if(ks.some(k=>["travel","paris","rome","europe","vlog","cinematic","broll","tokyo","cafe","food","recipe","streetfood"].includes(k))){
+    pool = uniq([...pool, "travel","wanderlust","adventure","vlog","cinematic","itinerary","hiddenGems","foodie","streetfood","budgettravel"]);
+  }
+  if(bias==="trending"||bias==="mix") pool = uniq([...pool,...trending]);
+  if(bias==="niche"||bias==="mix") pool = uniq([...pool,"microinfluencer","smallcreator","howto","beginners","tips"]);
+  const score = t=> (ks.some(k=>t.includes(k))?2:0) + (t.length<=12?1:0) + (trending.includes(t)?0.5:0);
+  pool.sort((a,b)=>score(b)-score(a));
+  const out = pool.map(t=>t.replace(/\s+/g,"")).filter(Boolean).slice(0,limit);
+  return out;
+}
+
+// Render tags
+function renderTags(list){
+  const box = $("#tags"); if(!box) return;
+  box.innerHTML="";
+  if(!list.length){ box.innerHTML='<div class="kicker">No tags yet. Try a richer description.</div>'; return; }
+  list.forEach(t=>{
+    const chip = el("span","tag","#"+t);
+    chip.title = "Click to copy";
+    chip.addEventListener("click", ()=> navigator.clipboard.writeText("#"+t));
+    box.appendChild(chip);
+  });
+}
+
+// Save groups
+function saveGroup(name, tags){
+  const all = JSON.parse(localStorage.getItem("hashhero_groups")||"[]");
+  const ex = all.find(x=>x.name===name);
+  if(ex){ ex.tags=tags; ex.ts=Date.now(); } else { all.push({name, tags, ts:Date.now()}); }
+  localStorage.setItem("hashhero_groups", JSON.stringify(all));
+}
+
+// Wire generator
+document.addEventListener("DOMContentLoaded", ()=>{
+  if($("#generate")){
+    $("#generate").addEventListener("click", ()=>{
+      const desc=$("#desc").value.trim();
+      const platform=$("#platform").value;
+      const bias=$("#bias").value;
+      let limit=parseInt($("#limit").value||"25",10);
+      const tags=synthesize(desc,{bias,limit,platform});
+      window.__tags = tags;
+      renderTags(tags);
+    });
+    $("#clear")?.addEventListener("click", ()=>{ $("#desc").value=""; $("#tags").innerHTML=""; });
+    $("#copyAll")?.addEventListener("click", ()=>{
+      const mode=$("#format").value; const list=window.__tags||[];
+      const format = (l)=> mode==="plain"? l.join(" ") : mode==="comma"? l.map(x=>"#"+x).join(", ") : mode==="newline"? l.map(x=>"#"+x).join("\n") : l.map(x=>"#"+x).join(" ");
+      if(!list.length) return alert("Nothing to copy yet.");
+      copy(format(list));
+    });
+    $("#saveGroup")?.addEventListener("click", ()=>{
+      const list=window.__tags||[]; if(!list.length) return alert("Generate tags first.");
+      const name=$("#groupName").value.trim()||"hashhero_group";
+      saveGroup(name, list);
+      alert("Saved group '"+name+"'");
+    });
+  }
+
+  // Captions
+  if($("#capGen")){
+    $("#capGen").addEventListener("click", ()=>{
+      const prompt=$("#capPrompt").value.trim();
+      const tone=$("#capTone").value;
+      const ks=tokens(prompt); const ideas=[];
+      const emoji = ["✨","🔥","🎬","📍","🍽️","🌆","💡","🎒","🧭"];
+      for(let i=0;i<9;i++){
+        const bits = ks.slice(0,3+(i%3)).map(s=>s[0].toUpperCase()+s.slice(1)).join(" · ");
+        let s = tone==="Story/Hook" ? `Once upon a moment: ${bits}` :
+                tone==="Tips/List" ? `Pro tips: ${bits}` : `${bits}`;
+        ideas.push(`${s} ${emoji[i%emoji.length]}`.trim());
+      }
+      $("#capOut").innerHTML = ideas.map(x=>`<div class="tag copyCap" title="Click to copy">${x}</div>`).join("");
+      document.querySelectorAll(".copyCap").forEach(chip=> chip.addEventListener("click", ()=> copy(chip.textContent)));
+    });
+  }
+
+  // UTM
+  if($("#utmBuild")){
+    $("#utmBuild").addEventListener("click", ()=>{
+      const base = $("#baseUrl").value.trim();
+      if(!base) return alert("Base URL required");
+      const qs = new URLSearchParams({
+        utm_source: $("#utm_source").value.trim(),
+        utm_medium: $("#utm_medium").value.trim(),
+        utm_campaign: $("#utm_campaign").value.trim(),
+        utm_term: $("#utm_term").value.trim(),
+        utm_content: $("#utm_content").value.trim()
+      });
+      const url = (base.includes("?")? base+"&" : base+"?")+qs.toString();
+      $("#utmResult").value = url;
+    });
+    $("#copyUtm")?.addEventListener("click", ()=> copy($("#utmResult").value));
+  }
+
+  // Link-in-bio
+  if($("#libAdd")){
+    $("#libAdd").addEventListener("click", ()=>{
+      const n=$("#libName").value.trim(), u=$("#libUrl").value.trim();
+      if(!n||!u) return alert("Add both Label and URL");
+      const row=document.createElement("div"); row.className="row";
+      row.innerHTML=`<input class="input libName" value="${n}"/><input class="input libUrl" value="${u}"/><button class="btn secondary libDel">Delete</button>`;
+      $("#libList").appendChild(row);
+      row.querySelector(".libDel").addEventListener("click", ()=> row.remove());
+      $("#libName").value=""; $("#libUrl").value="";
+    });
+    $("#libExport")?.addEventListener("click", ()=>{
+      const title=$("#pageTitle").value.trim()||"My Links";
+      const items=[...document.querySelectorAll("#libList .row")].map(r=>({name:r.querySelector(".libName").value,url:r.querySelector(".libUrl").value})).filter(x=>x.name&&x.url);
+      if(!items.length) return alert("Add at least one link");
+      const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title>
+<style>body{font-family:sans-serif;background:#0b0f19;color:#e6e9f5;padding:24px}a{display:block;background:#11162a;color:#e6e9f5;border:1px solid rgba(255,255,255,.12);padding:14px 16px;border-radius:12px;margin:10px 0;text-decoration:none}</style></head>
+<body><h1>${title}</h1>${items.map(i=>`<a href="${i.url}" target="_blank">${i.name}</a>`).join("")}</body></html>`;
+      const blob=new Blob([html],{type:"text/html"});
+      const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="linkinbio.html"; a.click(); URL.revokeObjectURL(url);
+    });
+  }
+
+  // Groups
+  if($("#groupsList")){
+    const render=()=>{
+      const all=(JSON.parse(localStorage.getItem("hashhero_groups")||"[]")).sort((a,b)=>b.ts-a.ts);
+      $("#groupsList").innerHTML=all.map(g=>`<tr><td>${g.name}</td><td>${g.tags.length}</td><td><button class="btn secondary load" data-n="${g.name}">Load</button> <button class="btn secondary del" data-n="${g.name}">Delete</button></td></tr>`).join("");
+      document.querySelectorAll(".load").forEach(b=> b.addEventListener("click", ()=>{ localStorage.setItem("hashhero_active_group", b.dataset.n); alert("Loaded '"+b.dataset.n+"'"); }));
+      document.querySelectorAll(".del").forEach(b=> b.addEventListener("click", ()=>{ 
+        const all=JSON.parse(localStorage.getItem("hashhero_groups")||"[]");
+        const i=all.findIndex(x=>x.name===b.dataset.n); if(i>=0){ all.splice(i,1); localStorage.setItem("hashhero_groups", JSON.stringify(all)); render(); }
+      }));
+    };
+    render();
+  }
+
+  // Timer
+  if($("#timerStart")){
+    let t=null, remain=0;
+    const show=()=> $("#timerDisp").textContent=new Date(remain*1000).toISOString().substring(14,19);
+    $("#timerStart").addEventListener("click", ()=>{
+      remain=parseInt($("#workMin").value||"25",10)*60;
+      clearInterval(t); show();
+      t=setInterval(()=>{ remain--; show(); if(remain<=0){ clearInterval(t); alert("Time! Engage for 5 minutes."); } },1000);
+    });
+    $("#timerStop").addEventListener("click", ()=> clearInterval(t));
+  }
+
+  // Hashtagify
+  if($("#hashifyBtn")){
+    $("#hashifyBtn").addEventListener("click", ()=>{
+      const words=uniq(tokens($("#hashifyInput").value)).map(w=>"#"+w).join(" ");
+      $("#hashifyOut").value=words;
+    });
+    $("#copyHashify")?.addEventListener("click", ()=> copy($("#hashifyOut").value));
+  }
+
+  // Analyzer
+  if($("#analyzeBtn")){
+    $("#analyzeBtn").addEventListener("click", ()=>{
+      const words=tokens($("#analyzeInput").value);
+      const freq={}; words.forEach(w=>freq[w]=(freq[w]||0)+1);
+      const rows=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,120);
+      $("#analyzeTable").innerHTML=rows.map(([w,c])=>`<tr><td>${w}</td><td>${c}</td></tr>`).join("");
+    });
+  }
+});
+</script>
 </body>
 </html>
