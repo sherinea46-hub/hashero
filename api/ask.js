@@ -1,4 +1,4 @@
-// /api/ask.js — CommonJS debug handler
+// /api/ask.js — Clean CommonJS handler
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
   try {
