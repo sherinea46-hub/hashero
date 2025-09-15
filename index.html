@@ -1,367 +1,173 @@
-<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
-<title>HashHero — SPA</title><link rel=stylesheet href="assets/style.css"><style>html,body{background:#0b0f19;color:#e6e9f5;margin:0;padding:0}</style></head>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HashHero — Generator, AMA, QR, Timer</title>
+  <link rel="stylesheet" href="/assets/css/site.css" />
+  <script defer src="/assets/js/app.js"></script>
+</head>
 <body>
-<div class="container">
-  <div class="nav">
-    <div class="brand"><img class="logo" src="assets/logo.svg" alt="HashHero logo"/><div><h1>HashHero</h1><div class="kicker">Hashtags First</div></div></div>
-    <div class="badges">
-      <a class="badge" href="#generator">Generator</a>
-      <a class="badge" href="#captions">Captions</a>
-      <a class="badge" href="#utm">UTM</a>
-      <a class="badge" href="#linkinbio">Link-in-Bio</a>
-      <a class="badge" href="#groups">Groups</a>
-      <a class="badge" href="#timer">Timer</a>
-      <a class="badge" href="#hashtagify">Hashtagify</a>
-      <a class="badge" href="#analyzer">Analyzer</a>
-      <a class="badge" href="/ama">AMA</a>
-      <a class="badge" href="#usage">Usage</a>
-    </div>
-  </div>
+  <header class="hh-header">
+    <a class="hh-brand" href="#">
+      <span class="hh-dot">H</span><span>HashHero</span>
+    </a>
+    <nav class="hh-nav">
+      <a class="hh-link hh-link--primary" href="#generator">Generator</a>
+      <a class="hh-link hh-link--primary" href="#ama">AMA</a>
+      <a class="hh-link" href="#qr">QR Codes</a>
+      <a class="hh-link" href="#timer">Engagement Timer</a>
+    </nav>
+  </header>
 
-  <section id="generator" class="section active">
-    <div class="hero">
-      <div class="card">
-        <div class="kicker">Smart Hashtag Generator</div>
-        <h2>Hashtag Generator</h2>
-        <p>Type a topic or a detailed description. Choose platform and bias to shape the output.</p>
-        <div class="grid grid-3">
-          <div>
-            <label>Description</label>
-            <textarea id="desc" rows="5" placeholder="e.g., Travel vlog Paris cafe hunt, cinematic b-roll, budget tips" class="input"></textarea>
-          </div>
-          <div>
-            <label>Preset</label>
-            <select id="platform" class="input">
-              <option>Instagram</option>
-              <option>TikTok</option>
-              <option>YouTube Shorts</option>
-              <option>X (Twitter)</option>
-            </select>
-            <div class="hr"></div>
-            <label>Bias</label>
-            <select id="bias" class="input">
-              <option value="mix" selected>Balanced Mix</option>
-              <option value="trending">Trending</option>
-              <option value="niche">Niche</option>
-              <option value="none">None</option>
-            </select>
-            <div class="hr"></div>
-            <label>Max Tags</label>
-            <input id="limit" type="number" min="1" max="60" value="25" class="input"/>
-          </div>
-          <div>
-            <div class="row" style="margin-top:26px">
-              <button class="btn" id="generate">Generate</button>
-              <button class="btn secondary" id="clear">Clear</button>
+  <main class="hh-main">
+
+    <section id="generator" class="hh-section">
+      <h1>Smart Hashtag Generator</h1>
+      <div class="grid2">
+        <div class="card">
+          <label class="lbl">Describe your post</label>
+          <textarea id="g-desc" class="input" rows="6" placeholder="e.g., Paris café vlog, cinematic b-roll, budget travel tips for beginners"></textarea>
+
+          <div class="row">
+            <div class="col">
+              <label class="lbl">Platform</label>
+              <select id="g-platform" class="select">
+                <option>Instagram</option>
+                <option>TikTok</option>
+                <option>Twitter</option>
+                <option>YouTube</option>
+                <option>LinkedIn</option>
+              </select>
             </div>
-            <div class="note" style="margin-top:12px">
-              <b>Tip:</b> Add location, format (e.g., cinematic), and audience (beginners) for better relevance.
+            <div class="col">
+              <label class="lbl">Bias</label>
+              <select id="g-bias" class="select">
+                <option value="balanced">Balanced</option>
+                <option value="reach">Reach (bigger)</option>
+                <option value="niche">Niche (targeted)</option>
+              </select>
+            </div>
+            <div class="col">
+              <label class="lbl">Max Tags</label>
+              <input id="g-max" class="input" type="number" value="25" min="5" max="30"/>
             </div>
           </div>
+
+          <div class="row">
+            <button id="g-generate" class="btn">Generate</button>
+            <button id="g-clear" class="btn btn-ghost">Clear</button>
+            <button id="g-copy" class="btn btn-ghost">Copy</button>
+          </div>
+          <p class="hint">Tip: add location, format (cinematic, POV, tutorial), and audience (beginners, pros) for better tags.</p>
+        </div>
+
+        <div class="card">
+          <div class="row row-between">
+            <div class="lbl">Output</div>
+            <div class="small muted"><span id="g-count">0</span> / <span id="g-maxcap">30</span></div>
+          </div>
+          <textarea id="g-out" class="output" rows="10" readonly></textarea>
+          <div id="g-warnings" class="muted small"></div>
         </div>
       </div>
+      <div class="chipbar" id="g-suggestions"></div>
+    </section>
+
+    <section id="ama" class="hh-section">
+      <h1>AMA</h1>
       <div class="card">
-        <div class="section-title inline"><h3>Output</h3><button class="btn secondary" id="copyAll">Copy All</button><span class="small kicker">Recommended limit: <span id="limitInfo" class="count">25</span> · Generated: <span id="genCount" class="count">0</span></span></div>
-        <div id="tags"></div><div id="qualityNote" class="note" style="margin-top:10px"><b>Heads up:</b> I filtered generic/too-long terms. Try adding location, audience, or format keywords for even better specificity.</div>
-        <div class="hr"></div>
-        <div class="grid grid-2">
-          <div>
-            <label>Format</label>
-            <select id="format" class="input">
-              <option value="hash">#prefixed</option>
-              <option value="plain">plain words</option>
-              <option value="comma">comma separated</option>
-              <option value="newline">one per line</option>
-            </select>
-          </div>
-          <div>
-            <label>Save Group</label>
-            <div class="row">
-              <input id="groupName" class="input" placeholder="e.g., paris_travel_vlog"/>
-              <button class="btn secondary" id="saveGroup">Save</button>
+        <div class="row">
+          <input id="a-q" class="input" placeholder="Ask me anything…" />
+          <button id="a-ask" class="btn">Ask</button>
+          <button id="a-health" class="btn btn-ghost">Health</button>
+        </div>
+        <pre id="a-out" class="outputblock"></pre>
+        <p class="hint">Start with <code>HASHHERO_MOCK=1</code> in Vercel env to verify wiring, then set to 0 to go live.</p>
+      </div>
+    </section>
+
+    <section id="qr" class="hh-section">
+      <h1>QR Code Generator</h1>
+      <div class="grid2">
+        <div class="card">
+          <label class="lbl">Content / URL</label>
+          <input id="qr-data" class="input" placeholder="https://your-link or @handle" />
+          <div class="row">
+            <div class="col">
+              <label class="lbl">Preset</label>
+              <select id="qr-preset" class="select">
+                <option value="ig">Instagram Profile</option>
+                <option value="tt">TikTok Profile</option>
+                <option value="yt">YouTube Channel</option>
+                <option value="ln">LinkedIn Profile</option>
+                <option value="custom">Custom</option>
+              </select>
             </div>
-            <small class="kicker">Saved locally in your browser</small>
+            <div class="col">
+              <label class="lbl">Size</label>
+              <select id="qr-size" class="select">
+                <option value="256">256</option>
+                <option value="384">384</option>
+                <option value="512" selected>512</option>
+              </select>
+            </div>
+            <div class="col">
+              <label class="lbl">Margin</label>
+              <input id="qr-margin" class="input" type="number" value="2" min="0" max="10"/>
+            </div>
           </div>
+          <div class="row">
+            <button id="qr-make" class="btn">Generate</button>
+            <button id="qr-dl" class="btn btn-ghost">Download PNG</button>
+          </div>
+          <p class="hint">We use a reliable QR image service to produce a PNG—no tracking.</p>
+        </div>
+
+        <div class="card center">
+          <img id="qr-img" alt="QR preview" class="qrimg" />
         </div>
       </div>
-    </div>
-    <div class="examples">
-      <span class="badge example" data-x="Travel vlog Paris hidden cafes cinematic b-roll budget itinerary">Travel · Paris</span>
-      <span class="badge example" data-x="Street food Tokyo night market ramen sushi vlog">Food · Tokyo</span>
-      <span class="badge example" data-x="Gym beginner dumbbell routine home workout tips">Fitness · Beginner</span>
-      <span class="badge example" data-x="Photography sunset long exposure tutorial smartphone">Photography · Sunset</span>
-    </div>
-  </section>
+    </section>
 
-  <section id="captions" class="section"><div class="card"><div class="kicker">Caption Generator</div><h2>Caption Generator</h2>
-    <label>Describe your post</label>
-    <textarea id="capPrompt" rows="5" class="input" placeholder="e.g., Cozy Paris cafe hunt, cinematic b-roll, budget itinerary"></textarea>
-    <div class="grid grid-2" style="margin-top:10px"><div><label>Style</label><select id="capTone" class="input"><option>Short & Punchy</option><option>Story/Hook</option><option>Tips/List</option></select></div><div class="note">Click any idea to copy.</div></div>
-    <div class="row" style="margin-top:12px"><button class="btn" id="capGen">Generate</button></div>
-    <div id="capOut" style="margin-top:12px"></div></div>
-  </section>
-
-  <section id="utm" class="section"><div class="card"><div class="kicker">UTM Builder</div><h2>UTM Builder</h2>
-  <div class="grid grid-2"><div>
-  <label>Base URL</label><input id="baseUrl" class="input" placeholder="https://example.com/landing"/>
-  <div class="grid grid-2" style="margin-top:10px">
-    <div><label>utm_source</label><input id="utm_source" class="input" placeholder="instagram"/></div>
-    <div><label>utm_medium</label><input id="utm_medium" class="input" placeholder="social"/></div>
-    <div><label>utm_campaign</label><input id="utm_campaign" class="input" placeholder="launch_q4"/></div>
-    <div><label>utm_term</label><input id="utm_term" class="input" placeholder="travel vlog"/></div>
-    <div><label>utm_content</label><input id="utm_content" class="input" placeholder="video1"/></div>
-  </div>
-  <div class="row" style="margin-top:12px"><button class="btn" id="utmBuild">Build URL</button></div>
-  </div>
-  <div><label>Result</label><textarea id="utmResult" rows="7" class="input" placeholder="Built URL will appear here"></textarea>
-  <div class="row" style="margin-top:10px"><button class="btn secondary" id="copyUtm">Copy</button></div></div></div></div></section>
-
-  <section id="linkinbio" class="section"><div class="card"><div class="kicker">Link-in-Bio</div><h2>Link-in-Bio</h2>
-  <div class="grid grid-2"><div><label>Page Title</label><input id="pageTitle" class="input" placeholder="My Links"/>
-  <div class="row" style="margin-top:10px"><input id="libName" class="input" placeholder="Label (e.g., YouTube)"/><input id="libUrl" class="input" placeholder="https://..."/><button class="btn" id="libAdd">Add</button></div>
-  <div id="libList" style="margin-top:10px"></div></div>
-  <div><div class="note">Add items then export a portable HTML page.</div><button class="btn" id="libExport">Export HTML</button></div></div></div></section>
-
-  <section id="groups" class="section"><div class="card"><div class="kicker">Saved Groups</div><h2>Saved Groups</h2>
-  
-    <div class="row" style="margin:10px 0">
-      <button class="btn" id="exportGroups">Export JSON</button>
-      <button class="btn secondary" id="importGroups">Import JSON</button>
-      <input type="file" id="importFile" accept="application/json" style="display:none"/>
-    </div>
-    <table><thead><tr><th>Name</th><th>Tags</th><th>Actions</th></tr></thead><tbody id="groupsList"></tbody></table></div></section>
-
-  <section id="timer" class="section"><div class="card"><div class="kicker">Engagement Timer</div><h2>Engagement Timer</h2><div class="grid grid-2"><div><label>Work minutes</label><input id="workMin" class="input" type="number" value="25" min="1" /><div class="row" style="margin-top:10px"><button class="btn" id="timerStart">Start</button><button class="btn secondary" id="timerStop">Stop</button></div></div><div class="card" style="text-align:center"><div class="kicker">Remaining</div><div id="timerDisp" style="font-size:48px; font-weight:800">00:00</div><div class="kicker">When it ends: engage for 5 minutes.</div></div></div></div></section>
-
-  <section id="hashtagify" class="section"><div class="card"><div class="kicker">Hashtagify</div><h2>Hashtagify</h2><label>Text</label><textarea id="hashifyInput" rows="5" class="input" placeholder="Turn these words into hashtags"></textarea><div class="row" style="margin-top:10px"><button class="btn" id="hashifyBtn">Hashtagify</button></div><label>Result</label><textarea id="hashifyOut" rows="5" class="input" placeholder="#result will appear here"></textarea><div class="row" style="margin-top:10px"><button class="btn secondary" id="copyHashify">Copy</button></div></div></section>
-
-  <section id="analyzer" class="section"><div class="card"><div class="kicker">Word Analyzer</div><h2>Word Analyzer</h2><label>Paste caption or transcript</label><textarea id="analyzeInput" rows="8" class="input" placeholder="Paste content to analyze most frequent words"></textarea><div class="row" style="margin-top:10px"><button class="btn" id="analyzeBtn">Analyze</button></div><table style="margin-top:12px"><thead><tr><th>Word</th><th>Count</th></tr></thead><tbody id="analyzeTable"></tbody></table></div></section>
-  <section id="usage" class="section">
-    <div class="card">
-      <div class="kicker">How to Use HashHero</div>
-      <h2>Usage Guide</h2>
-      <p>Work with saved groups of hashtags in three quick ways:</p>
-      <ol>
-        <li><b>Generate & Save</b> — In <i>Generator</i>, type your description → <i>Generate</i> → name your set → <i>Save Group</i>. It’s stored locally in your browser.</li>
-        <li><b>Insert a Saved Group</b> — In the Generator’s Output card: <i>My Groups</i> dropdown → pick a group → <i>Insert</i> to load those tags.</li>
-        <li><b>Manage / Backup</b> — Go to <i>Groups</i> to <i>Load</i> (preps the Generator), <i>Delete</i>, <i>Export JSON</i>, or <i>Import JSON</i> (merges or overwrites on name conflicts, with automatic backup).</li>
-      </ol>
-      <p class="note">Tip: Use descriptive names like <code>paris_travel_vlog</code> or <code>gym_beginner_routine</code> for faster recall.</p>
-    </div>
-  </section>
-  <section id="ask" class="section">
-    <div class="card">
-      <div class="kicker">Ask Me Anything</div>
-      <h2>AMA</h2>
-      <label>Your question</label>
-      <textarea id="amaQ" rows="5" class="input" placeholder="Ask about hashtags, captions, growth, QR usage, etc."></textarea>
-      <div class="row" style="margin-top:12px">
-        <button class="btn" id="amaAsk">Ask</button>
-        <label class="kicker" id="amaStatus" style="display:none">Thinking…</label>
+    <section id="timer" class="hh-section">
+      <h1>Engagement Timer</h1>
+      <div class="card">
+        <div class="row">
+          <div class="col">
+            <label class="lbl">Work (mins)</label>
+            <input id="t-work" class="input" type="number" value="20" min="1" />
+          </div>
+          <div class="col">
+            <label class="lbl">Break (mins)</label>
+            <input id="t-break" class="input" type="number" value="5" min="1" />
+          </div>
+          <div class="col">
+            <label class="lbl">Cycles</label>
+            <input id="t-cycles" class="input" type="number" value="3" min="1" />
+          </div>
+        </div>
+        <div class="row">
+          <button id="t-start" class="btn">Start</button>
+          <button id="t-stop" class="btn btn-ghost">Stop</button>
+          <span id="t-status" class="muted small"></span>
+        </div>
+        <div class="ring">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="54" class="ring-bg"/>
+            <circle cx="60" cy="60" r="54" class="ring-fg" id="t-ring"/>
+            <text x="60" y="66" text-anchor="middle" class="ring-txt" id="t-clock">00:00</text>
+          </svg>
+        </div>
+        <p class="hint">Use during posting/comment sprints. We’ll beep at phase changes.</p>
+        <audio id="t-beep" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
       </div>
-      <div class="hr"></div>
-      <label>Answer</label>
-      <div id="amaA" class="note" style="min-height:90px"></div>
-    </div>
-  </section>
+    </section>
 
+  </main>
 
-
-  <footer>© 2025 HashHero — SPA (Vercel + GitHub Pages safe)</footer>
-</div>
-
-
-<script>
-function setActive(hash){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));const id=(hash||'#generator').replace('#','');const el=document.getElementById(id);if(el)el.classList.add('active');document.querySelectorAll('.badge').forEach(b=>b.classList.toggle('active',b.getAttribute('href')===('#'+id)));}
-window.addEventListener('hashchange',()=>setActive(location.hash));document.addEventListener('DOMContentLoaded',()=>setActive(location.hash));
-const $=s=>document.querySelector(s);const el=(t,c,tx)=>{const e=document.createElement(t);if(c)e.className=c;if(tx)e.textContent=tx;return e;};const copy=async t=>{try{await navigator.clipboard.writeText(t);alert('Copied!')}catch(e){alert('Copy failed')}};
-const STOP=new Set('a,an,the,and,or,if,of,in,on,for,to,with,by,at,from,this,that,these,those,as,be,is,are,was,were,am,will,can,how,what,when,where,why,who,your,my,our,their,its,into,about,over,under,vs,via,just,very,really,more,most,less,lot,thing,things,post,video,content,creator,please,help,need'.split(','));
-const BLACKLIST=new Set('sexy,adult,nsfw,followforfollow,like4like,sub4sub,spam,clickbait,freefollowers'.split(','));
-function normWord(w){return w.replace(/(ing|ers|er|ies|ied|ed|s)$/,'').replace(/[^a-z0-9]/g,'');}
-function tokenize(s){return (s||'').toLowerCase().replace(/[#@]/g,' ').replace(/[^a-z0-9\s-]/g,' ').split(/\s+/).map(normWord).filter(w=>w&&w.length>2&&!STOP.has(w));}
-function ngrams(words,n){const out=[];for(let i=0;i<=words.length-n;i++){out.push(words.slice(i,i+n).join(''));}return out;}
-const TRENDING=['viral','trending','fyp','foryou','explore','instadaily','reels','shorts'];const NICHE=['microinfluencer','smallcreator','howto','beginner','tips','community','diary'];
-function related(words){const set=new Set();const W=new Set(words);const has=(...a)=>a.some(x=>W.has(x));if(has('travel','trip','paris','europe','tokyo','cafe','london','rome','beach','tour'))'travel wanderlust adventure itinerary budgettravel hiddenGems foodie streetfood citywalk museum sunset architecture local vlog cinematic'.split(' ').forEach(x=>set.add(x));if(has('vlog','video','cinematic','broll','editor','capcut','reel'))'broll cinematic tutorial behindthescenes howto tips filmmaking'.split(' ').forEach(x=>set.add(x));if(has('food','recipe','cook','bake','restaurant','streetfood','kitchen'))'recipe homemade delicious foodie yummy dessert healthy quick snack chef streetfood'.split(' ').forEach(x=>set.add(x));if(has('fitness','gym','workout','dumbbell','cardio','yoga','run'))'fitness gym workout training routine healthy gains beginner homeworkout'.split(' ').forEach(x=>set.add(x));return [...set];}
-function scoreTag(tag,wordsSet,bias){let s=0;for(const w of wordsSet){if(tag.includes(w))s+=2}if(tag.length<=14)s+=1;if(tag.length<=9)s+=.5;if(bias==='trending'&&TRENDING.includes(tag))s+=1;if(bias==='niche'&&NICHE.includes(tag))s+=1;if(bias==='mix'&&(TRENDING.includes(tag)||NICHE.includes(tag)))s+=.6;return s;}
-function platformCap(p){if(p.includes('Instagram'))return 30;if(p.includes('TikTok'))return 30;if(p.includes('YouTube'))return 15;if(p.includes('X'))return 10;return 25;}
-function synthesize(desc,{bias='mix',limit=25,platform='Instagram'}){const words=tokenize(desc);const uniq=[...new Set(words)];const rel=related(uniq);const g2=ngrams(uniq,2);const g3=ngrams(uniq,3);let pool=new Set([...uniq,...rel,...g2,...g3]);if(bias==='trending'||bias==='mix')TRENDING.forEach(t=>pool.add(t));if(bias==='niche'||bias==='mix')NICHE.forEach(t=>pool.add(t));const wset=new Set(uniq);let list=[...pool].map(t=>t.replace(/\s+/g,'').replace(/[^a-z0-9]/gi,'')).filter(t=>t&&t.length<=20&&!BLACKLIST.has(t));list.sort((a,b)=>scoreTag(b,wset,bias)-scoreTag(a,wset,bias));const hard=platformCap(platform);const target=Math.min(limit||hard,hard);const out=[];const seen=new Set();for(const t of list){if(seen.has(t))continue;if(['video','content','creator','insta','tiktok','youtube'].includes(t)&&out.length>8)continue;seen.add(t);out.push(t);if(out.length>=target)break;}return out;}
-function renderTags(list){const box=$('#tags');box.innerHTML='';if(!list.length){box.innerHTML='<div class="kicker">No tags yet. Try typing a richer description.</div>';$('#genCount').textContent='0';return;}list.forEach(t=>{const chip=el('span','tag','#'+t);chip.title='Click to copy';chip.addEventListener('click',()=>navigator.clipboard.writeText('#'+t));box.appendChild(chip);});$('#genCount').textContent=list.length;document.getElementById('qualityNote').style.display=list.length?'block':'none';}
-function formatAll(list,mode='hash'){if(mode==='plain')return list.join(' ');if(mode==='comma')return list.map(x=>'#'+x).join(', ');if(mode==='newline')return list.map(x=>'#'+x).join('\n');return list.map(x=>'#'+x).join(' ');}
-let __tags=[];let __deb=null;function generateNow(){const desc=$('#desc').value.trim();const platform=$('#platform').value;const bias=$('#bias').value;let limit=parseInt($('#limit').value||'25',10);__tags=synthesize(desc,{bias,limit,platform});renderTags(__tags);}function schedule(){clearTimeout(__deb);__deb=setTimeout(generateNow,250);}
-document.addEventListener('DOMContentLoaded', ()=>{
-  const upd=()=>$('#limitInfo').textContent=platformCap($('#platform').value);
-  $('#platform').addEventListener('change',()=>{upd();schedule()}); upd();
-  $('#generate').addEventListener('click',generateNow);
-  $('#desc').addEventListener('input',schedule);
-  $('#bias').addEventListener('change',generateNow);
-  $('#limit').addEventListener('input',generateNow);
-  $('#clear').addEventListener('click',()=>{$('#desc').value='';__tags=[];renderTags([]);});
-  $('#copyAll').addEventListener('click',()=>{if(!__tags.length)return alert('Nothing to copy yet.');copy(formatAll(__tags,$('#format').value));});
-  $('#saveGroup').addEventListener('click',()=>{
-    if(!__tags.length)return alert('Generate tags first.');
-    const name=$('#groupName').value.trim()||'hashhero_group';
-    const all=JSON.parse(localStorage.getItem('hashhero_groups')||'[]');
-    const ex=all.find(x=>x.name===name);
-    if(ex){ ex.tags=__tags; ex.ts=Date.now(); } else { all.push({name, tags:__tags, ts:Date.now()}); }
-    localStorage.setItem('hashhero_groups', JSON.stringify(all));
-    alert("Saved group '"+name+"'");
-    populateMyGroups(); // refresh dropdown
-  });
-  document.querySelectorAll('.example').forEach(b=> b.addEventListener('click',()=>{$('#desc').value=b.dataset.x;generateNow()}));
-
-  // ---- My Groups dropdown ----
-  function populateMyGroups(){
-    const sel = $('#myGroupsSelect'); if(!sel) return;
-    const all=(JSON.parse(localStorage.getItem('hashhero_groups')||'[]')).sort((a,b)=>b.ts-a.ts);
-    sel.innerHTML = all.length ? all.map(g=>`<option value="${g.name}">${g.name} (${g.tags.length})</option>`).join('') : '<option value="">(no groups yet)</option>';
-  }
-  populateMyGroups();
-
-  $('#insertGroup')?.addEventListener('click', ()=>{
-    const name = ($('#myGroupsSelect')?.value||'').trim();
-    if(!name) return alert('No group selected.');
-    const all = JSON.parse(localStorage.getItem('hashhero_groups')||'[]');
-    const g = all.find(x=>x.name===name);
-    if(!g) return alert('Group not found.');
-    __tags = g.tags || [];
-    renderTags(__tags);
-    $('#genCount').textContent = __tags.length;
-  });
-
-  // ---- Auto-apply last loaded group (from Groups tab) ----
-  const pending = localStorage.getItem('hashhero_active_tags');
-  if(pending){
-    try{
-      const arr = JSON.parse(pending);
-      if(Array.isArray(arr) && arr.length){
-        __tags = arr;
-        renderTags(__tags);
-        $('#genCount').textContent = __tags.length;
-      }
-    }catch(e){}
-    localStorage.removeItem('hashhero_active_tags'); // one-time
-  }
-}); 
-// Other tools abbreviated handlers
-document.addEventListener('DOMContentLoaded',()=>{
-  const uniq=a=>[...new Set(a)];const tok=s=>(s||'').toLowerCase().replace(/[^a-z0-9\s\-]/g,' ').split(/\s+/).filter(Boolean);
-  if($('#capGen')){$('#capGen').addEventListener('click',()=>{const ks=tok($('#capPrompt').value).slice(0,8),tone=$('#capTone').value,emoji=['✨','🔥','🎬','📍','🍽️','🌆','💡','🎒','🧭'];const ideas=[];for(let i=0;i<9;i++){const bits=ks.slice(0,3+(i%3)).map(s=>s[0].toUpperCase()+s.slice(1)).join(' · ');let s=tone==='Story/Hook'?`Once upon a moment: ${bits}`:tone==='Tips/List'?`Pro tips: ${bits}`:`${bits}`;ideas.push(`${s} ${emoji[i%emoji.length]}`.trim())}$('#capOut').innerHTML=ideas.map(x=>`<div class="tag copyCap" title="Click to copy">${x}</div>`).join('');document.querySelectorAll('.copyCap').forEach(ch=>ch.addEventListener('click',()=>navigator.clipboard.writeText(ch.textContent)));});}
-  if($('#utmBuild')){$('#utmBuild').addEventListener('click',()=>{const base=$('#baseUrl').value.trim();if(!base)return alert('Base URL required');const qs=new URLSearchParams({utm_source:$('#utm_source').value.trim(),utm_medium:$('#utm_medium').value.trim(),utm_campaign:$('#utm_campaign').value.trim(),utm_term:$('#utm_term').value.trim(),utm_content:$('#utm_content').value.trim()});$('#utmResult').value=(base.includes('?')?base+'&':base+'?')+qs.toString()});$('#copyUtm')?.addEventListener('click',()=>navigator.clipboard.writeText($('#utmResult').value));}
-  if($('#libAdd')){$('#libAdd').addEventListener('click',()=>{const n=$('#libName').value.trim(),u=$('#libUrl').value.trim();if(!n||!u)return alert('Add both Label and URL');const row=document.createElement('div');row.className='row';row.innerHTML=`<input class="input libName" value="${n}"/><input class="input libUrl" value="${u}"/><button class="btn secondary libDel">Delete</button>`;$('#libList').appendChild(row);row.querySelector('.libDel').addEventListener('click',()=>row.remove());$('#libName').value='';$('#libUrl').value='' });$('#libExport')?.addEventListener('click',()=>{const title=$('#pageTitle').value.trim()||'My Links';const items=[...document.querySelectorAll('#libList .row')].map(r=>({name:r.querySelector('.libName').value,url:r.querySelector('.libUrl').value})).filter(x=>x.name&&x.url);if(!items.length)return alert('Add at least one link');const html=`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><style>body{font-family:sans-serif;background:#0b0f19;color:#e6e9f5;padding:24px}a{display:block;background:#11162a;color:#e6e9f5;border:1px solid rgba(255,255,255,.12);padding:14px 16px;border-radius:12px;margin:10px 0;text-decoration:none}</style></head><body><h1>${title}</h1>${items.map(i=>`<a href="${i.url}" target="_blank">${i.name}</a>`).join("")}</body></html>`;const blob=new Blob([html],{type:'text/html'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='linkinbio.html';a.click();URL.revokeObjectURL(url)});}
-  if($('#groupsList')){const render=()=>{const all=(JSON.parse(localStorage.getItem('hashhero_groups')||'[]')).sort((a,b)=>b.ts-a.ts);$('#groupsList').innerHTML=all.map(g=>`<tr><td>${g.name}</td><td>${g.tags.length}</td><td><button class="btn secondary load" data-n="${g.name}">Load</button> <button class="btn secondary del" data-n="${g.name}">Delete</button></td></tr>`).join('');document.querySelectorAll('.load').forEach(b=>b.addEventListener('click',()=>{localStorage.setItem('hashhero_active_group',b.dataset.n);alert("Loaded '"+b.dataset.n+"'")}));document.querySelectorAll('.del').forEach(b=>b.addEventListener('click',()=>{const all=JSON.parse(localStorage.getItem('hashhero_groups')||'[]');const i=all.findIndex(x=>x.name===b.dataset.n);if(i>=0){all.splice(i,1);localStorage.setItem('hashhero_groups',JSON.stringify(all));render();}}));};render();
-    // --- Export groups ---
-    $('#exportGroups')?.addEventListener('click', ()=>{
-      const all = JSON.parse(localStorage.getItem('hashhero_groups')||'[]');
-      const payload = { version: '1.0', exportedAt: new Date().toISOString(), groups: all };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
-      const fn = 'hashhero_groups_' + new Date().toISOString().replace(/[:.]/g,'-') + '.json';
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = fn; a.click();
-      URL.revokeObjectURL(url);
-    });
-
-    // --- Import groups ---
-    $('#importGroups')?.addEventListener('click', ()=> $('#importFile').click());
-    $('#importFile')?.addEventListener('change', (e)=>{
-      const file = e.target.files && e.target.files[0];
-      if(!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        try{
-          // Create backup before import
-          const current = JSON.parse(localStorage.getItem('hashhero_groups')||'[]');
-          const backup = { version: '1.0', backedUpAt: new Date().toISOString(), groups: current };
-          const bblob = new Blob([JSON.stringify(backup, null, 2)], {type: 'application/json'});
-          const bname = 'hashhero_groups_backup_' + new Date().toISOString().replace(/[:.]/g,'-') + '.json';
-          const burl = URL.createObjectURL(bblob);
-          const ba = document.createElement('a'); ba.href = burl; ba.download = bname; ba.click();
-          URL.revokeObjectURL(burl);
-
-          // Parse import
-          const parsed = JSON.parse(reader.result);
-          const imported = Array.isArray(parsed) ? parsed : (parsed && Array.isArray(parsed.groups) ? parsed.groups : []);
-          if(!imported.length) { alert('No groups found in file.'); return; }
-
-          // Merge with overwrite prompt on conflicts
-          const byName = new Map(current.map(g=>[g.name,g]));
-          let added=0, updated=0;
-          for(const g of imported){
-            if(!g || typeof g.name!=='string' || !Array.isArray(g.tags)) continue;
-            const exists = byName.get(g.name);
-            if(exists){
-              if(confirm("Overwrite existing group '"+g.name+"'?")){
-                byName.set(g.name, {name:g.name, tags:g.tags, ts: Date.now()});
-                updated++;
-              }
-            }else{
-              byName.set(g.name, {name:g.name, tags:g.tags, ts: Date.now()});
-              added++;
-            }
-          }
-          const merged = Array.from(byName.values()).sort((a,b)=>b.ts-a.ts);
-          localStorage.setItem('hashhero_groups', JSON.stringify(merged));
-          alert('Import complete: '+added+' added, '+updated+' updated. A backup was downloaded just in case.');
-          render(); // refresh table
-          populateMyGroups?.(); // refresh dropdown on Generator if defined
-        }catch(err){
-          console.error(err);
-          alert('Import failed: invalid JSON.');
-        }finally{
-          e.target.value = ''; // reset file input
-        }
-      };
-      reader.readAsText(file);
-    });
-  }
-  if($('#timerStart')){let t=null,remain=0;const show=()=>$('#timerDisp').textContent=new Date(remain*1000).toISOString().substring(14,19);$('#timerStart').addEventListener('click',()=>{remain=parseInt($('#workMin').value||'25',10)*60;clearInterval(t);show();t=setInterval(()=>{remain--;show();if(remain<=0){clearInterval(t);alert('Time! Engage for 5 minutes.')}},1000)});$('#timerStop').addEventListener('click',()=>clearInterval(t));}
-  if($('#hashifyBtn')){$('#hashifyBtn').addEventListener('click',()=>{$('#hashifyOut').value=[...new Set(($('#hashifyInput').value||'').toLowerCase().replace(/[^a-z0-9\s\-]/g,' ').split(/\s+/).filter(Boolean))].map(w=>'#'+w).join(' ')});$('#copyHashify')?.addEventListener('click',()=>navigator.clipboard.writeText($('#hashifyOut').value));}
-  if($('#analyzeBtn')){$('#analyzeBtn').addEventListener('click',()=>{const words=($('#analyzeInput').value||'').toLowerCase().replace(/[^a-z0-9\s\-]/g,' ').split(/\s+/).filter(Boolean);const freq={};words.forEach(w=>freq[w]=(freq[w]||0)+1);const rows=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,120);$('#analyzeTable').innerHTML=rows.map(([w,c])=>`<tr><td>${w}</td><td>${c}</td></tr>`).join('')});}
-});
-</script>
-
-
-<script>
-(function(){
-  function $(s){ return document.querySelector(s); }
-  function setStatus(v){ var s=$('#amaStatus'); if(s) s.style.display = v ? 'inline-flex' : 'none'; }
-  var history = [];
-
-  async function ask(){
-    var qEl = $('#amaQ'), aEl = $('#amaA'), btn = $('#amaAsk');
-    if(!qEl || !aEl || !btn) return;
-    var question = (qEl.value || '').trim();
-    if(!question){ alert('Type a question first.'); return; }
-    aEl.textContent = '';
-    setStatus(true); btn.disabled = true;
-
-    try{
-      const resp = await fetch('/api/ask', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question, history })
-      });
-      const text = await resp.text();
-      let data = null; try { data = JSON.parse(text); } catch(e) {}
-      if (!resp.ok) {
-        aEl.textContent = (data && (data.error || data.detail)) || text || ('HTTP ' + resp.status);
-        return;
-      }
-      aEl.textContent = (data && data.answer) || 'No answer';
-      history.push({ role: 'user', content: question });
-      history.push({ role: 'assistant', content: aEl.textContent });
-    }catch(e){
-      aEl.textContent = 'Network error — ' + (e && e.message || e);
-    }finally{
-      setStatus(false); btn.disabled = false;
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', function(){
-    var btn = document.getElementById('amaAsk');
-    if(btn){ btn.addEventListener('click', ask); }
-  });
-})();
-</script>
-
+  <footer class="hh-footer">
+    <span>© 2025 HashHero</span>
+  </footer>
 </body>
 </html>
