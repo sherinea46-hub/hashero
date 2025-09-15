@@ -1,25 +1,15 @@
 :root{
   --bg:#0f1220; --card:#0b0e1a; --line:#2a2f45; --text:#e5e7eb; --muted:#a7adc8;
-  --accent:#6366f1; --chip:#2b2f4a; --star:#8b5cf6; --glow:#7c3aed;
+  --accent:#6366f1; --chip:#2b2f4a; --star:#8b5cf6; --glow:#7c3aed; --ok:#10b981; --warn:#f59e0b; --bad:#ef4444;
 }
 *{box-sizing:border-box}
 body{margin:0; background:var(--bg); color:var(--text); font:16px system-ui,Arial}
 a{color:inherit}
 
-.hh-header{
-  position:sticky; top:0; z-index:20; background:var(--bg);
-  display:flex; justify-content:space-between; align-items:center;
-  padding:10px 12px; border-bottom:1px solid #1b2138;
-}
+.hh-header{position:sticky; top:0; z-index:20; background:var(--bg); display:flex; justify-content:space-between; align-items:center; padding:10px 12px; border-bottom:1px solid #1b2138}
 .hh-brand{display:flex; gap:8px; align-items:center; font-weight:700; text-decoration:none}
 .hh-dot{display:inline-grid; place-items:center; width:28px; height:28px; border-radius:9px; background:var(--accent); color:#fff; font-weight:800}
-
-/* Mobile-friendly scrollable nav */
-.hh-nav{
-  display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch;
-  scrollbar-width:none;
-  max-width:70%;
-}
+.hh-nav{display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; max-width:70%}
 .hh-nav::-webkit-scrollbar{display:none}
 .hh-link{padding:8px 12px; border-radius:10px; text-decoration:none; color:#c7cbe3; white-space:nowrap}
 .hh-link--primary{background:var(--chip); border:1px solid #454a74; color:#fff; font-weight:700}
@@ -56,20 +46,20 @@ a{color:inherit}
 .chipbar{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
 .chip{background:var(--chip); color:#fff; padding:6px 10px; border-radius:999px; border:1px solid #3c4269; cursor:pointer}
 .chip:hover{filter:brightness(1.1)}
+.uploader{margin-top:10px}
 
-.exbar{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0}
-.ex{background:#1a1f36; color:#c7cbe3; border:1px solid #2b3355; border-radius:999px; padding:6px 10px; cursor:pointer}
-.ex:hover{filter:brightness(1.1)}
-
-.promo{display:flex; align-items:flex-start; gap:16px}
-.promo-col{flex:1}
-.promo-col-right{display:flex; flex-direction:column; gap:8px; align-items:flex-start}
-.hh-examples{padding-left:18px; margin:10px 0 0}
-.hh-examples li{margin:6px 0}
-.hh-cta{display:inline-block; background:linear-gradient(90deg,#7c3aed,#6366f1); color:#fff; text-decoration:none; padding:10px 14px; border-radius:10px; font-weight:700}
+.stats-wrap{margin-top:10px}
+.hidden{display:none}
+.stats-table{width:100%; border-collapse:collapse; font-size:14px; margin-top:6px}
+.stats-table th,.stats-table td{border-bottom:1px solid #212844; padding:8px 6px; text-align:left}
+.badge{display:inline-block; padding:3px 8px; border-radius:999px; font-weight:700}
+.badge.frequent{background:#1a263a; border:1px solid #29416a; color:#a1c1ff}
+.badge.average{background:#1a2a24; border:1px solid #2a4a39; color:#9ee1b0}
+.badge.rare{background:#2b1f19; border:1px solid #4d2c26; color:#f9c49a}
+.impact{height:8px; width:100px; background:#1f2743; border-radius:999px; overflow:hidden; display:inline-block; vertical-align:middle}
+.impact span{display:block; height:8px; background:linear-gradient(90deg,var(--warn),var(--ok)); width:0%}
 
 .ring{display:grid; place-items:center; margin-top:8px}
-/* Smaller, responsive timer */
 .ring svg{ width:min(300px,80vw); height:auto; }
 .ring-bg{fill:none; stroke:#1f2743; stroke-width:12}
 .ring-fg{fill:none; stroke:var(--accent); stroke-width:12; stroke-linecap:round; stroke-dasharray:339.292; stroke-dashoffset:339.292; transition:stroke-dashoffset .2s}
@@ -77,11 +67,8 @@ a{color:inherit}
 
 .hh-footer{border-top:1px solid #1b2138; padding:14px 12px; color:#8c92b0; text-align:center}
 
-/* ============ Mobile Tweaks ============ */
-@media (max-width: 900px){
-  .grid2{grid-template-columns:1fr}
-  .promo{flex-direction:column}
-}
+/* Mobile tweaks */
+@media (max-width: 900px){ .grid2{grid-template-columns:1fr} .promo{flex-direction:column} }
 @media (max-width: 640px){
   body{font-size:15px}
   .hh-section h1{font-size:24px}
@@ -95,7 +82,7 @@ a{color:inherit}
   body{font-size:14px}
   .hh-section{margin:12px 0}
   .hh-section h1{font-size:22px}
-  .chip,.ex{padding:5px 8px; font-size:12px}
+  .chip{padding:5px 8px; font-size:12px}
   .hh-cta{padding:9px 12px}
   .output{min-height:180px}
 }
