@@ -2,33 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
-  <meta name="theme-color" content="#0f1220" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>HashHero — Generator, Ask AI, QR, Timer</title>
   <link rel="stylesheet" href="/assets/css/site.css" />
   <script defer src="/assets/js/app.js"></script>
 </head>
 <body>
   <header class="hh-header">
-    <a class="hh-brand" href="#"><span class="hh-dot">H</span><span>HashHero</span></a>
+    <a class="hh-brand" href="#">
+      <span class="hh-dot">H</span><span>HashHero</span>
+    </a>
     <nav class="hh-nav">
       <a class="hh-link hh-link--primary" href="#generator">Generator</a>
       <a class="hh-link hh-link--primary askai" href="#ama">Ask AI</a>
       <a class="hh-link" href="#qr">QR Codes</a>
-      <a class="hh-link" href="#timer">Timer</a>
+      <a class="hh-link" href="#timer">Engagement Timer</a>
     </nav>
   </header>
 
   <main class="hh-main">
+
+    <!-- Promo card to drive traffic to Ask AI -->
     <section id="promo" class="hh-section">
       <div class="card highlight promo">
         <div class="promo-col">
           <h2>Ask AI Anything ✨</h2>
-          <p class="muted">Instant answers for growth, hashtags, captions, and strategy.</p>
+          <p class="muted">
+            Get instant, clear answers to grow your audience faster — strategy tips, hashtag help, captions, hooks, and more.
+          </p>
           <ul class="hh-examples">
             <li><button class="ex" data-q="Best hashtags for fitness reels?">Best hashtags for fitness reels?</button></li>
-            <li><button class="ex" data-q="Give me 5 hooks for a travel vlog about Paris.">5 hooks for Paris travel vlog</button></li>
-            <li><button class="ex" data-q="How do I get more YouTube views in 30 days?">Grow YouTube in 30 days</button></li>
+            <li><button class="ex" data-q="Give me 5 hooks for a travel vlog about Paris.">Give me 5 hooks for a travel vlog about Paris.</button></li>
+            <li><button class="ex" data-q="How do I get more YouTube views in 30 days?">How do I get more YouTube views in 30 days?</button></li>
           </ul>
         </div>
         <div class="promo-col-right">
@@ -75,23 +80,6 @@
             <button id="g-clear" class="btn btn-ghost">Clear</button>
             <button id="g-copy" class="btn btn-ghost">Copy</button>
           </div>
-
-          <div class="uploader">
-            <label class="lbl">Or upload an image</label>
-            <input id="g-img" type="file" accept="image/*" />
-            <div class="small muted">We extract concepts from the photo to suggest better hashtags.</div>
-            <button id="g-img-analyze" class="btn btn-ghost">Analyze Image → Add keywords</button>
-            <div id="g-img-status" class="small muted"></div>
-          </div>
-
-          <div class="uploader">
-            <label class="lbl">Or paste an Instagram post URL</label>
-            <input id="g-url" class="input" placeholder="https://www.instagram.com/p/XXXXXXXXX/" />
-            <div class="small muted">We’ll pull the caption and extract keywords for you.</div>
-            <button id="g-url-analyze" class="btn btn-ghost">Analyze URL → Add keywords</button>
-            <div id="g-url-status" class="small muted"></div>
-          </div>
-
           <p class="hint">Tip: add location, format (cinematic, POV, tutorial), and audience (beginners, pros) for better tags.</p>
         </div>
 
@@ -102,33 +90,22 @@
           </div>
           <textarea id="g-out" class="output" rows="10" readonly></textarea>
           <div id="g-warnings" class="muted small"></div>
-
-          <div class="row">
-            <button id="g-toggle-stats" class="btn btn-ghost">Show Details</button>
-          </div>
-          <div id="g-stats-wrap" class="stats-wrap hidden">
-            <table class="stats-table" id="g-stats-table">
-              <thead><tr><th>Hashtag</th><th>Popularity</th><th>Impact</th></tr></thead>
-              <tbody></tbody>
-            </table>
-            <p class="hint">Popularity tiers are estimates. For live data, plug a provider key in <code>HASHHERO_STATS_PROVIDER</code>.</p>
-          </div>
         </div>
       </div>
       <div class="chipbar" id="g-suggestions"></div>
     </section>
 
+    <!-- Ask AI (formerly AMA) -->
     <section id="ama" class="hh-section">
       <h1>Ask AI</h1>
       <div class="card">
-        <p class="muted" style="margin-top:0">Ask anything about content, growth, hashtags, captions, or strategy.</p>
-        <div class="row row-mobile-stack">
+        <p class="muted" style="margin-top:0">
+          Ask anything about content, growth, hashtags, captions, or strategy. Get instant, actionable answers.
+        </p>
+        <div class="row">
           <input id="a-q" class="input" placeholder="Try: Best hashtags for morning workout reels?" />
-          <div class="row btnrow">
-            <button id="a-ask" class="btn">Ask</button>
-            <button id="a-health" class="btn btn-ghost">Health</button>
-            <button id="a-clear" class="btn btn-ghost">Clear</button>
-          </div>
+          <button id="a-ask" class="btn">Ask</button>
+          <button id="a-health" class="btn btn-ghost">Health</button>
         </div>
         <div class="exbar">
           <span class="muted small">Examples:</span>
@@ -137,6 +114,7 @@
           <button class="ex" data-q="What hooks work for travel reels about Tokyo?">Hooks for Tokyo travel reels</button>
         </div>
         <pre id="a-out" class="outputblock"></pre>
+        <p class="hint">Testing? Set <code>HASHHERO_MOCK=1</code> in Vercel env to verify wiring, then set to 0 to go live.</p>
       </div>
     </section>
 
@@ -203,7 +181,6 @@
         <div class="row">
           <button id="t-start" class="btn">Start</button>
           <button id="t-stop" class="btn btn-ghost">Stop</button>
-          <button id="t-reset" class="btn btn-ghost">Reset</button>
           <span id="t-status" class="muted small"></span>
         </div>
         <div class="ring">
@@ -217,8 +194,11 @@
         <audio id="t-beep" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
       </div>
     </section>
+
   </main>
 
-  <footer class="hh-footer"><span>© 2025 HashHero</span></footer>
+  <footer class="hh-footer">
+    <span>© 2025 HashHero</span>
+  </footer>
 </body>
 </html>
