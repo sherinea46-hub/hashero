@@ -84,6 +84,14 @@
             <div id="g-img-status" class="small muted"></div>
           </div>
 
+          <div class="uploader">
+            <label class="lbl">Or paste an Instagram post URL</label>
+            <input id="g-url" class="input" placeholder="https://www.instagram.com/p/XXXXXXXXX/" />
+            <div class="small muted">We’ll pull the caption and extract keywords for you.</div>
+            <button id="g-url-analyze" class="btn btn-ghost">Analyze URL → Add keywords</button>
+            <div id="g-url-status" class="small muted"></div>
+          </div>
+
           <p class="hint">Tip: add location, format (cinematic, POV, tutorial), and audience (beginners, pros) for better tags.</p>
         </div>
 
@@ -195,6 +203,7 @@
         <div class="row">
           <button id="t-start" class="btn">Start</button>
           <button id="t-stop" class="btn btn-ghost">Stop</button>
+          <button id="t-reset" class="btn btn-ghost">Reset</button>
           <span id="t-status" class="muted small"></span>
         </div>
         <div class="ring">

@@ -23,7 +23,7 @@ const SUGGESTIONS_STARTER = [
 ];
 const stem = w => w.replace(/[^a-z0-9]+/gi,"").toLowerCase();
 
-/* ================= Stats Helper ================= */
+/* ============== Stats Helper ============== */
 function renderStatsTable(tags, platform){
   const tbody = document.querySelector("#g-stats-table tbody");
   tbody.innerHTML = "";
@@ -52,7 +52,7 @@ function renderStatsTable(tags, platform){
   });
 }
 
-/* ============== SMART HASHTAG GENERATOR ============== */
+/* ============== Generator Core ============== */
 function suggestFromDesc(desc) {
   const words = desc.split(/[\s,./]+/).map(stem).filter(Boolean);
   const tokens = [];
@@ -168,10 +168,11 @@ function initGenerator(){
     const wrap = document.getElementById("g-stats-wrap");
     wrap.classList.toggle("hidden");
     if (!wrap.classList.contains("hidden")){
-      const current = document.getElementById("g-out").value.trim().split(/\s+/).map(s=>s.replace(/^#/,""));
-      if (current.length && current[0]) renderStatsTable(current, document.getElementById("g-platform").value);
+      const current = document.getElementById("g-out").value.trim().split(/\s+/).map(s=>s.replace(/^#/,"")).filter(Boolean);
+      if (current.length) renderStatsTable(current, document.getElementById("g-platform").value);
     }
   };
+
   // Image analysis
   document.getElementById("g-img-analyze").onclick = async ()=>{
     const file = document.getElementById("g-img").files?.[0];
@@ -179,7 +180,7 @@ function initGenerator(){
     if (!file){ status.textContent = "Select an image first."; return; }
     status.textContent = "Analyzing…";
     const b64 = await new Promise(resolve=>{
-      const r = new FileReader(); r.onload = ()=>resolve(r.result.split(",")[1]); r.readAsDataURL(file);
+      const r = new FileReader(); r.onload = ()=>resolve(r.result.split(\",\")[1]); r.readAsDataURL(file);
     });
     try{
       const r = await fetch("/api/image-tags", {
@@ -189,13 +190,62 @@ function initGenerator(){
       const data = await r.json();
       if (Array.isArray(data?.keywords) && data.keywords.length){
         const ta = document.getElementById("g-desc");
-        ta.value = (ta.value ? ta.value+" " : "") + data.keywords.slice(0,10).join(" ");
+        ta.value = (ta.value ? ta.value+\" \" : \"\") + data.keywords.slice(0,10).join(\" \");
         status.textContent = `Added ${data.keywords.length} keywords from image.`;
       }else{
         status.textContent = "No keywords detected.";
       }
     }catch(e){ status.textContent = "Error analyzing image."; }
   };
+
+  // URL analysis
+  document.getElementById("g-url-analyze").onclick = async ()=>{
+    const url = document.getElementById("g-url").value.trim();
+    const status = document.getElementById("g-url-status");
+    if (!url){ status.textContent = "Paste an Instagram URL."; return; }
+    status.textContent = "Fetching caption…";
+    try{
+      const r = await fetch("/api/ig-extract", {
+        method:"POST", headers:{"content-type":"application/json"},
+        body: JSON.stringify({ url })
+      });
+      const data = await r.json();
+      if (data?.caption){
+        status.textContent = "Caption found. Extracting keywords…";
+        const kw = extractKeywordsFromText(data.caption);
+        if (kw.length){
+          const ta = document.getElementById("g-desc");
+          ta.value = (ta.value ? ta.value+\" \" : \"\") + kw.slice(0,12).join(\" \");
+          status.textContent = `Added ${kw.length} keywords from caption.`;
+        }else{
+          status.textContent = "No keywords extracted.";
+        }
+      }else{
+        status.textContent = data?.error?.message || "Could not read caption.";
+      }
+    }catch(e){ status.textContent = "Error fetching URL."; }
+  };
+}
+
+/* Simple keyword extraction from caption text (client-side, no AI) */
+function extractKeywordsFromText(txt){
+  txt = (txt||\"\").toLowerCase().replace(/https?:\\/\\/\\S+/g, \" \").replace(/[^\x20-\x7E]+/g, \" \"); // strip links & emojis
+  const words = txt.split(/[\\s,./!?:;()\"'\\[\\]{}#]+/).map(w=>w.trim()).filter(Boolean);
+  const freq = new Map();
+  for (let w of words){
+    if (STOP.has(w) || w.length<3 || /^\\d+$/.test(w)) continue;
+    w = w.replace(/'s$/,''); // possessive
+    freq.set(w, (freq.get(w)||0)+1);
+  }
+  // take top 20 by frequency, then unique stems
+  const sorted = Array.from(freq.entries()).sort((a,b)=>b[1]-a[1]).map(x=>x[0]).slice(0,20);
+  const out=[]; const seen=new Set();
+  for (const w of sorted){
+    const s = stem(w);
+    if (seen.has(s)) continue;
+    seen.add(s); out.push(w);
+  }
+  return out;
 }
 
 /* ============== Ask AI (AMA) ============== */
@@ -286,6 +336,18 @@ function nextPhase(){
 function startPhase(mins, label){ tTotal = mins*60*1000; tRemain = tTotal; setRing(0); document.getElementById("t-status").textContent = label; }
 function startTimer(){ tCycles = +document.getElementById("t-cycles").value||3; tCyclesLeft = tCycles; tPhase="work"; startPhase(+document.getElementById("t-work").value||20, `Work (left ${tCyclesLeft})`); clearInterval(tInterval); tInterval = setInterval(tick, 1000); }
 function stopTimer(){ clearInterval(tInterval); tInterval=null; }
+function resetTimer(){
+  stopTimer();
+  document.getElementById("t-status").textContent = "Reset";
+  document.getElementById("t-clock").textContent = "00:00";
+  setRing(0);
+}
+
+function initTimer(){
+  document.getElementById("t-start").onclick = startTimer;
+  document.getElementById("t-stop").onclick = ()=>{ stopTimer(); document.getElementById("t-status").textContent="Stopped"; };
+  document.getElementById("t-reset").onclick = resetTimer;
+}
 
 /* ============== Boot ============== */
 document.addEventListener("DOMContentLoaded", ()=>{

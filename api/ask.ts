@@ -1,4 +1,4 @@
-// Vercel Serverless Function (Node runtime) — Ask AI
+// /api/ask.ts — Ask AI
 export default async function handler(req: any, res: any) {
   try {
     if (req.method === "OPTIONS") {
