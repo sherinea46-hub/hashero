@@ -156,6 +156,13 @@ function initAMA(){
     alert(r.ok ? "API is up ✅" : `API down ❌ (${r.status})`);
   };
 
+  // NEW: Clear button
+  document.getElementById("a-clear").onclick = ()=>{
+    q.value = "";
+    out.textContent = "";
+    q.focus();
+  };
+
   // Example buttons fill input + auto-run
   document.querySelectorAll(".ex").forEach(btn=>{
     btn.addEventListener("click", ()=>{
@@ -163,7 +170,6 @@ function initAMA(){
       const amaInput = document.getElementById("a-q");
       amaInput.value = text;
       document.getElementById("a-ask").click();
-      // smooth scroll to AMA section
       document.getElementById("ama").scrollIntoView({behavior:"smooth"});
     });
   });

@@ -18,7 +18,7 @@ a{color:inherit}
 .hh-link{padding:8px 12px; border-radius:10px; text-decoration:none; color:#c7cbe3}
 .hh-link--primary{background:var(--chip); border:1px solid #454a74; color:#fff; font-weight:700}
 .hh-link--primary:nth-child(1){outline:2px solid var(--star); outline-offset:1px}
-.hh-link--primary.askai{outline:2px solid var(--glow); outline-offset:1px} /* highlight Ask AI */
+.hh-link--primary.askai{outline:2px solid var(--glow); outline-offset:1px}
 
 .hh-main{max-width:1100px; margin:0 auto; padding:18px 16px 60px}
 .hh-section{margin:18px 0}
@@ -63,6 +63,8 @@ a{color:inherit}
 .hh-cta{display:inline-block; background:linear-gradient(90deg,#7c3aed,#6366f1); color:#fff; text-decoration:none; padding:10px 14px; border-radius:10px; font-weight:700}
 
 .ring{display:grid; place-items:center; margin-top:8px}
+/* Shrink & make timer responsive */
+.ring svg{ width:min(350px,70vw); height:auto; }
 .ring-bg{fill:none; stroke:#1f2743; stroke-width:12}
 .ring-fg{fill:none; stroke:var(--accent); stroke-width:12; stroke-linecap:round; stroke-dasharray:339.292; stroke-dashoffset:339.292; transition:stroke-dashoffset .2s}
 .ring-txt{fill:#fff; font:700 22px system-ui,Arial}
