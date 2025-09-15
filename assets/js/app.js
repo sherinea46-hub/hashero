@@ -156,14 +156,12 @@ function initAMA(){
     alert(r.ok ? "API is up ✅" : `API down ❌ (${r.status})`);
   };
 
-  // NEW: Clear button
   document.getElementById("a-clear").onclick = ()=>{
     q.value = "";
     out.textContent = "";
     q.focus();
   };
 
-  // Example buttons fill input + auto-run
   document.querySelectorAll(".ex").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const text = btn.getAttribute("data-q") || btn.textContent;
