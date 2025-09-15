@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>HashHero — Generator, AMA, QR, Timer</title>
+  <title>HashHero — Generator, Ask AI, QR, Timer</title>
   <link rel="stylesheet" href="/assets/css/site.css" />
   <script defer src="/assets/js/app.js"></script>
 </head>
@@ -14,13 +14,34 @@
     </a>
     <nav class="hh-nav">
       <a class="hh-link hh-link--primary" href="#generator">Generator</a>
-      <a class="hh-link hh-link--primary" href="#ama">AMA</a>
+      <a class="hh-link hh-link--primary askai" href="#ama">Ask AI</a>
       <a class="hh-link" href="#qr">QR Codes</a>
       <a class="hh-link" href="#timer">Engagement Timer</a>
     </nav>
   </header>
 
   <main class="hh-main">
+
+    <!-- Promo card to drive traffic to Ask AI -->
+    <section id="promo" class="hh-section">
+      <div class="card highlight promo">
+        <div class="promo-col">
+          <h2>Ask AI Anything ✨</h2>
+          <p class="muted">
+            Get instant, clear answers to grow your audience faster — strategy tips, hashtag help, captions, hooks, and more.
+          </p>
+          <ul class="hh-examples">
+            <li><button class="ex" data-q="Best hashtags for fitness reels?">Best hashtags for fitness reels?</button></li>
+            <li><button class="ex" data-q="Give me 5 hooks for a travel vlog about Paris.">Give me 5 hooks for a travel vlog about Paris.</button></li>
+            <li><button class="ex" data-q="How do I get more YouTube views in 30 days?">How do I get more YouTube views in 30 days?</button></li>
+          </ul>
+        </div>
+        <div class="promo-col-right">
+          <a class="hh-cta" href="#ama">Try Ask AI</a>
+          <span class="muted small">No login. Instant answers.</span>
+        </div>
+      </div>
+    </section>
 
     <section id="generator" class="hh-section">
       <h1>Smart Hashtag Generator</h1>
@@ -74,16 +95,26 @@
       <div class="chipbar" id="g-suggestions"></div>
     </section>
 
+    <!-- Ask AI (formerly AMA) -->
     <section id="ama" class="hh-section">
-      <h1>AMA</h1>
+      <h1>Ask AI</h1>
       <div class="card">
+        <p class="muted" style="margin-top:0">
+          Ask anything about content, growth, hashtags, captions, or strategy. Get instant, actionable answers.
+        </p>
         <div class="row">
-          <input id="a-q" class="input" placeholder="Ask me anything…" />
+          <input id="a-q" class="input" placeholder="Try: Best hashtags for morning workout reels?" />
           <button id="a-ask" class="btn">Ask</button>
           <button id="a-health" class="btn btn-ghost">Health</button>
         </div>
+        <div class="exbar">
+          <span class="muted small">Examples:</span>
+          <button class="ex" data-q="Give me 5 caption ideas for a cozy coffee shot.">Caption ideas for a coffee shot</button>
+          <button class="ex" data-q="How do I grow on TikTok without posting daily?">Grow on TikTok w/o daily posts</button>
+          <button class="ex" data-q="What hooks work for travel reels about Tokyo?">Hooks for Tokyo travel reels</button>
+        </div>
         <pre id="a-out" class="outputblock"></pre>
-        <p class="hint">Start with <code>HASHHERO_MOCK=1</code> in Vercel env to verify wiring, then set to 0 to go live.</p>
+        <p class="hint">Testing? Set <code>HASHHERO_MOCK=1</code> in Vercel env to verify wiring, then set to 0 to go live.</p>
       </div>
     </section>
 

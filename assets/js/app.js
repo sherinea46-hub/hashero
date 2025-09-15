@@ -131,27 +131,42 @@ function initGenerator(){
   };
 }
 
-/* ============== AMA ============== */
+/* ============== Ask AI (AMA) ============== */
 function initAMA(){
   const q = document.getElementById("a-q");
   const out = document.getElementById("a-out");
   const ask = async ()=>{
+    const question = q.value.trim();
+    if (!question){ q.focus(); return; }
     out.textContent = "…thinking";
     try{
       const r = await fetch("/api/ask", {
         method:"POST",
         headers:{"content-type":"application/json"},
-        body: JSON.stringify({ question: q.value.trim() })
+        body: JSON.stringify({ question })
       });
       out.textContent = await r.text();
     }catch(e){ out.textContent = "⚠️ Error. Try again."; }
   };
   document.getElementById("a-ask").onclick = ask;
   q.addEventListener("keydown", e=>{ if(e.key==="Enter") ask(); });
+
   document.getElementById("a-health").onclick = async ()=>{
     const r = await fetch("/api/ask", { method:"POST", headers:{ "x-hashhero-health":"ping" } });
     alert(r.ok ? "API is up ✅" : `API down ❌ (${r.status})`);
   };
+
+  // Example buttons fill input + auto-run
+  document.querySelectorAll(".ex").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const text = btn.getAttribute("data-q") || btn.textContent;
+      const amaInput = document.getElementById("a-q");
+      amaInput.value = text;
+      document.getElementById("a-ask").click();
+      // smooth scroll to AMA section
+      document.getElementById("ama").scrollIntoView({behavior:"smooth"});
+    });
+  });
 }
 
 /* ============== QR ============== */
