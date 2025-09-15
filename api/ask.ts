@@ -1,8 +1,9 @@
 // Vercel Serverless Function (Node runtime)
 // File: api/ask.ts
+
 export default async function handler(req: any, res: any) {
   try {
-    // CORS preflight (keeps things happy if called cross-origin)
+    // CORS preflight
     if (req.method === "OPTIONS") {
       res.setHeader("access-control-allow-origin", "*");
       res.setHeader("access-control-allow-methods", "POST, OPTIONS");
@@ -25,9 +26,11 @@ export default async function handler(req: any, res: any) {
       return res.status(400).json({ error: { message: "Missing 'question' in JSON body" } });
     }
 
+    // Mock mode
     const MOCK = process.env.HASHHERO_MOCK === "1";
     if (MOCK) return res.status(200).send(`You asked: "${question}". (MOCK reply)`);
 
+    // Live mode
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
     if (!OPENAI_API_KEY) {
       return res.status(500).json({ error: { message: "Server missing OPENAI_API_KEY" } });
@@ -58,9 +61,21 @@ export default async function handler(req: any, res: any) {
     }
 
     const data = await r.json();
-    const text = data?.output_text ?? "No output_text returned.";
+
+    // Prefer output_text if present, otherwise dig into content
+    let text = data?.output_text;
+    if (!text && Array.isArray(data?.output)) {
+      const first = data.output[0];
+      if (first?.content?.[0]?.text) {
+        text = first.content[0].text;
+      }
+    }
+
+    if (!text) text = "⚠️ OpenAI response did not include text.";
+
     res.setHeader("content-type", "text/plain; charset=utf-8");
     return res.status(200).send(text);
+
   } catch (e: any) {
     return res.status(500).json({ error: { message: e?.message ?? String(e) } });
   }
