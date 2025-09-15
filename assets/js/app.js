@@ -252,9 +252,21 @@ function startTimer(){
 }
 function stopTimer(){ clearInterval(tInterval); tInterval=null; }
 
+function resetTimer(){
+  clearInterval(tInterval); tInterval = null;
+  tPhase = "work"; tTotal = 0; tRemain = 0;
+  const clock = document.getElementById("t-clock"); if (clock) clock.textContent = "00:00";
+  if (typeof setRing === "function") setRing(0);
+  const s = document.getElementById("t-status"); if (s) s.textContent = "Reset";
+}
+
+
 function initTimer(){
   document.getElementById("t-start").onclick = startTimer;
-  document.getElementById("t-stop").onclick = ()=>{ stopTimer(); document.getElementById("t-status").textContent="Stopped"; };
+  document.getElementById("t-stop").onclick = ()=>{ stopTimer(); document.getElementById("t-status").textContent="Stopped"; 
+  var r = document.getElementById("t-reset");
+  if (r) r.onclick = resetTimer;
+};
 }
 
 document.addEventListener("DOMContentLoaded", ()=>{
