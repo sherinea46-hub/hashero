@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="theme-color" content="#0f1220" />
   <title>HashHero — Generator, Ask AI, QR, Timer</title>
   <link rel="stylesheet" href="/assets/css/site.css" />
   <script defer src="/assets/js/app.js"></script>
@@ -16,7 +17,7 @@
       <a class="hh-link hh-link--primary" href="#generator">Generator</a>
       <a class="hh-link hh-link--primary askai" href="#ama">Ask AI</a>
       <a class="hh-link" href="#qr">QR Codes</a>
-      <a class="hh-link" href="#timer">Engagement Timer</a>
+      <a class="hh-link" href="#timer">Timer</a>
     </nav>
   </header>
 
@@ -100,11 +101,13 @@
         <p class="muted" style="margin-top:0">
           Ask anything about content, growth, hashtags, captions, or strategy. Get instant, actionable answers.
         </p>
-        <div class="row">
+        <div class="row row-mobile-stack">
           <input id="a-q" class="input" placeholder="Try: Best hashtags for morning workout reels?" />
-          <button id="a-ask" class="btn">Ask</button>
-          <button id="a-health" class="btn btn-ghost">Health</button>
-          <button id="a-clear" class="btn btn-ghost">Clear</button>
+          <div class="row btnrow">
+            <button id="a-ask" class="btn">Ask</button>
+            <button id="a-health" class="btn btn-ghost">Health</button>
+            <button id="a-clear" class="btn btn-ghost">Clear</button>
+          </div>
         </div>
         <div class="exbar">
           <span class="muted small">Examples:</span>

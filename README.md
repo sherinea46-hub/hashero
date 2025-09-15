@@ -1,21 +1,15 @@
-# HashHero — URL-to-Keywords + Timer Reset
+# HashHero — Mobile-Optimized Build
 
-New features:
-- **Instagram URL input** → fetch caption (oEmbed if token set, else best-effort HTML) → extract keywords → feed the generator.
-- **Timer Reset** button (clears ring and clock back to 00:00).
+What’s new:
+- **Mobile-first nav**: horizontal scrollable nav pills.
+- **Stacked Ask AI controls** on phones with full-width buttons.
+- **Smaller, responsive timer** (max ~300px, 80vw on small screens).
+- Tightened paddings, font sizes, and chip sizes for narrow viewports.
 
-Other features kept:
-- Smart Generator with **popularity tiers** & **impact score** (mock provider by default)
-- **Image upload** → AI Vision keywords
-- **Ask AI** with Clear, mobile-optimized layout, smaller timer
+Deploy:
+1. Upload contents to your repo (preserve folders), commit to `main`.
+2. In Vercel → Environment Variables:
+   - `OPENAI_API_KEY = <your key>`
+   - `HASHHERO_MOCK = 1` for testing; switch to `0` for live.
+3. Redeploy and test on phone (Ask AI examples auto-run & scroll).
 
-## Env (Vercel → Settings → Environment Variables)
-- `OPENAI_API_KEY` — required for Ask AI and Image keywords (if `HASHHERO_MOCK=0`)
-- `HASHHERO_MOCK` — `1` for testing (mock data), `0` for live
-- `HASHHERO_VISION_MODEL` — optional (e.g., `gpt-4o-mini`)
-- `HASHHERO_STATS_PROVIDER` — optional (plug vendor if you have one)
-- `HASHHERO_IG_OEMBED_TOKEN` — optional (Facebook App token to use Instagram oEmbed for captions)
-
-## Notes
-- Instagram may block raw HTML fetches; oEmbed with a token is the most reliable way.
-- We do **not** scrape IG beyond reading the caption via oEmbed or meta description when available.

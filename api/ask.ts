@@ -1,4 +1,4 @@
-// /api/ask.ts — Ask AI
+// Vercel Serverless Function (Node runtime)
 export default async function handler(req: any, res: any) {
   try {
     if (req.method === "OPTIONS") {
@@ -7,8 +7,12 @@ export default async function handler(req: any, res: any) {
       res.setHeader("access-control-allow-headers", "content-type, x-hashhero-health");
       return res.status(204).end();
     }
-    if (req.headers["x-hashhero-health"] === "ping") return res.status(200).send("ok");
-    if (req.method !== "POST") return res.status(405).json({ error: { message: "Use POST" } });
+    if (req.headers["x-hashhero-health"] === "ping") {
+      return res.status(200).send("ok");
+    }
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: { message: "Use POST" } });
+    }
 
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
     const question = body?.question;
@@ -20,10 +24,12 @@ export default async function handler(req: any, res: any) {
     if (MOCK) return res.status(200).send(`You asked: "${question}". (MOCK reply)`);
 
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-    if (!OPENAI_API_KEY) return res.status(500).json({ error: { message: "Server missing OPENAI_API_KEY" } });
+    if (!OPENAI_API_KEY) {
+      return res.status(500).json({ error: { message: "Server missing OPENAI_API_KEY" } });
+    }
 
     const model = process.env.HASHHERO_MODEL || "gpt-4o-mini";
-    const sys = process.env.HASHHERO_SYSTEM_PROMPT || "You are a concise, helpful AMA assistant for social growth.";
+    const sys = process.env.HASHHERO_SYSTEM_PROMPT || "You are a concise, helpful AMA assistant.";
 
     const r = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
@@ -44,7 +50,7 @@ export default async function handler(req: any, res: any) {
     }
 
     const data = await r.json();
-    let text = data?.output_text;
+    let text: string | undefined = data?.output_text;
     if (!text && Array.isArray(data?.output)) {
       const first = data.output[0];
       if (first?.content?.[0]?.text) text = first.content[0].text;

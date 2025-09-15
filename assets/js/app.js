@@ -1,4 +1,4 @@
-/* ================= Utility ================= */
+/* ============== SMART HASHTAG GENERATOR ============== */
 const STOP = new Set(["the","a","an","and","or","to","for","with","on","in","at","of","my","our","your",
 "this","that","is","are","be","from","by","it","as","about","into","over","up","down","out"]);
 const GENERIC = new Set(["love","instagood","photooftheday","beautiful","happy","cute","tbt","fashion",
@@ -21,38 +21,9 @@ const SUGGESTIONS_STARTER = [
   "travel", "food", "fitness", "beginner", "photography", "sunset", "tutorial", "vlog",
   "cinematic", "paris", "tokyo", "newyork", "budget", "behindthescenes", "tips", "guide"
 ];
+
 const stem = w => w.replace(/[^a-z0-9]+/gi,"").toLowerCase();
 
-/* ============== Stats Helper ============== */
-function renderStatsTable(tags, platform){
-  const tbody = document.querySelector("#g-stats-table tbody");
-  tbody.innerHTML = "";
-  fetch("/api/hashtag-stats", {
-    method:"POST",
-    headers:{ "content-type":"application/json" },
-    body: JSON.stringify({ tags, platform })
-  }).then(r=>r.json()).then(data=>{
-    (data?.stats||[]).forEach(row=>{
-      const tr = document.createElement("tr");
-      const tdTag = document.createElement("td"); tdTag.textContent = `#${row.tag}`;
-      const tdPop = document.createElement("td");
-      const b = document.createElement("span");
-      b.className = `badge ${row.popularity}`;
-      b.textContent = row.popularity[0].toUpperCase()+row.popularity.slice(1);
-      tdPop.appendChild(b);
-      const tdImp = document.createElement("td");
-      const bar = document.createElement("span"); bar.className = "impact";
-      const fill = document.createElement("span"); fill.style.width = `${Math.round(row.impact*100)}%`;
-      bar.appendChild(fill); tdImp.appendChild(bar);
-      tr.appendChild(tdTag); tr.appendChild(tdPop); tr.appendChild(tdImp);
-      tbody.appendChild(tr);
-    });
-  }).catch(()=>{
-    tbody.innerHTML = `<tr><td colspan="3" class="muted">Stats provider unavailable.</td></tr>`;
-  });
-}
-
-/* ============== Generator Core ============== */
 function suggestFromDesc(desc) {
   const words = desc.split(/[\s,./]+/).map(stem).filter(Boolean);
   const tokens = [];
@@ -133,18 +104,13 @@ function makeHashtags(){
   const tags = ordered
     .filter(t=>t.length <= 24)
     .slice(0, max)
-    .map(t=>t.replace(/\s+/g,""));
+    .map(t=>`#${t.replace(/\s+/g,"")}`);
 
-  const out = document.getElementById("g-out");
-  out.value = tags.map(t=>`#${t}`).join(" ");
+  document.getElementById("g-out").value = tags.join(" ");
   document.getElementById("g-count").textContent = String(tags.length);
   const filtered = base.filter(x=>GENERIC.has(x));
   document.getElementById("g-warnings").textContent =
     filtered.length ? `Filtered ${filtered.length} generic tags.` : "";
-
-  if (!document.getElementById("g-stats-wrap").classList.contains("hidden")){
-    renderStatsTable(tags, platform);
-  }
 }
 
 function initGenerator(){
@@ -155,7 +121,6 @@ function initGenerator(){
     document.getElementById("g-out").value="";
     document.getElementById("g-count").textContent="0";
     document.getElementById("g-warnings").textContent="";
-    document.querySelector("#g-stats-table tbody").innerHTML="";
   };
   document.getElementById("g-copy").onclick = async ()=>{
     const v = document.getElementById("g-out").value;
@@ -164,88 +129,6 @@ function initGenerator(){
     document.getElementById("g-warnings").textContent = "Copied ✅";
     setTimeout(()=>document.getElementById("g-warnings").textContent="",1500);
   };
-  document.getElementById("g-toggle-stats").onclick = ()=>{
-    const wrap = document.getElementById("g-stats-wrap");
-    wrap.classList.toggle("hidden");
-    if (!wrap.classList.contains("hidden")){
-      const current = document.getElementById("g-out").value.trim().split(/\s+/).map(s=>s.replace(/^#/,"")).filter(Boolean);
-      if (current.length) renderStatsTable(current, document.getElementById("g-platform").value);
-    }
-  };
-
-  // Image analysis
-  document.getElementById("g-img-analyze").onclick = async ()=>{
-    const file = document.getElementById("g-img").files?.[0];
-    const status = document.getElementById("g-img-status");
-    if (!file){ status.textContent = "Select an image first."; return; }
-    status.textContent = "Analyzing…";
-    const b64 = await new Promise(resolve=>{
-      const r = new FileReader(); r.onload = ()=>resolve(r.result.split(\",\")[1]); r.readAsDataURL(file);
-    });
-    try{
-      const r = await fetch("/api/image-tags", {
-        method:"POST", headers:{"content-type":"application/json"},
-        body: JSON.stringify({ image_b64: b64, platform: document.getElementById("g-platform").value })
-      });
-      const data = await r.json();
-      if (Array.isArray(data?.keywords) && data.keywords.length){
-        const ta = document.getElementById("g-desc");
-        ta.value = (ta.value ? ta.value+\" \" : \"\") + data.keywords.slice(0,10).join(\" \");
-        status.textContent = `Added ${data.keywords.length} keywords from image.`;
-      }else{
-        status.textContent = "No keywords detected.";
-      }
-    }catch(e){ status.textContent = "Error analyzing image."; }
-  };
-
-  // URL analysis
-  document.getElementById("g-url-analyze").onclick = async ()=>{
-    const url = document.getElementById("g-url").value.trim();
-    const status = document.getElementById("g-url-status");
-    if (!url){ status.textContent = "Paste an Instagram URL."; return; }
-    status.textContent = "Fetching caption…";
-    try{
-      const r = await fetch("/api/ig-extract", {
-        method:"POST", headers:{"content-type":"application/json"},
-        body: JSON.stringify({ url })
-      });
-      const data = await r.json();
-      if (data?.caption){
-        status.textContent = "Caption found. Extracting keywords…";
-        const kw = extractKeywordsFromText(data.caption);
-        if (kw.length){
-          const ta = document.getElementById("g-desc");
-          ta.value = (ta.value ? ta.value+\" \" : \"\") + kw.slice(0,12).join(\" \");
-          status.textContent = `Added ${kw.length} keywords from caption.`;
-        }else{
-          status.textContent = "No keywords extracted.";
-        }
-      }else{
-        status.textContent = data?.error?.message || "Could not read caption.";
-      }
-    }catch(e){ status.textContent = "Error fetching URL."; }
-  };
-}
-
-/* Simple keyword extraction from caption text (client-side, no AI) */
-function extractKeywordsFromText(txt){
-  txt = (txt||\"\").toLowerCase().replace(/https?:\\/\\/\\S+/g, \" \").replace(/[^\x20-\x7E]+/g, \" \"); // strip links & emojis
-  const words = txt.split(/[\\s,./!?:;()\"'\\[\\]{}#]+/).map(w=>w.trim()).filter(Boolean);
-  const freq = new Map();
-  for (let w of words){
-    if (STOP.has(w) || w.length<3 || /^\\d+$/.test(w)) continue;
-    w = w.replace(/'s$/,''); // possessive
-    freq.set(w, (freq.get(w)||0)+1);
-  }
-  // take top 20 by frequency, then unique stems
-  const sorted = Array.from(freq.entries()).sort((a,b)=>b[1]-a[1]).map(x=>x[0]).slice(0,20);
-  const out=[]; const seen=new Set();
-  for (const w of sorted){
-    const s = stem(w);
-    if (seen.has(s)) continue;
-    seen.add(s); out.push(w);
-  }
-  return out;
 }
 
 /* ============== Ask AI (AMA) ============== */
@@ -267,15 +150,24 @@ function initAMA(){
   };
   document.getElementById("a-ask").onclick = ask;
   q.addEventListener("keydown", e=>{ if(e.key==="Enter") ask(); });
+
   document.getElementById("a-health").onclick = async ()=>{
     const r = await fetch("/api/ask", { method:"POST", headers:{ "x-hashhero-health":"ping" } });
     alert(r.ok ? "API is up ✅" : `API down ❌ (${r.status})`);
   };
-  document.getElementById("a-clear").onclick = ()=>{ q.value = ""; out.textContent = ""; q.focus(); };
+
+  document.getElementById("a-clear").onclick = ()=>{
+    q.value = "";
+    out.textContent = "";
+    q.focus();
+  };
+
   document.querySelectorAll(".ex").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const text = btn.getAttribute("data-q") || btn.textContent;
-      q.value = text; document.getElementById("a-ask").click();
+      const amaInput = document.getElementById("a-q");
+      amaInput.value = text;
+      document.getElementById("a-ask").click();
       document.getElementById("ama").scrollIntoView({behavior:"smooth"});
     });
   });
@@ -316,40 +208,55 @@ function initQR(){
 
 /* ============== TIMER ============== */
 let tInterval=null, tTotal=0, tRemain=0, tPhase="work", tCycles=0, tCyclesLeft=0;
-function setRing(p){ const CIRC = 339.292; document.getElementById("t-ring").style.strokeDashoffset = String(CIRC*(1-p)); }
-function format(ms){ const s = Math.max(0, Math.round(ms/1000)); const m = Math.floor(s/60), ss = s%60; return `${String(m).padStart(2,"0")}:${String(ss).padStart(2,"0")}`; }
+function setRing(p){
+  const CIRC = 339.292;
+  document.getElementById("t-ring").style.strokeDashoffset = String(CIRC*(1-p));
+}
+function format(ms){
+  const s = Math.max(0, Math.round(ms/1000));
+  const m = Math.floor(s/60), ss = s%60;
+  return `${String(m).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
+}
 function tick(){
   tRemain = Math.max(0, tRemain - 1000);
   const p = 1 - (tRemain / tTotal);
   setRing(p);
   document.getElementById("t-clock").textContent = format(tRemain);
-  if (tRemain <= 0){ document.getElementById("t-beep").play().catch(()=>{}); nextPhase(); }
+  if (tRemain <= 0){
+    document.getElementById("t-beep").play().catch(()=>{});
+    nextPhase();
+  }
 }
 function nextPhase(){
   if (tPhase==="work"){
     if (tCyclesLeft<=0){ stopTimer(); document.getElementById("t-status").textContent="Done ✅"; return; }
-    tPhase="break"; const mins = +document.getElementById("t-break").value||5; startPhase(mins, "Break");
+    tPhase="break";
+    const mins = +document.getElementById("t-break").value||5;
+    startPhase(mins, "Break");
   }else{
-    tPhase="work"; tCyclesLeft--; const mins = +document.getElementById("t-work").value||20; startPhase(mins, `Work (left ${tCyclesLeft})`);
+    tPhase="work"; tCyclesLeft--;
+    const mins = +document.getElementById("t-work").value||20;
+    startPhase(mins, `Work (left ${tCyclesLeft})`);
   }
 }
-function startPhase(mins, label){ tTotal = mins*60*1000; tRemain = tTotal; setRing(0); document.getElementById("t-status").textContent = label; }
-function startTimer(){ tCycles = +document.getElementById("t-cycles").value||3; tCyclesLeft = tCycles; tPhase="work"; startPhase(+document.getElementById("t-work").value||20, `Work (left ${tCyclesLeft})`); clearInterval(tInterval); tInterval = setInterval(tick, 1000); }
-function stopTimer(){ clearInterval(tInterval); tInterval=null; }
-function resetTimer(){
-  stopTimer();
-  document.getElementById("t-status").textContent = "Reset";
-  document.getElementById("t-clock").textContent = "00:00";
-  setRing(0);
+function startPhase(mins, label){
+  tTotal = mins*60*1000; tRemain = tTotal; setRing(0);
+  document.getElementById("t-status").textContent = label;
 }
+function startTimer(){
+  tCycles = +document.getElementById("t-cycles").value||3;
+  tCyclesLeft = tCycles;
+  tPhase="work";
+  startPhase(+document.getElementById("t-work").value||20, `Work (left ${tCyclesLeft})`);
+  clearInterval(tInterval); tInterval = setInterval(tick, 1000);
+}
+function stopTimer(){ clearInterval(tInterval); tInterval=null; }
 
 function initTimer(){
   document.getElementById("t-start").onclick = startTimer;
   document.getElementById("t-stop").onclick = ()=>{ stopTimer(); document.getElementById("t-status").textContent="Stopped"; };
-  document.getElementById("t-reset").onclick = resetTimer;
 }
 
-/* ============== Boot ============== */
 document.addEventListener("DOMContentLoaded", ()=>{
   initGenerator(); initAMA(); initQR(); initTimer();
 });
