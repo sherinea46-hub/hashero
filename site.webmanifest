@@ -1,0 +1,9 @@
+{
+  "name": "HashHero",
+  "short_name": "HashHero",
+  "start_url": "/",
+  "display": "standalone",
+  "icons": [{"src": "/assets/icons/apple-touch-icon.png","sizes":"180x180","type":"image/png"}],
+  "theme_color": "#0f1220",
+  "background_color": "#0f1220"
+}
