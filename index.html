@@ -2,41 +2,74 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#0f1220" />
-  <title>HashHero — Generator, Ask AI, QR, Timer</title>
-  <link rel="stylesheet" href="/assets/css/site.css" />
-  <script defer src="/assets/js/app.js"></script>
+  <meta name="robots" content="index, follow" />
 
-  <!-- Primary SEO -->
-  <title>HashHero — Free Hashtag Generator, Ask AI, QR & Timer</title>
-  <meta name="description" content="HashHero is a free toolkit for content creators: smart hashtag generator, Ask AI, QR code maker, and engagement timer—no login, no paywall." />
+  <title>HashHero — Free AI Hashtag Generator, Ask AI, QR & Timer</title>
+  <meta name="description" content="HashHero is a free toolkit for content creators: AI-powered hashtag generator with popularity tiers, Ask AI for captions & strategy, QR code maker, and an engagement timer—no login, no paywall." />
   <link rel="canonical" href="https://hashhero.app/" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="HashHero — Free Hashtag Generator, Ask AI, QR & Timer" />
+  <meta property="og:site_name" content="HashHero" />
+  <meta property="og:title" content="HashHero — Free AI Hashtag Generator, Ask AI, QR & Timer" />
   <meta property="og:description" content="Smart hashtags with popularity tiers + impact, Ask AI for captions and strategy, QR codes, and a focused engagement timer." />
   <meta property="og:url" content="https://hashhero.app/" />
   <meta property="og:image" content="https://hashhero.app/assets/og/hashhero-og.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_US" />
 
   <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="HashHero — Free Hashtag Generator, Ask AI, QR & Timer" />
+  <meta name="twitter:title" content="HashHero — Free AI Hashtag Generator, Ask AI, QR & Timer" />
   <meta name="twitter:description" content="Free tools for creators—no login." />
   <meta name="twitter:image" content="https://hashhero.app/assets/og/hashhero-og.jpg" />
+  <meta name="twitter:image:alt" content="HashHero — AI Hashtag Generator preview" />
 
   <!-- Favicons -->
   <link rel="icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
   <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
   <link rel="manifest" href="/site.webmanifest" />
 
-  <!-- JSON-LD -->
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"HashHero","url":"https://hashhero.app/","potentialAction":{"@type":"SearchAction","target":"https://hashhero.app/#ama?q={search_term_string}","query-input":"required name=search_term_string"}}</script>
-
+  <!-- Preconnects / Performance -->
   <link rel="preconnect" href="https://api.qrserver.com" crossorigin>
+  <!-- Optional: Preload hero/OG image for faster LCP -->
+  <!-- <link rel="preload" as="image" href="/assets/og/hashhero-og.jpg" imagesrcset="/assets/og/hashhero-og.jpg 1200w" imagesizes="(max-width: 600px) 100vw, 1200px"> -->
 
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@graph":[
+      {
+        "@type":"WebSite",
+        "name":"HashHero",
+        "url":"https://hashhero.app/",
+        "potentialAction":{
+          "@type":"SearchAction",
+          "target":"https://hashhero.app/#ama?q={search_term_string}",
+          "query-input":"required name=search_term_string"
+        }
+      },
+      {
+        "@type":"SoftwareApplication",
+        "name":"HashHero AI Hashtag Generator",
+        "applicationCategory":"BusinessApplication",
+        "operatingSystem":"Web",
+        "url":"https://hashhero.app/#generator",
+        "description":"AI-powered hashtag generator with popularity tiers and impact scoring for Instagram, TikTok, YouTube, and more."
+      }
+    ]
+  }
+  </script>
+
+  <!-- CSS/JS -->
+  <link rel="stylesheet" href="/assets/css/site.css" />
+  <script defer src="/assets/js/app.js"></script>
 </head>
+
 <body>
   <header class="hh-header">
     <a class="hh-brand" href="#">
