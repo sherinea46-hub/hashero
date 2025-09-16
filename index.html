@@ -72,6 +72,12 @@
   <style>
     #audio-badge { font-size:.75rem; margin-left:.5rem; padding:.15rem .45rem; border:1px solid rgba(255,255,255,.2); border-radius:999px; vertical-align:middle; }
   </style>
+
+  <style>
+    /* Compact Audio UI when idle */
+    #audio.compact #aud-legend, #audio.compact #aud-results { display: none; }
+  </style>
+
 </head>
 
 <body>
@@ -84,6 +90,7 @@
       <a class="hh-link hh-link--primary askai" href="#ama">Ask AI</a>
       <a class="hh-link" href="#qr">QR Codes</a>
       <a class="hh-link" href="#timer">Timer</a>
+      <a class="hh-link" href="#audio">Audio</a>
           <a class="hh-link" href="about.html">About</a>
     </nav>
   </header>
@@ -266,7 +273,7 @@
     </section>
 
   
-    <section id="audio" class="hh-section">
+    <section id="audio" class="hh-section compact">
       <h1>Trending Audio Finder <span id="audio-badge" class="pill">v1.3</span></h1>
       <div class="card">
         <p class="muted" style="margin-top:0">Find fresh sounds for Reels, TikTok, and Shorts. Filter by keyword and platform, then copy the track title or open a search.</p>
@@ -281,7 +288,7 @@
           <button id="aud-find" class="btn">Find</button>
           <button id="aud-clear" class="btn btn-ghost">Clear</button>
         </div>
-        <div class="row small muted" style="margin-top:.25rem">
+        <div id="aud-legend" class="row small muted" style="margin-top:.25rem">
           <span>Volume: <strong>High</strong> (very popular) • <strong>Medium</strong> (balanced) • <strong>Niche</strong> (targeted)</span>
         </div>
         <div id="aud-results" class="list"></div>
@@ -294,13 +301,18 @@
     <span>© 2025 HashHero</span>
   </footer>
 
+
+
+
 <script id="audio-patch-v1_3">
-// HashHero Audio Patch v1.3 — forced suggestions + synonyms + autosearch
+// HashHero Audio Patch v1.3b — compact by default + synonyms + suggestions
 (function(){
+  const wrap = document.getElementById("audio");
   const qEl = document.getElementById("aud-q");
   const pEl = document.getElementById("aud-platform");
   const listEl = document.getElementById("aud-results");
-  if (!qEl || !pEl || !listEl) return;
+  const legendEl = document.getElementById("aud-legend");
+  if (!wrap || !qEl || !pEl || !listEl) return;
 
   const CURATED = [
     { title: "soft piano love theme", platform: "Reels", tags: ["romance","date-night","couples"], volume: "Medium" },
@@ -314,19 +326,71 @@
     { title: "cinematic whoosh + riser", platform: "Shorts", tags: ["transitions","b-roll","edits"], volume: "Niche" }
   ];
   const SYN = { romance: ["love","date night","valentine","couples","wedding","first dance","rom-com"] };
-  function exp(q){ if(!q) return []; const base=q.toLowerCase().trim(); const parts=base.split(/\s+/); const extra=SYN[base]||[]; return Array.from(new Set([base, ...parts, ...extra])); }
+
+  function exp(q){ if(!q) return []; const base=q.toLowerCase().trim();
+    const parts=base.split(/\s+/); const extra=SYN[base]||[];
+    return Array.from(new Set([base, ...parts, ...extra])); }
+
   function pill(t){ return `<span class="pill">${t}</span>`; }
-  function url(p, t){ const q=encodeURIComponent(t); if(p==="TikTok")return `https://www.tiktok.com/search/music?q=${q}`; if(p==="Reels")return `https://www.google.com/search?q=${encodeURIComponent(t+" instagram reels audio")}`; if(p==="Shorts")return `https://www.youtube.com/results?search_query=${q}+shorts`; return `https://www.google.com/search?q=${q}`; }
+  function url(p, t){ const q=encodeURIComponent(t);
+    if(p==="TikTok")return `https://www.tiktok.com/search/music?q=${q}`;
+    if(p==="Reels")return `https://www.google.com/search?q=${encodeURIComponent(t+" instagram reels audio")}`;
+    if(p==="Shorts")return `https://www.youtube.com/results?search_query=${q}+shorts`;
+    return `https://www.google.com/search?q=${q}`; }
   async function copy(text){ try{ await navigator.clipboard.writeText(text);}catch{} }
-  function render(items, hint){ if(!items.length){ listEl.innerHTML=`<div class="muted small">${hint||"No matches."}</div>`; return; } listEl.innerHTML=items.map(it=>{ const tags=(it.tags||[]).slice(0,3).map(t=>`#${t}`).join(" "); return `<div class="aud-item"><div class="meta"><div class="title">${it.title}</div><div class="tag">${it.platform} ${it.volume?pill(it.volume):""} · ${tags}</div></div><div class="actions"><button class="btn btn-ghost" data-copy="${encodeURIComponent(it.title)}">Copy title</button><a class="btn" href="${url(it.platform,it.title)}" target="_blank" rel="noopener">Open ${it.platform} search</a></div></div>`; }).join(""); listEl.querySelectorAll("[data-copy]").forEach(b=>b.addEventListener("click",()=>copy(decodeURIComponent(b.getAttribute("data-copy")||"")))); }
-  function matches(it,q,plat){ const hay=[it.title,it.platform,...(it.tags||[])].join(" ").toLowerCase().replace(/\s+/g,''); const terms=exp(q).map(x=>x.replace(/\s+/g,'')); const okQ=!q||terms.some(t=>t&&hay.includes(t)); const okP=(plat==="all")||it.platform===plat; return okQ&&okP; }
-  function synth(q){ const k=(q||"your theme").trim(); const baseTags=exp(k).slice(0,3); const m=[ {title:`${k} slow dance`, platform:"Reels", volume:"Medium"}, {title:`${k} lofi night`, platform:"Shorts", volume:"Niche"}, {title:`${k} acoustic duet`, platform:"Reels", volume:"High"}, {title:`${k} soft piano`, platform:"TikTok", volume:"Medium"} ]; return m.map(x=>({...x, tags: baseTags.length?baseTags:[k]})); }
-  function run(){ const q=qEl.value||""; const plat=pEl.value||"all"; const base=CURATED; let hits=base.filter(it=>matches(it,q,plat)).slice(0,20); if(!hits.length && q.trim().length){ hits=synth(q); render(hits, `No exact matches — showing suggestions for “${q}”.`); } else { render(hits); } }
+
+  function render(items){
+    // If nothing to show, keep compact
+    if(!items.length){ wrap.classList.add("compact"); listEl.innerHTML = ""; if (legendEl) legendEl.style.display = "none"; return; }
+    // Show results
+    if (legendEl) legendEl.style.display = "";
+    wrap.classList.remove("compact");
+    listEl.innerHTML = items.map(it => {
+      const tags=(it.tags||[]).slice(0,3).map(t=>`#${t}`).join(" ");
+      return `<div class="aud-item">
+        <div class="meta"><div class="title">${it.title}</div>
+        <div class="tag">${it.platform} ${it.volume?pill(it.volume):""} · ${tags}</div></div>
+        <div class="actions">
+          <button class="btn btn-ghost" data-copy="${encodeURIComponent(it.title)}">Copy title</button>
+          <a class="btn" href="${url(it.platform, it.title)}" target="_blank" rel="noopener">Open ${it.platform} search</a>
+        </div></div>`;
+    }).join("");
+    listEl.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () =>
+      copy(decodeURIComponent(b.getAttribute("data-copy")||""))));
+  }
+
+  function matches(it,q,plat){
+    const hay=[it.title,it.platform,...(it.tags||[])].join(" ").toLowerCase().replace(/\s+/g,'');
+    const terms=exp(q).map(x=>x.replace(/\s+/g,''));
+    const okQ=!q||terms.some(t=>t&&hay.includes(t));
+    const okP=(plat==="all")||it.platform===plat;
+    return okQ&&okP;
+  }
+
+  function synth(q){
+    const k=(q||"your theme").trim(); const baseTags=exp(k).slice(0,3);
+    const m=[ {title:`${k} slow dance`, platform:"Reels", volume:"Medium"},
+              {title:`${k} lofi night`, platform:"Shorts", volume:"Niche"},
+              {title:`${k} acoustic duet`, platform:"Reels", volume:"High"},
+              {title:`${k} soft piano`, platform:"TikTok", volume:"Medium"} ];
+    return m.map(x=>({...x, tags: baseTags.length?baseTags:[k]}));
+  }
+
+  function run(){
+    const q=qEl.value||""; const plat=pEl.value||"all";
+    if (!q.trim().length){ render([]); return; } // keep compact when empty
+    const base = CURATED;
+    let hits=base.filter(it=>matches(it,q,plat)).slice(0,20);
+    if(!hits.length){ hits = synth(q); }
+    render(hits);
+  }
+
   let t; const deb=()=>{ clearTimeout(t); t=setTimeout(run,250); };
   qEl.addEventListener("input", deb);
   document.getElementById("aud-find")?.addEventListener("click", run);
-  document.getElementById("aud-clear")?.addEventListener("click", ()=>{ qEl.value=""; pEl.value="all"; run(); });
-  run();
+  document.getElementById("aud-clear")?.addEventListener("click", ()=>{ qEl.value=""; pEl.value="all"; render([]); });
+  // Start compact
+  render([]);
 })();
 </script>
 
