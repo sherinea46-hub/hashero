@@ -75,6 +75,16 @@
     #qod .muted { opacity: .8; }
     #qod .small { font-size: .9rem; }
   </style>
+
+  <style>
+    /* Trending Audio Finder minimal styles */
+    #aud-results .aud-item { display:flex; align-items:center; justify-content:space-between; padding:.6rem .75rem; border:1px solid rgba(255,255,255,.08); border-radius:.8rem; margin:.5rem 0; gap:.75rem; }
+    #aud-results .meta { display:flex; flex-direction:column; gap:.15rem; }
+    #aud-results .title { font-weight:600; }
+    #aud-results .tag { font-size:.8rem; opacity:.85; }
+    #aud-results .pill { font-size:.75rem; padding:.15rem .5rem; border:1px solid rgba(255,255,255,.15); border-radius:999px; margin-left:.4rem; }
+    #aud-results .actions { display:flex; gap:.4rem; flex-wrap:wrap; }
+  </style>
 </head>
 
 <body>
@@ -270,7 +280,33 @@
 
   
     <!-- Quote of the Day (SEO-friendly, daily refresh) -->
-    <section id="qod" class="hh-section">
+    
+    <!-- Trending Audio Finder (lightweight, curated, free) -->
+    <section id="audio" class="hh-section">
+      <h1>Trending Audio Finder</h1>
+      <div class="card">
+        <p class="muted" style="margin-top:0">
+          Find fresh sounds for Reels, TikTok, and Shorts. Filter by keyword and platform, then copy the track title or open a search.
+        </p>
+        <div class="row row-mobile-stack">
+          <input id="aud-q" class="input" placeholder="Search keyword, e.g., travel, coffee, gym…" />
+          <select id="aud-platform" class="select">
+            <option value="all">All</option>
+            <option value="TikTok">TikTok</option>
+            <option value="Reels">Reels</option>
+            <option value="Shorts">Shorts</option>
+          </select>
+          <button id="aud-find" class="btn">Find</button>
+          <button id="aud-clear" class="btn btn-ghost">Clear</button>
+        </div>
+        <div class="row small muted" style="margin-top:.25rem">
+          <span>Volume: <strong>High</strong> (very popular) • <strong>Medium</strong> (balanced) • <strong>Niche</strong> (targeted)</span>
+        </div>
+        <div id="aud-results" class="list"></div>
+        <p class="hint small">Tip: Mix High + Niche audio to balance reach and relevance.</p>
+      </div>
+    </section>
+<section id="qod" class="hh-section">
       <div class="card">
         <h2>Quote of the Day</h2>
         <blockquote id="qod-text" class="text-lg"></blockquote>
@@ -420,5 +456,103 @@
     })();
   })();
   </script>
+
+<script>
+(function(){
+  // Rotating curated set; rotates by UTC day to keep results fresh without backend.
+  // Each item: { title, platform, tags, volume } where volume: "High"|"Medium"|"Niche"
+  const DATA = [
+    { title: "city pop sunset (instrumental)", platform: "Reels", tags: ["travel","aesthetic","vlog"], volume: "Medium" },
+    { title: "lofi café rain loop", platform: "Reels", tags: ["coffee","study","cozy"], volume: "Medium" },
+    { title: "phonk sprint edit", platform: "TikTok", tags: ["gym","motivation","workout"], volume: "High" },
+    { title: "afrobeats chill groove", platform: "TikTok", tags: ["dance","summer","travel"], volume: "High" },
+    { title: "cinematic whoosh + riser", platform: "Shorts", tags: ["transitions","b-roll","edits"], volume: "Niche" },
+    { title: "uk drill piano loop", platform: "TikTok", tags: ["street","fashion","edits"], volume: "Medium" },
+    { title: "bedroom pop hook", platform: "Reels", tags: ["day-in-the-life","grwm","vlog"], volume: "High" },
+    { title: "retro synthwave drive", platform: "Shorts", tags: ["gaming","tech","timelapse"], volume: "Medium" },
+    { title: "acoustic fingerstyle vibe", platform: "Reels", tags: ["nature","travel","cinematic"], volume: "Niche" },
+    { title: "latin pop upbeat 110bpm", platform: "TikTok", tags: ["dance","food","couples"], volume: "High" }
+  ];
+
+  function dayIndex(len){
+    const now = new Date();
+    const utcMidnight = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const daysSinceEpoch = Math.floor(utcMidnight / 86400000);
+    return daysSinceEpoch % len;
+  }
+
+  function rotate(arr){
+    const idx = dayIndex(arr.length);
+    return arr.slice(idx).concat(arr.slice(0, idx));
+  }
+
+  function matches(item, q, platform){
+    const hay = [item.title, item.platform, ...(item.tags||[])].join(" ").toLowerCase();
+    const okQ = !q || hay.includes(q.toLowerCase());
+    const okP = (platform==="all") || item.platform === platform;
+    return okQ && okP;
+  }
+
+  function searchURL(platform, title){
+    const q = encodeURIComponent(title);
+    if (platform === "TikTok") return `https://www.tiktok.com/search/music?q=${q}`;
+    if (platform === "Reels") return `https://www.google.com/search?q=${encodeURIComponent(title + " instagram reels audio")}`;
+    if (platform === "Shorts") return `https://www.youtube.com/results?search_query=${q}+shorts`;
+    return `https://www.google.com/search?q=${q}`;
+  }
+
+  async function copy(text){
+    try { await navigator.clipboard.writeText(text); } catch {}
+  }
+
+  function pill(text){ return `<span class="pill">${text}</span>`; }
+
+  function render(list){
+    const wrap = document.getElementById("aud-results");
+    if (!wrap) return;
+    if (!list.length){
+      wrap.innerHTML = `<div class="muted small">No matches. Try a broader keyword (e.g., "travel", "coffee", "gym").</div>`;
+      return;
+    }
+    wrap.innerHTML = list.map(item => {
+      const tags = (item.tags||[]).slice(0,3).map(t=>`#${t}`).join(" ");
+      const vol = item.volume;
+      return `
+        <div class="aud-item">
+          <div class="meta">
+            <div class="title">${item.title}</div>
+            <div class="tag">${item.platform} ${vol ? pill(vol) : ""} · ${tags}</div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-ghost" data-copy="${encodeURIComponent(item.title)}">Copy title</button>
+            <a class="btn" href="${searchURL(item.platform, item.title)}" target="_blank" rel="noopener">Open ${item.platform} search</a>
+          </div>
+        </div>`;
+    }).join("");
+    // Hook up copy buttons
+    wrap.querySelectorAll("[data-copy]").forEach(btn => {
+      btn.addEventListener("click", () => copy(decodeURIComponent(btn.getAttribute("data-copy")||"")));
+    });
+  }
+
+  const qEl = document.getElementById("aud-q");
+  const pEl = document.getElementById("aud-platform");
+
+  function run(){
+    const q = qEl?.value || "";
+    const p = pEl?.value || "all";
+    const rotated = rotate(DATA);
+    const filtered = rotated.filter(it => matches(it, q, p)).slice(0, 12);
+    render(filtered);
+  }
+
+  document.getElementById("aud-find")?.addEventListener("click", run);
+  document.getElementById("aud-clear")?.addEventListener("click", () => { if(qEl) qEl.value=""; if(pEl) pEl.value="all"; run(); });
+  qEl?.addEventListener("keydown", e => { if (e.key==="Enter") run(); });
+
+  // initial render
+  run();
+})();
+</script>
 </body>
 </html>
