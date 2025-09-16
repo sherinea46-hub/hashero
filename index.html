@@ -97,6 +97,7 @@
       <a class="hh-link hh-link--primary askai" href="#ama">Ask AI</a>
       <a class="hh-link" href="#qr">QR Codes</a>
       <a class="hh-link" href="#timer">Timer</a>
+      <a class="hh-link" href="#audio">Audio</a>
           <a class="hh-link" href="about.html">About</a>
     </nav>
   </header>
@@ -461,7 +462,7 @@
 (function(){
   // Rotating curated set; rotates by UTC day to keep results fresh without backend.
   // Each item: { title, platform, tags, volume } where volume: "High"|"Medium"|"Niche"
-  const DATA = [
+  const LOCAL_DATA = [
     { title: "city pop sunset (instrumental)", platform: "Reels", tags: ["travel","aesthetic","vlog"], volume: "Medium" },
     { title: "lofi café rain loop", platform: "Reels", tags: ["coffee","study","cozy"], volume: "Medium" },
     { title: "phonk sprint edit", platform: "TikTok", tags: ["gym","motivation","workout"], volume: "High" },
@@ -480,19 +481,17 @@
     const daysSinceEpoch = Math.floor(utcMidnight / 86400000);
     return daysSinceEpoch % len;
   }
-
   function rotate(arr){
+    if (!arr || !arr.length) return [];
     const idx = dayIndex(arr.length);
     return arr.slice(idx).concat(arr.slice(0, idx));
   }
-
   function matches(item, q, platform){
     const hay = [item.title, item.platform, ...(item.tags||[])].join(" ").toLowerCase();
     const okQ = !q || hay.includes(q.toLowerCase());
     const okP = (platform==="all") || item.platform === platform;
     return okQ && okP;
   }
-
   function searchURL(platform, title){
     const q = encodeURIComponent(title);
     if (platform === "TikTok") return `https://www.tiktok.com/search/music?q=${q}`;
@@ -500,13 +499,8 @@
     if (platform === "Shorts") return `https://www.youtube.com/results?search_query=${q}+shorts`;
     return `https://www.google.com/search?q=${q}`;
   }
-
-  async function copy(text){
-    try { await navigator.clipboard.writeText(text); } catch {}
-  }
-
+  async function copy(text){ try { await navigator.clipboard.writeText(text); } catch {} }
   function pill(text){ return `<span class="pill">${text}</span>`; }
-
   function render(list){
     const wrap = document.getElementById("aud-results");
     if (!wrap) return;
@@ -537,21 +531,38 @@
 
   const qEl = document.getElementById("aud-q");
   const pEl = document.getElementById("aud-platform");
+  let REMOTE_DATA = null;
 
   function run(){
     const q = qEl?.value || "";
     const p = pEl?.value || "all";
-    const rotated = rotate(DATA);
-    const filtered = rotated.filter(it => matches(it, q, p)).slice(0, 12);
+    const base = REMOTE_DATA && REMOTE_DATA.length ? REMOTE_DATA : LOCAL_DATA;
+    const rotated = rotate(base);
+    const filtered = rotated.filter(it => matches(it, q, p)).slice(0, 20);
     render(filtered);
+  }
+
+  async function fetchRemote(){
+    try {
+      const res = await fetch("/api/audio/trending", { cache: "no-store" });
+      if (!res.ok) throw new Error("bad_status");
+      const data = await res.json();
+      if (!Array.isArray(data)) throw new Error("bad_payload");
+      REMOTE_DATA = data;
+    } catch(e) {
+      REMOTE_DATA = null; // fallback to local
+    } finally {
+      run();
+    }
   }
 
   document.getElementById("aud-find")?.addEventListener("click", run);
   document.getElementById("aud-clear")?.addEventListener("click", () => { if(qEl) qEl.value=""; if(pEl) pEl.value="all"; run(); });
   qEl?.addEventListener("keydown", e => { if (e.key==="Enter") run(); });
 
-  // initial render
+  // initial render (then try remote)
   run();
+  fetchRemote();
 })();
 </script>
 </body>
