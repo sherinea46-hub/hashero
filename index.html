@@ -70,25 +70,11 @@
   <script defer src="/assets/js/app.js"></script>
 
   <style>
-    /* QOD light styling to match cards */
-    #qod blockquote { margin: 0; line-height: 1.5; }
-    #qod .muted { opacity: .8; }
-    #qod .small { font-size: .9rem; }
-  </style>
-
-  <style>
-    /* Trending Audio Finder minimal styles */
-    #aud-results .aud-item { display:flex; align-items:center; justify-content:space-between; padding:.6rem .75rem; border:1px solid rgba(255,255,255,.08); border-radius:.8rem; margin:.5rem 0; gap:.75rem; }
-    #aud-results .meta { display:flex; flex-direction:column; gap:.15rem; }
-    #aud-results .title { font-weight:600; }
-    #aud-results .tag { font-size:.8rem; opacity:.85; }
-    #aud-results .pill { font-size:.75rem; padding:.15rem .5rem; border:1px solid rgba(255,255,255,.15); border-radius:999px; margin-left:.4rem; }
-    #aud-results .actions { display:flex; gap:.4rem; flex-wrap:wrap; }
+    #audio-badge { font-size:.75rem; margin-left:.5rem; padding:.15rem .45rem; border:1px solid rgba(255,255,255,.2); border-radius:999px; vertical-align:middle; }
   </style>
 </head>
 
 <body>
-  <!-- HashHero build: audio-romance-fix v1.2 (auto-search + suggestions) 2025-09-16 -->
   <header class="hh-header">
     <a class="hh-brand" href="#">
       <span class="hh-dot">H</span><span>HashHero</span>
@@ -98,7 +84,6 @@
       <a class="hh-link hh-link--primary askai" href="#ama">Ask AI</a>
       <a class="hh-link" href="#qr">QR Codes</a>
       <a class="hh-link" href="#timer">Timer</a>
-      <a class="hh-link" href="#audio">Audio</a>
           <a class="hh-link" href="about.html">About</a>
     </nav>
   </header>
@@ -281,15 +266,10 @@
     </section>
 
   
-    <!-- Quote of the Day (SEO-friendly, daily refresh) -->
-    
-    <!-- Trending Audio Finder (lightweight, curated, free) -->
     <section id="audio" class="hh-section">
-      <h1>Trending Audio Finder</h1>
+      <h1>Trending Audio Finder <span id="audio-badge" class="pill">v1.3</span></h1>
       <div class="card">
-        <p class="muted" style="margin-top:0">
-          Find fresh sounds for Reels, TikTok, and Shorts. Filter by keyword and platform, then copy the track title or open a search.
-        </p>
+        <p class="muted" style="margin-top:0">Find fresh sounds for Reels, TikTok, and Shorts. Filter by keyword and platform, then copy the track title or open a search.</p>
         <div class="row row-mobile-stack">
           <input id="aud-q" class="input" placeholder="Search keyword, e.g., travel, coffee, gym…" />
           <select id="aud-platform" class="select">
@@ -308,263 +288,47 @@
         <p class="hint small">Tip: Mix High + Niche audio to balance reach and relevance.</p>
       </div>
     </section>
-<section id="qod" class="hh-section">
-      <div class="card">
-        <h2>Quote of the Day</h2>
-        <blockquote id="qod-text" class="text-lg"></blockquote>
-        <p id="qod-author" class="muted"></p>
-        <p id="qod-context" class="small muted"></p>
-        <!-- JSON-LD injected here -->
-        <script id="qod-ld" type="application/ld+json"></script>
-
-        <!-- Noscript fallback so crawlers with JS off still see content -->
-        <noscript>
-          <blockquote>“Creativity is intelligence having fun.”</blockquote>
-          <p class="small muted">Daily inspiration for creators. Try the HashHero Hashtag Generator.</p>
-        </noscript>
-      </div>
-    </section>
-</main>
+    </main>
 
   <footer class="hh-footer">
     <span>© 2025 HashHero</span>
   </footer>
 
-  <script>
-  (function () {
-    // ---- Config ----
-    const STORAGE_KEY = "hh_qod_cache_v1";
-    const INTERNAL_LINK = "/#generator"; // adjust if your generator route changes
-    const TAGS = [
-      "hashtag generator",
-      "instagram hashtags",
-      "tiktok marketing",
-      "youtube shorts",
-      "content strategy",
-      "engagement rate",
-      "creator toolkit"
-    ];
-
-    // ---- Helpers ----
-    function todayISO() {
-      const now = new Date();
-      // force UTC date so all users share the same "day"
-      return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
-        .toISOString()
-        .slice(0, 10);
-    }
-
-    function setJSONLD(quote) {
-      const ldEl = document.getElementById("qod-ld");
-      if (!ldEl) return;
-      const ld = {
-        "@context": "https://schema.org",
-        "@type": "Quotation",
-        "text": quote.text,
-        "spokenByCharacter": { "@type": "Person", "name": quote.author || "Unknown" },
-        "about": TAGS.slice(0, 4),
-        "dateCreated": todayISO(),
-        "isPartOf": { "@type": "WebSite", "name": "HashHero", "url": location.origin }
-      };
-      ldEl.textContent = JSON.stringify(ld);
-    }
-
-    function render(quote) {
-      const textEl = document.getElementById("qod-text");
-      const authEl = document.getElementById("qod-author");
-      const ctxEl = document.getElementById("qod-context");
-
-      if (!textEl || !authEl || !ctxEl) return;
-
-      textEl.textContent = `“${quote.text}”`;
-      authEl.textContent = `— ${quote.author || "Unknown"}`;
-
-      // Natural language context with light, honest keywords
-      ctxEl.textContent = `Daily inspiration for creators: ${TAGS.slice(0,3).join(" • ")}. `;
-      const link = document.createElement("a");
-      link.href = INTERNAL_LINK;
-      link.textContent = "Open Hashtag Generator";
-      link.setAttribute("aria-label", "Open HashHero Hashtag Generator");
-      link.className = "underline";
-      ctxEl.appendChild(link);
-
-      setJSONLD(quote);
-    }
-
-    function save(quote) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ date: todayISO(), quote }));
-    }
-
-    function load() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return null;
-        const parsed = JSON.parse(raw);
-        if (parsed && parsed.date === todayISO() && parsed.quote && parsed.quote.text) {
-          return parsed.quote;
-        }
-      } catch {}
-      return null;
-    }
-
-    function fallbackQuote() {
-      const F = [
-        { text: "Consistency beats intensity. Post, learn, iterate.", author: "HashHero" },
-        { text: "Create for humans first; algorithms will follow.", author: "HashHero" },
-        { text: "Specific beats generic. Niche tags find your people.", author: "HashHero" },
-        { text: "Batch today so you can post calmly tomorrow.", author: "HashHero" }
-      ];
-      return F[Math.floor(Math.random() * F.length)];
-    }
-
-    async function getZenQuotes() {
-      // ZenQuotes "today" endpoint returns an array with one object: [{ q, a }]
-      const res = await fetch("https://zenquotes.io/api/today", { cache: "no-store" });
-      if (!res.ok) throw new Error("zenquotes_fail");
-      const data = await res.json();
-      if (!Array.isArray(data) || !data[0] || !data[0].q) throw new Error("zenquotes_bad");
-      return { text: data[0].q, author: data[0].a };
-    }
-
-    async function getQuotable() {
-      const res = await fetch("https://api.quotable.io/random", { cache: "no-store" });
-      if (!res.ok) throw new Error("quotable_fail");
-      const data = await res.json();
-      if (!data || !data.content) throw new Error("quotable_bad");
-      return { text: data.content, author: data.author };
-    }
-
-    (async function init() {
-      // Serve from cache if we already have today's quote
-      const cached = load();
-      if (cached) {
-        render(cached);
-        return;
-      }
-
-      // Try ZenQuotes -> fallback to Quotable -> fallback to hardcoded
-      try {
-        const q1 = await getZenQuotes();
-        save(q1); render(q1);
-      } catch {
-        try {
-          const q2 = await getQuotable();
-          save(q2); render(q2);
-        } catch {
-          const q3 = fallbackQuote();
-          save(q3); render(q3);
-        }
-      }
-    })();
-  })();
-  </script>
-
-<script>
+<script id="audio-patch-v1_3">
+// HashHero Audio Patch v1.3 — forced suggestions + synonyms + autosearch
 (function(){
-  // Rotating curated set; rotates by UTC day to keep results fresh without backend.
-  // Each item: { title, platform, tags, volume } where volume: "High"|"Medium"|"Niche"
-  const LOCAL_DATA = [
+  const qEl = document.getElementById("aud-q");
+  const pEl = document.getElementById("aud-platform");
+  const listEl = document.getElementById("aud-results");
+  if (!qEl || !pEl || !listEl) return;
+
+  const CURATED = [
+    { title: "soft piano love theme", platform: "Reels", tags: ["romance","date-night","couples"], volume: "Medium" },
+    { title: "acoustic slow dance loop", platform: "TikTok", tags: ["romance","wedding","first-look"], volume: "Medium" },
+    { title: "lofi midnight kiss", platform: "Shorts", tags: ["romance","night","aesthetic"], volume: "Niche" },
+    { title: "indie duet chorus", platform: "Reels", tags: ["romance","valentine","couples"], volume: "High" },
     { title: "city pop sunset (instrumental)", platform: "Reels", tags: ["travel","aesthetic","vlog"], volume: "Medium" },
     { title: "lofi café rain loop", platform: "Reels", tags: ["coffee","study","cozy"], volume: "Medium" },
     { title: "phonk sprint edit", platform: "TikTok", tags: ["gym","motivation","workout"], volume: "High" },
     { title: "afrobeats chill groove", platform: "TikTok", tags: ["dance","summer","travel"], volume: "High" },
-    { title: "cinematic whoosh + riser", platform: "Shorts", tags: ["transitions","b-roll","edits"], volume: "Niche" },
-    { title: "uk drill piano loop", platform: "TikTok", tags: ["street","fashion","edits"], volume: "Medium" },
-    { title: "bedroom pop hook", platform: "Reels", tags: ["day-in-the-life","grwm","vlog"], volume: "High" },
-    { title: "retro synthwave drive", platform: "Shorts", tags: ["gaming","tech","timelapse"], volume: "Medium" },
-    { title: "acoustic fingerstyle vibe", platform: "Reels", tags: ["nature","travel","cinematic"], volume: "Niche" },
-    { title: "latin pop upbeat 110bpm", platform: "TikTok", tags: ["dance","food","couples"], volume: "High" }
+    { title: "cinematic whoosh + riser", platform: "Shorts", tags: ["transitions","b-roll","edits"], volume: "Niche" }
   ];
-
-  function dayIndex(len){
-    const now = new Date();
-    const utcMidnight = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-    const daysSinceEpoch = Math.floor(utcMidnight / 86400000);
-    return daysSinceEpoch % len;
-  }
-  function rotate(arr){
-    if (!arr || !arr.length) return [];
-    const idx = dayIndex(arr.length);
-    return arr.slice(idx).concat(arr.slice(0, idx));
-  }
-  function matches(item, q, platform){
-    const hay = [item.title, item.platform, ...(item.tags||[])].join(" ").toLowerCase();
-    const okQ = !q || hay.includes(q.toLowerCase());
-    const okP = (platform==="all") || item.platform === platform;
-    return okQ && okP;
-  }
-  function searchURL(platform, title){
-    const q = encodeURIComponent(title);
-    if (platform === "TikTok") return `https://www.tiktok.com/search/music?q=${q}`;
-    if (platform === "Reels") return `https://www.google.com/search?q=${encodeURIComponent(title + " instagram reels audio")}`;
-    if (platform === "Shorts") return `https://www.youtube.com/results?search_query=${q}+shorts`;
-    return `https://www.google.com/search?q=${q}`;
-  }
-  async function copy(text){ try { await navigator.clipboard.writeText(text); } catch {} }
-  function pill(text){ return `<span class="pill">${text}</span>`; }
-  function render(list){
-    const wrap = document.getElementById("aud-results");
-    if (!wrap) return;
-    if (!list.length){
-      wrap.innerHTML = `<div class="muted small">No matches. Try a broader keyword (e.g., "travel", "coffee", "gym").</div>`;
-      return;
-    }
-    wrap.innerHTML = list.map(item => {
-      const tags = (item.tags||[]).slice(0,3).map(t=>`#${t}`).join(" ");
-      const vol = item.volume;
-      return `
-        <div class="aud-item">
-          <div class="meta">
-            <div class="title">${item.title}</div>
-            <div class="tag">${item.platform} ${vol ? pill(vol) : ""} · ${tags}</div>
-          </div>
-          <div class="actions">
-            <button class="btn btn-ghost" data-copy="${encodeURIComponent(item.title)}">Copy title</button>
-            <a class="btn" href="${searchURL(item.platform, item.title)}" target="_blank" rel="noopener">Open ${item.platform} search</a>
-          </div>
-        </div>`;
-    }).join("");
-    // Hook up copy buttons
-    wrap.querySelectorAll("[data-copy]").forEach(btn => {
-      btn.addEventListener("click", () => copy(decodeURIComponent(btn.getAttribute("data-copy")||"")));
-    });
-  }
-
-  const qEl = document.getElementById("aud-q");
-  const pEl = document.getElementById("aud-platform");
-  let REMOTE_DATA = null;
-
-  function run(){
-    const q = qEl?.value || "";
-    const p = pEl?.value || "all";
-    const base = REMOTE_DATA && REMOTE_DATA.length ? REMOTE_DATA : LOCAL_DATA;
-    const rotated = rotate(base);
-    const filtered = rotated.filter(it => matches(it, q, p)).slice(0, 20);
-    render(filtered);
-  }
-
-  async function fetchRemote(){
-    try {
-      const res = await fetch("/api/audio/trending", { cache: "no-store" });
-      if (!res.ok) throw new Error("bad_status");
-      const data = await res.json();
-      if (!Array.isArray(data)) throw new Error("bad_payload");
-      REMOTE_DATA = data;
-    } catch(e) {
-      REMOTE_DATA = null; // fallback to local
-    } finally {
-      run();
-    }
-  }
-
+  const SYN = { romance: ["love","date night","valentine","couples","wedding","first dance","rom-com"] };
+  function exp(q){ if(!q) return []; const base=q.toLowerCase().trim(); const parts=base.split(/\s+/); const extra=SYN[base]||[]; return Array.from(new Set([base, ...parts, ...extra])); }
+  function pill(t){ return `<span class="pill">${t}</span>`; }
+  function url(p, t){ const q=encodeURIComponent(t); if(p==="TikTok")return `https://www.tiktok.com/search/music?q=${q}`; if(p==="Reels")return `https://www.google.com/search?q=${encodeURIComponent(t+" instagram reels audio")}`; if(p==="Shorts")return `https://www.youtube.com/results?search_query=${q}+shorts`; return `https://www.google.com/search?q=${q}`; }
+  async function copy(text){ try{ await navigator.clipboard.writeText(text);}catch{} }
+  function render(items, hint){ if(!items.length){ listEl.innerHTML=`<div class="muted small">${hint||"No matches."}</div>`; return; } listEl.innerHTML=items.map(it=>{ const tags=(it.tags||[]).slice(0,3).map(t=>`#${t}`).join(" "); return `<div class="aud-item"><div class="meta"><div class="title">${it.title}</div><div class="tag">${it.platform} ${it.volume?pill(it.volume):""} · ${tags}</div></div><div class="actions"><button class="btn btn-ghost" data-copy="${encodeURIComponent(it.title)}">Copy title</button><a class="btn" href="${url(it.platform,it.title)}" target="_blank" rel="noopener">Open ${it.platform} search</a></div></div>`; }).join(""); listEl.querySelectorAll("[data-copy]").forEach(b=>b.addEventListener("click",()=>copy(decodeURIComponent(b.getAttribute("data-copy")||"")))); }
+  function matches(it,q,plat){ const hay=[it.title,it.platform,...(it.tags||[])].join(" ").toLowerCase().replace(/\s+/g,''); const terms=exp(q).map(x=>x.replace(/\s+/g,'')); const okQ=!q||terms.some(t=>t&&hay.includes(t)); const okP=(plat==="all")||it.platform===plat; return okQ&&okP; }
+  function synth(q){ const k=(q||"your theme").trim(); const baseTags=exp(k).slice(0,3); const m=[ {title:`${k} slow dance`, platform:"Reels", volume:"Medium"}, {title:`${k} lofi night`, platform:"Shorts", volume:"Niche"}, {title:`${k} acoustic duet`, platform:"Reels", volume:"High"}, {title:`${k} soft piano`, platform:"TikTok", volume:"Medium"} ]; return m.map(x=>({...x, tags: baseTags.length?baseTags:[k]})); }
+  function run(){ const q=qEl.value||""; const plat=pEl.value||"all"; const base=CURATED; let hits=base.filter(it=>matches(it,q,plat)).slice(0,20); if(!hits.length && q.trim().length){ hits=synth(q); render(hits, `No exact matches — showing suggestions for “${q}”.`); } else { render(hits); } }
+  let t; const deb=()=>{ clearTimeout(t); t=setTimeout(run,250); };
+  qEl.addEventListener("input", deb);
   document.getElementById("aud-find")?.addEventListener("click", run);
-  document.getElementById("aud-clear")?.addEventListener("click", () => { if(qEl) qEl.value=""; if(pEl) pEl.value="all"; run(); });
-  qEl?.addEventListener("keydown", e => { if (e.key==="Enter") run(); });
-
-  // initial render (then try remote)
+  document.getElementById("aud-clear")?.addEventListener("click", ()=>{ qEl.value=""; pEl.value="all"; run(); });
   run();
-  fetchRemote();
 })();
 </script>
+
 </body>
 </html>
