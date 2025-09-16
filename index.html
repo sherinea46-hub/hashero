@@ -68,6 +68,13 @@
   <!-- CSS/JS -->
   <link rel="stylesheet" href="/assets/css/site.css" />
   <script defer src="/assets/js/app.js"></script>
+
+  <style>
+    /* QOD light styling to match cards */
+    #qod blockquote { margin: 0; line-height: 1.5; }
+    #qod .muted { opacity: .8; }
+    #qod .small { font-size: .9rem; }
+  </style>
 </head>
 
 <body>
@@ -261,10 +268,157 @@
       </div>
     </section>
 
-  </main>
+  
+    <!-- Quote of the Day (SEO-friendly, daily refresh) -->
+    <section id="qod" class="hh-section">
+      <div class="card">
+        <h2>Quote of the Day</h2>
+        <blockquote id="qod-text" class="text-lg"></blockquote>
+        <p id="qod-author" class="muted"></p>
+        <p id="qod-context" class="small muted"></p>
+        <!-- JSON-LD injected here -->
+        <script id="qod-ld" type="application/ld+json"></script>
+
+        <!-- Noscript fallback so crawlers with JS off still see content -->
+        <noscript>
+          <blockquote>“Creativity is intelligence having fun.”</blockquote>
+          <p class="small muted">Daily inspiration for creators. Try the HashHero Hashtag Generator.</p>
+        </noscript>
+      </div>
+    </section>
+</main>
 
   <footer class="hh-footer">
     <span>© 2025 HashHero</span>
   </footer>
+
+  <script>
+  (function () {
+    // ---- Config ----
+    const STORAGE_KEY = "hh_qod_cache_v1";
+    const INTERNAL_LINK = "/#generator"; // adjust if your generator route changes
+    const TAGS = [
+      "hashtag generator",
+      "instagram hashtags",
+      "tiktok marketing",
+      "youtube shorts",
+      "content strategy",
+      "engagement rate",
+      "creator toolkit"
+    ];
+
+    // ---- Helpers ----
+    function todayISO() {
+      const now = new Date();
+      // force UTC date so all users share the same "day"
+      return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
+        .toISOString()
+        .slice(0, 10);
+    }
+
+    function setJSONLD(quote) {
+      const ldEl = document.getElementById("qod-ld");
+      if (!ldEl) return;
+      const ld = {
+        "@context": "https://schema.org",
+        "@type": "Quotation",
+        "text": quote.text,
+        "spokenByCharacter": { "@type": "Person", "name": quote.author || "Unknown" },
+        "about": TAGS.slice(0, 4),
+        "dateCreated": todayISO(),
+        "isPartOf": { "@type": "WebSite", "name": "HashHero", "url": location.origin }
+      };
+      ldEl.textContent = JSON.stringify(ld);
+    }
+
+    function render(quote) {
+      const textEl = document.getElementById("qod-text");
+      const authEl = document.getElementById("qod-author");
+      const ctxEl = document.getElementById("qod-context");
+
+      if (!textEl || !authEl || !ctxEl) return;
+
+      textEl.textContent = `“${quote.text}”`;
+      authEl.textContent = `— ${quote.author || "Unknown"}`;
+
+      // Natural language context with light, honest keywords
+      ctxEl.textContent = `Daily inspiration for creators: ${TAGS.slice(0,3).join(" • ")}. `;
+      const link = document.createElement("a");
+      link.href = INTERNAL_LINK;
+      link.textContent = "Open Hashtag Generator";
+      link.setAttribute("aria-label", "Open HashHero Hashtag Generator");
+      link.className = "underline";
+      ctxEl.appendChild(link);
+
+      setJSONLD(quote);
+    }
+
+    function save(quote) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ date: todayISO(), quote }));
+    }
+
+    function load() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.date === todayISO() && parsed.quote && parsed.quote.text) {
+          return parsed.quote;
+        }
+      } catch {}
+      return null;
+    }
+
+    function fallbackQuote() {
+      const F = [
+        { text: "Consistency beats intensity. Post, learn, iterate.", author: "HashHero" },
+        { text: "Create for humans first; algorithms will follow.", author: "HashHero" },
+        { text: "Specific beats generic. Niche tags find your people.", author: "HashHero" },
+        { text: "Batch today so you can post calmly tomorrow.", author: "HashHero" }
+      ];
+      return F[Math.floor(Math.random() * F.length)];
+    }
+
+    async function getZenQuotes() {
+      // ZenQuotes "today" endpoint returns an array with one object: [{ q, a }]
+      const res = await fetch("https://zenquotes.io/api/today", { cache: "no-store" });
+      if (!res.ok) throw new Error("zenquotes_fail");
+      const data = await res.json();
+      if (!Array.isArray(data) || !data[0] || !data[0].q) throw new Error("zenquotes_bad");
+      return { text: data[0].q, author: data[0].a };
+    }
+
+    async function getQuotable() {
+      const res = await fetch("https://api.quotable.io/random", { cache: "no-store" });
+      if (!res.ok) throw new Error("quotable_fail");
+      const data = await res.json();
+      if (!data || !data.content) throw new Error("quotable_bad");
+      return { text: data.content, author: data.author };
+    }
+
+    (async function init() {
+      // Serve from cache if we already have today's quote
+      const cached = load();
+      if (cached) {
+        render(cached);
+        return;
+      }
+
+      // Try ZenQuotes -> fallback to Quotable -> fallback to hardcoded
+      try {
+        const q1 = await getZenQuotes();
+        save(q1); render(q1);
+      } catch {
+        try {
+          const q2 = await getQuotable();
+          save(q2); render(q2);
+        } catch {
+          const q3 = fallbackQuote();
+          save(q3); render(q3);
+        }
+      }
+    })();
+  })();
+  </script>
 </body>
 </html>
