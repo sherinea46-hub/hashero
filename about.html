@@ -1,78 +1,74 @@
+
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
-  <meta name="theme-color" content="#0f1220" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>About — HashHero</title>
-  <link rel="stylesheet" href="assets/css/site.css" />
-
-  <!-- Primary SEO -->
-  <title>About HashHero — Free tools for content creators</title>
-  <meta name="description" content="HashHero is a free, lightweight stop for content creators. Send feedback to sherinea46@gmail.com." />
-  <link rel="canonical" href="https://hashhero.app/about" />
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="About HashHero — Free tools for content creators" />
-  <meta property="og:description" content="HashHero is a free, lightweight stop for content creators." />
-  <meta property="og:url" content="https://hashhero.app/about" />
-  <meta property="og:image" content="https://hashhero.app/assets/og/hashhero-og.jpg" />
-
-  <!-- Twitter Cards -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="About HashHero — Free tools for content creators" />
-  <meta name="twitter:description" content="Free tools for creators — feedback welcome." />
-  <meta name="twitter:image" content="https://hashhero.app/assets/og/hashhero-og.jpg" />
-
-  <!-- Favicons -->
-  <link rel="icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
-  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
-  <link rel="manifest" href="/site.webmanifest" />
-
-  <!-- JSON-LD -->
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"HashHero","url":"https://hashhero.app/","email":"sherinea46@gmail.com","logo":"https://hashhero.app/assets/icons/favicon.svg"}</script>
-
-  <link rel="preconnect" href="https://api.qrserver.com" crossorigin>
-
+  <meta name="description" content="About HashHero: a fast, free toolkit for content creators with a focus on a smart hashtag generator and helpful add-ons like a meme maker." />
+  <link rel="stylesheet" href="/assets/css/site.css" />
+  <style>
+    :root { --bg: #0f1220; --card: #151932; --text: #e8ebff; --muted: #9aa3c7; --accent: #7aa2ff; }
+    body { background: var(--bg); color: var(--text); margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif; }
+    .container { max-width: 900px; margin: 0 auto; padding: 24px; }
+    header { position: sticky; top:0; backdrop-filter: blur(6px); background: rgba(15,18,32,0.7); border-bottom: 1px solid rgba(255,255,255,0.06); z-index: 50; }
+    .nav { display:flex; align-items:center; justify-content:space-between; gap:16px; padding: 14px 24px; }
+    .brand { font-weight: 800; letter-spacing:.3px; }
+    .brand a { color: var(--text); text-decoration: none; }
+    .menu { display:flex; gap:14px; flex-wrap: wrap; }
+    .menu a { color: var(--muted); text-decoration:none; padding:8px 10px; border-radius:12px; }
+    .menu a.active, .menu a:hover { color: var(--text); background: rgba(122,162,255,.12); }
+    .card { background: var(--card); border:1px solid rgba(255,255,255,0.06); border-radius: 18px; padding:18px; }
+    a { color: #cfd7ff; }
+    .muted { color: var(--muted); }
+  </style>
 </head>
 <body>
-  <header class="hh-header">
-    <a class="hh-brand" href="index.html"><span class="hh-dot">H</span><span>HashHero</span></a>
-    <nav class="hh-nav">
-      <a class="hh-link" href="index.html#generator">Generator</a>
-      <a class="hh-link askai" href="index.html#ama">Ask AI</a>
-      <a class="hh-link" href="index.html#qr">QR Codes</a>
-      <a class="hh-link" href="index.html#timer">Timer</a>
-      <a class="hh-link" href="index.html#audio">Audio</a>
-      <a class="hh-link hh-link--primary" href="about.html">About</a>
+  <header>
+    <nav class="nav container">
+      <div class="brand"><a href="/">HashHero</a></div>
+      <div class="menu">
+        <a href="/">Generator</a>
+        <a href="/ask.html">Ask&nbsp;AI</a>
+        <a href="/qr.html">QR</a>
+        <a href="/timer.html">Timer</a>
+        <a href="/audio.html">Audio</a>
+        <a href="/meme.html">Meme</a>
+        <a class="active" href="/about.html">About</a>
+      </div>
     </nav>
   </header>
 
-  <main class="hh-main">
-    <section class="hh-section">
-      <div class="card highlight">
-        <h1>About HashHero</h1>
-        <p class="muted">HashHero is a lightweight, free stop for content creators. Generate smart hashtags, ask AI for quick strategy tips,find fresh sounds for your content, create social QR codes, and keep momentum with a focused engagement timer — all in one place.</p>
-        <p>Our goal is to remove friction so you can publish faster, learn what works, and grow your audience. No paywall, no sign‑up — just practical tools that respect your time.</p>
-        <ul>
-          <li><strong>Smart Hashtag Generator</strong> — context‑aware suggestions with popularity tiers and impact estimates.</li>
-          <li><strong>Ask AI</strong> — instant answers for captions, hooks, and growth tactics.</li>
-          <li><strong>QR Codes</strong> — quick links to your socials without tracking.</li>
-          <li><strong>Engagement Timer</strong> — sprint in focused work/break cycles.</li>
-        </ul>
-      </div>
-    </section>
+  <main class="container">
+    <div class="card">
+      <h1 style="margin-top:0;">About HashHero</h1>
+      <p>HashHero is a free, fast, no-login toolkit for creators. The hashtag generator is the star; everything else is an add-on that helps you ship content faster.</p>
+      <ul>
+        <li><strong>Generator:</strong> Bias-aware tags from your description with per-tag copy.</li>
+        <li><strong>Meme:</strong> Upload or pick a template, add draggable text, export PNG/JPG.</li>
+        <li><strong>Ask AI:</strong> Quick prompts for hooks, titles, and captions.</li>
+        <li><strong>QR:</strong> Simple QR codes for links.</li>
+        <li><strong>Timer:</strong> Engagement countdowns with reset.</li>
+        <li><strong>Audio:</strong> Hidden-until-search previews powered by iTunes (30s).</li>
+      </ul>
+      <p>Feedback welcome: <a href="mailto:sherinea46@gmail.com">sherinea46@gmail.com</a></p>
+    </div>
 
-    <section class="hh-section">
-      <div class="card">
-        <h2>Feedback & Contact</h2>
-        <p>We’d love your ideas, bug reports, or feature requests.</p>
-        <a class="btn" href="mailto:sherinea46@gmail.com?subject=HashHero%20feedback">Email us</a>
-      </div>
-    </section>
+    <div class="card" style="margin:20px auto; max-width:850px; border:1px dashed rgba(255,255,255,0.2); background:rgba(255,255,255,0.03); border-radius:14px; padding:14px;">
+      <strong>Disclaimer:</strong>
+      <p class="small muted" style="margin-top:6px;">
+        Meme templates from Imgflip or other sources may be subject to copyright.
+        They are provided here for parody, commentary, and educational purposes only.
+        Please ensure you have rights or fair-use justification before publishing memes made with third-party images.
+        You are always safe using your own uploads or the built-in blank templates.
+      </p>
+    </div>
   </main>
 
-  <footer class="hh-footer"><span>© 2025 HashHero</span></footer>
+  <footer>© <span id="year"></span> HashHero — Free tools for creators.</footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>

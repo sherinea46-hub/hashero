@@ -1,0 +1,578 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Meme Generator — HashHero</title>
+  <meta name="description" content="Free meme generator for creators — upload or pick a template, add draggable text, and download instantly. No login." />
+  <link rel="stylesheet" href="/assets/css/site.css" />
+  <style>
+    :root {
+      --bg: #0f1220;
+      --card: #151932;
+      --text: #e8ebff;
+      --muted: #9aa3c7;
+      --accent: #7aa2ff;
+      --border: rgba(255,255,255,0.08);
+    }
+    body { background: var(--bg); color: var(--text); margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif; }
+    .container { max-width: 1150px; margin: 0 auto; padding: 24px; }
+    header { position: sticky; top:0; backdrop-filter: blur(6px); background: rgba(15,18,32,0.7); border-bottom: 1px solid rgba(255,255,255,0.06); z-index: 50; }
+    .nav { display:flex; align-items:center; justify-content:space-between; gap:16px; padding: 14px 24px; }
+    .brand { font-weight: 800; letter-spacing:.3px; }
+    .brand a { color: var(--text); text-decoration: none; }
+    .menu { display:flex; gap:14px; flex-wrap: wrap; }
+    .menu a { color: var(--muted); text-decoration:none; padding:8px 10px; border-radius:12px; }
+    .menu a.active, .menu a:hover { color: var(--text); background: rgba(122,162,255,.12); }
+    .grid { display:grid; gap:16px; grid-template-columns: 360px 1fr; }
+    @media (max-width: 980px) { .grid { grid-template-columns: 1fr; } }
+    .card { background: var(--card); border:1px solid var(--border); border-radius: 18px; padding:18px; }
+    .muted { color: var(--muted); }
+    input[type="text"], input[type="number"], input[type="range"], input[type="file"], select, button, .pill {
+      background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color: var(--text);
+      padding:10px 12px; border-radius:12px;
+    }
+    input[type="range"] { width: 100%; }
+    label { font-size: 12px; color: var(--muted); }
+    button { cursor:pointer; }
+    .row { display:flex; gap:10px; align-items:center; flex-wrap: wrap; }
+    .pill { display:inline-flex; align-items:center; gap:6px; font-size:12px; padding:6px 10px; }
+    .pill[data-action="add"] { border-style:dashed; }
+    .template-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
+    .template { border:1px solid var(--border); border-radius:12px; overflow:hidden; cursor:pointer; background: rgba(255,255,255,0.03); }
+    .template img { display:block; width:100%; height:100%; object-fit:cover; aspect-ratio: 1 / 1; }
+    canvas { width:100%; background:#000; border-radius: 18px; border:1px solid var(--border); }
+    .small { font-size:12px; }
+    .help { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .toolbar .row + .row { margin-top:10px; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="nav container">
+      <div class="brand"><a href="/">HashHero</a></div>
+      <div class="menu">
+        <a href="/">Generator</a>
+        <a href="/ask.html">Ask&nbsp;AI</a>
+        <a href="/qr.html">QR</a>
+        <a href="/timer.html">Timer</a>
+        <a href="/audio.html">Audio</a>
+        <a class="active" href="/meme.html">Meme</a>
+        <a href="/about.html">About</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <section class="card toolbar">
+        <h1 style="margin:0 0 6px 0;">Meme Generator</h1>
+        <p class="muted" style="margin:0 0 10px 0;">Upload an image or pick a template. Add draggable text and download.</p>
+
+        <div class="row">
+          <label for="file">Upload image</label>
+          <input id="file" type="file" accept="image/*">
+        </div>
+
+        <div style="margin-top:10px;">
+          <div class="row" style="justify-content:space-between; flex-wrap:wrap;">
+            <div class="row" style="gap:8px;">
+              <button class="pill small" id="tabBuiltIn">Built‑in</button>
+              <button class="pill small" id="tabTrending">Trending</button>
+            </div>
+            <div class="row">
+              <input id="tplSearch" type="text" placeholder="Search templates… (e.g., drake, distracted)" style="min-width:220px;">
+              <button class="pill small" id="clearTemplate">Clear</button>
+            </div>
+          </div>
+          <div class="template-grid" id="templates"></div>
+          <div class="help">Built‑in templates work offline. <strong>Trending</strong> pulls popular templates from Imgflip. If a template image can’t load due to CORS, use the fallback button to download and upload it.</div>
+        </div>
+
+        <hr style="border-color: rgba(255,255,255,0.08); margin:16px 0;">
+
+        <div class="row">
+          <button class="pill" data-action="add" id="addText">+ Add text</button>
+          <button class="pill" id="resetPositions">Reset positions</button>
+          <label><input type="checkbox" id="upper" checked style="vertical-align: middle; margin-right:6px;">UPPERCASE</label>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <label style="min-width:110px;">Font size</label>
+          <input id="fontSize" type="range" min="10" max="120" value="48">
+        </div>
+
+        <div class="row">
+          <label style="min-width:110px;">Outline</label>
+          <input id="outline" type="range" min="0" max="12" value="6">
+        </div>
+
+        <div class="row">
+          <label style="min-width:110px;">Align</label>
+          <select id="align">
+            <option value="center">Center</option>
+            <option value="left">Left</option>
+            <option value="right">Right</option>
+          </select>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <input id="watermarkText" type="text" placeholder="Watermark (optional, e.g., hashhero)">
+          <label><input type="checkbox" id="wm" style="vertical-align: middle; margin-right:6px;">Enable watermark</label>
+        </div>
+
+        <hr style="border-color: rgba(255,255,255,0.08); margin:16px 0;">
+
+        <div class="row">
+          <button id="downloadPng">Download PNG</button>
+          <button id="downloadJpg">Download JPG</button>
+        </div>
+
+        <p class="help">Tip: Drag text directly on the preview. Add multiple lines by pressing Enter in a text box.</p>
+
+        <div id="textList" style="margin-top:14px;"></div>
+      <div class="card" style="margin-top:14px; border:1px dashed rgba(255,255,255,0.2); background:rgba(255,255,255,0.03);">
+        <strong>Disclaimer:</strong>
+        <p class="small muted" style="margin-top:6px;">
+          Meme templates from Imgflip or other sources may be subject to copyright. 
+          They are shown here for parody, commentary, and educational purposes only. 
+          Please ensure you have rights or fair-use justification before publishing memes 
+          made with third-party images. You are always safe using your own uploads or the built-in blank templates.
+        </p>
+      </div>
+    </section>
+
+      <section class="card">
+        <canvas id="c" width="1000" height="1000"></canvas>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // Canvas setup
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    const fileInput = document.getElementById('file');
+    const templatesEl = document.getElementById('templates');
+    const addTextBtn = document.getElementById('addText');
+    const textList = document.getElementById('textList');
+    const resetBtn = document.getElementById('resetPositions');
+    const upperCb = document.getElementById('upper');
+    const fontSizeRange = document.getElementById('fontSize');
+    const outlineRange = document.getElementById('outline');
+    const alignSel = document.getElementById('align');
+    const wmCb = document.getElementById('wm');
+    const wmText = document.getElementById('watermarkText');
+    const clearTemplateBtn = document.getElementById('clearTemplate');
+
+    // Lightweight built-in templates as data URLs (keeps page offline-friendly)
+    const TEMPLATES = [
+      // Colored placeholders with captions indicating classic memes. These avoid copyright issues and keep file small.
+      { name: 'Top/Bottom (classic)', data: makeSolidTemplate('#222', 1000, 1000) },
+      { name: 'Two Panel', data: makeTwoPanelTemplate(1000, 1000) },
+      { name: 'Four Panel', data: makeFourPanelTemplate(1000, 1000) }
+    ];
+
+    function makeSolidTemplate(color, w, h) {
+      const cnv = document.createElement('canvas'); cnv.width = w; cnv.height = h;
+      const c2 = cnv.getContext('2d'); c2.fillStyle = color; c2.fillRect(0,0,w,h);
+      return cnv.toDataURL('image/png');
+    }
+    function makeTwoPanelTemplate(w, h) {
+      const cnv = document.createElement('canvas'); cnv.width = w; cnv.height = h;
+      const c2 = cnv.getContext('2d');
+      c2.fillStyle = '#111'; c2.fillRect(0,0,w,h);
+      c2.fillStyle = '#333'; c2.fillRect(0,0,w,h/2);
+      c2.strokeStyle='rgba(255,255,255,0.2)'; c2.lineWidth=4; c2.strokeRect(2,2,w-4,h-4);
+      return cnv.toDataURL('image/png');
+    }
+    function makeFourPanelTemplate(w, h) {
+      const cnv = document.createElement('canvas'); cnv.width = w; cnv.height = h;
+      const c2 = cnv.getContext('2d');
+      c2.fillStyle = '#111'; c2.fillRect(0,0,w,h);
+      c2.fillStyle = '#2a2a2a'; c2.fillRect(0,0,w/2,h/2);
+      c2.fillStyle = '#3a3a3a'; c2.fillRect(w/2,0,w/2,h/2);
+      c2.fillStyle = '#2f2f2f'; c2.fillRect(0,h/2,w/2,h/2);
+      c2.fillStyle = '#383838'; c2.fillRect(w/2,h/2,w/2,h/2);
+      c2.strokeStyle='rgba(255,255,255,0.2)'; c2.lineWidth=4; c2.strokeRect(2,2,w-4,h-4);
+      return cnv.toDataURL('image/png');
+    }
+
+    // Populate template grid
+    function renderTemplates() {
+      templatesEl.innerHTML = TEMPLATES.map((t, i) => \`
+        <div class="template" data-i="\${i}">
+          <img src="\${t.data}" alt="\${t.name}">
+          <div style="padding:8px" class="small muted">\${t.name}</div>
+        </div>\`
+      ).join('');
+      templatesEl.querySelectorAll('.template').forEach(el => {
+        el.addEventListener('click', () => {
+          const t = TEMPLATES[+el.dataset.i];
+          loadImage(t.data);
+        });
+      });
+    }
+    renderTemplates();
+
+    // State
+    let img = null;
+    let texts = []; // { id, x, y, text, size, align }
+    let activeId = null;
+
+    // Default two text boxes
+    addTextBox('TOP TEXT');
+    addTextBox('BOTTOM TEXT', canvas.height - 120);
+
+    // File upload
+    fileInput.addEventListener('change', (e) => {
+      const f = e.target.files[0];
+      if (!f) return;
+      const url = URL.createObjectURL(f);
+      loadImage(url, true);
+    });
+
+    clearTemplateBtn.addEventListener('click', () => {
+      img = null;
+      draw();
+    });
+
+    function loadImage(src, revoke=false) {
+      const image = new Image();
+      image.crossOrigin = 'anonymous';
+      image.onload = () => {
+        img = image;
+        // Resize canvas to image aspect while keeping 1000px max dimension
+        const max = 1000;
+        let w = image.width, h = image.height;
+        if (w > h) { if (w > max) { h = Math.round(h * (max / w)); w = max; } }
+        else { if (h > max) { w = Math.round(w * (max / h)); h = max; } }
+        canvas.width = w; canvas.height = h;
+        // Reset default positions
+        if (texts.length === 0) {
+          addTextBox('TOP TEXT');
+          addTextBox('BOTTOM TEXT', canvas.height - 120);
+        } else {
+          texts[0].y = 80;
+          texts[texts.length - 1].y = canvas.height - 80;
+        }
+        draw();
+        if (revoke) setTimeout(() => URL.revokeObjectURL(src), 1000);
+      };
+      image.onerror = () => alert('Could not load image.');
+      image.src = src;
+    }
+
+    function addTextBox(initial='NEW TEXT', y=80) {
+      const id = Math.random().toString(36).slice(2,9);
+      texts.push({ id, x: canvas.width/2, y, text: initial, size: +fontSizeRange.value, align: alignSel.value });
+      activeId = id;
+      renderTextList();
+      draw();
+    }
+
+    addTextBtn.addEventListener('click', () => addTextBox('NEW TEXT'));
+
+    function renderTextList() {
+      textList.innerHTML = texts.map(t => \`
+        <div class="card" style="margin-top:8px; border-style: solid;">
+          <div class="row" style="justify-content:space-between;">
+            <div class="small muted">Text box</div>
+            <button class="pill small" data-del="\${t.id}">Delete</button>
+          </div>
+          <div class="row" style="margin-top:8px;">
+            <input type="text" data-id="\${t.id}" value="\${t.text.replace(/"/g,'&quot;')}" style="flex:1; min-width: 200px;">
+          </div>
+        </div>\`
+      ).join('');
+      // Bind delete & input
+      textList.querySelectorAll('[data-del]').forEach(btn => btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-del');
+        texts = texts.filter(x => x.id !== id);
+        if (activeId === id) activeId = texts[0]?.id || null;
+        renderTextList(); draw();
+      }));
+      textList.querySelectorAll('input[type="text"]').forEach(inp => {
+        inp.addEventListener('input', () => {
+          const id = inp.getAttribute('data-id');
+          const t = texts.find(x => x.id === id);
+          if (!t) return;
+          t.text = inp.value;
+          draw();
+        });
+        inp.addEventListener('focus', () => activeId = inp.getAttribute('data-id'));
+      });
+    }
+
+    // Dragging
+    let dragging = false, dragOffsetX = 0, dragOffsetY = 0;
+    canvas.addEventListener('mousedown', startDrag);
+    canvas.addEventListener('touchstart', (e) => startDrag(e.touches[0]));
+    window.addEventListener('mousemove', moveDrag);
+    window.addEventListener('touchmove', (e) => moveDrag(e.touches[0]));
+    window.addEventListener('mouseup', endDrag);
+    window.addEventListener('touchend', endDrag);
+
+    function measureTextBox(t) {
+      ctx.font = fontSpec(t.size);
+      const lines = (t.text || '').split('\n');
+      const widths = lines.map(line => ctx.measureText(formatText(line)).width);
+      const w = Math.max(...widths, 1) + 20;
+      const lineHeight = t.size * 1.2;
+      const h = lines.length * lineHeight + 20;
+      let x = t.x, left = 0;
+      if (t.align === 'center') left = x - w/2;
+      if (t.align === 'left') left = x;
+      if (t.align === 'right') left = x - w;
+      return { left, top: t.y - h/2, w, h, lineHeight, lines };
+    }
+
+    function hitTest(mx, my) {
+      for (let i = texts.length -1; i >= 0; i--) {
+        const t = texts[i];
+        const box = measureTextBox(t);
+        if (mx >= box.left && mx <= box.left + box.w && my >= box.top && my <= box.top + box.h) {
+          return t;
+        }
+      }
+      return null;
+    }
+
+    function startDrag(e) {
+      const r = canvas.getBoundingClientRect();
+      const x = (e.clientX - r.left) * (canvas.width / r.width);
+      const y = (e.clientY - r.top) * (canvas.height / r.height);
+      const t = hitTest(x,y);
+      if (t) {
+        dragging = true;
+        activeId = t.id;
+        const box = measureTextBox(t);
+        dragOffsetX = x - t.x;
+        dragOffsetY = y - t.y;
+        e.preventDefault();
+      }
+    }
+    function moveDrag(e) {
+      if (!dragging) return;
+      const r = canvas.getBoundingClientRect();
+      const x = (e.clientX - r.left) * (canvas.width / r.width);
+      const y = (e.clientY - r.top) * (canvas.height / r.height);
+      const t = texts.find(x => x.id === activeId);
+      if (t) {
+        t.x = x - dragOffsetX;
+        t.y = y - dragOffsetY;
+        draw();
+      }
+    }
+    function endDrag() { dragging = false; }
+
+    resetBtn.addEventListener('click', () => {
+      texts.forEach((t,i) => { t.x = canvas.width/2; t.y = i === 0 ? 80 : canvas.height - 80; });
+      draw();
+    });
+
+    upperCb.addEventListener('change', draw);
+    fontSizeRange.addEventListener('input', () => {
+      if (activeId) {
+        const t = texts.find(x => x.id === activeId);
+        if (t) t.size = +fontSizeRange.value;
+      } else {
+        texts.forEach(t => t.size = +fontSizeRange.value);
+      }
+      draw();
+    });
+    outlineRange.addEventListener('input', draw);
+    alignSel.addEventListener('change', () => {
+      if (activeId) {
+        const t = texts.find(x => x.id === activeId);
+        if (t) t.align = alignSel.value;
+      } else {
+        texts.forEach(t => t.align = alignSel.value);
+      }
+      draw();
+    });
+    wmCb.addEventListener('change', draw);
+    wmText.addEventListener('input', draw);
+
+    function fontSpec(size) {
+      return \`\${size}px Impact, 'Anton', 'Arial Black', system-ui, sans-serif\`;
+    }
+    function formatText(line) {
+      return upperCb.checked ? (line || '').toUpperCase() : (line || '');
+    }
+
+    function draw() {
+      // Background
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0,0,canvas.width, canvas.height);
+      // Image if any
+      if (img) ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      else {
+        // default gradient bg to hint upload
+        const g = ctx.createLinearGradient(0,0,canvas.width, canvas.height);
+        g.addColorStop(0,'#20243e'); g.addColorStop(1,'#10131f');
+        ctx.fillStyle = g; ctx.fillRect(0,0,canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(255,255,255,0.2)';
+        ctx.textAlign='center';
+        ctx.font='22px system-ui, sans-serif';
+        ctx.fillText('Upload an image or pick a template', canvas.width/2, canvas.height/2);
+      }
+
+      // Draw texts
+      const outline = +outlineRange.value;
+      texts.forEach(t => {
+        ctx.font = fontSpec(t.size);
+        ctx.textAlign = t.align;
+        ctx.textBaseline = 'middle';
+        const lines = (t.text || '').split('\n');
+        const lh = t.size * 1.2;
+        lines.forEach((line, idx) => {
+          const yy = t.y + (idx - (lines.length-1)/2) * lh;
+          const txt = formatText(line);
+          if (outline > 0) {
+            ctx.lineWidth = outline;
+            ctx.strokeStyle = '#000';
+            ctx.strokeText(txt, t.x, yy);
+          }
+          ctx.fillStyle = '#fff';
+          ctx.fillText(txt, t.x, yy);
+        });
+      });
+
+      // Watermark
+      if (wmCb.checked && wmText.value.trim()) {
+        const s = Math.max(12, Math.round(canvas.width * 0.03));
+        ctx.save();
+        ctx.globalAlpha = 0.65;
+        ctx.font = \`bold \${s}px system-ui, sans-serif\`;
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(wmText.value.trim(), canvas.width - 14, canvas.height - 14);
+        ctx.restore();
+      }
+    }
+    draw();
+
+    function download(type='image/png') {
+      const link = document.createElement('a');
+      link.download = 'hashhero-meme' + (type === 'image/png' ? '.png' : '.jpg');
+      link.href = canvas.toDataURL(type, type === 'image/jpeg' ? 0.92 : undefined);
+      link.click();
+    }
+    document.getElementById('downloadPng').addEventListener('click', () => download('image/png'));
+    document.getElementById('downloadJpg').addEventListener('click', () => download('image/jpeg'));
+// --- Imgflip trending templates integration ---
+const tabBuiltIn = document.getElementById('tabBuiltIn');
+const tabTrending = document.getElementById('tabTrending');
+const tplSearch = document.getElementById('tplSearch');
+
+let trendingTemplates = [];
+let activeTab = 'built';
+
+async function fetchImgflip() {
+  try {
+    const res = await fetch('https://api.imgflip.com/get_memes', { mode: 'cors' });
+    const data = await res.json();
+    if (data?.success && Array.isArray(data.data?.memes)) {
+      trendingTemplates = data.data.memes
+        .filter(m => m.box_count <= 4) // simpler ones
+        .slice(0, 60);
+    }
+  } catch(e) {
+    console.warn('Failed to load Imgflip templates', e);
+  }
+}
+
+function activeTabStyles() {
+  // lightweight visual cue
+  tabBuiltIn.classList.toggle('active', activeTab === 'built');
+  tabTrending.classList.toggle('active', activeTab === 'trend');
+}
+
+function renderTemplatesDynamic() {
+  const q = (tplSearch.value || '').toLowerCase().trim();
+  if (activeTab === 'built') {
+    const filtered = TEMPLATES; // built-ins
+    templatesEl.innerHTML = filtered.map((t, i) => `
+      <div class="template" data-built="${i}">
+        <img src="${t.data}" alt="${t.name}">
+        <div style="padding:8px" class="small muted">${t.name}</div>
+      </div>`).join('');
+    templatesEl.querySelectorAll('[data-built]').forEach(el => {
+      el.addEventListener('click', () => {
+        const t = TEMPLATES[+el.dataset.built];
+        loadImage(t.data);
+      });
+    });
+    return;
+  }
+
+  // trending
+  let arr = trendingTemplates;
+  if (q) arr = arr.filter(m => m.name.toLowerCase().includes(q));
+  if (!arr.length) {
+    templatesEl.innerHTML = `<div class="small muted">No templates found. Try a different search.</div>`;
+    return;
+  }
+  templatesEl.innerHTML = arr.map(m => `
+    <div class="template">
+      <img src="${m.url}" alt="${m.name}">
+      <div style="padding:8px; display:flex; align-items:center; justify-content:space-between;">
+        <span class="small muted" title="${m.name}">${m.name}</span>
+        <div class="row" style="gap:6px;">
+          <button class="pill small" data-use="${encodeURIComponent(m.url)}" title="Try to load directly">Use</button>
+          <a class="pill small" href="${m.url}" target="_blank" rel="noopener" title="Open image in new tab to download">Open</a>
+        </div>
+      </div>
+    </div>`).join('');
+
+  // Bind "Use" with safe loader
+  templatesEl.querySelectorAll('[data-use]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const url = decodeURIComponent(btn.getAttribute('data-use'));
+      try {
+        const blobUrl = await safeLoadToBlobUrl(url);
+        if (blobUrl) {
+          loadImage(blobUrl, true);
+        } else {
+          // fallback to direct load
+          loadImage(url);
+        }
+      } catch(e) {
+        alert('Could not load template directly due to cross‑origin restrictions. Click "Open", download the image, then upload it.');
+      }
+    });
+  });
+}
+
+// Attempt a CORS-safe load; returns blob URL or null
+async function safeLoadToBlobUrl(url) {
+  try {
+    const res = await fetch(url, { mode: 'cors' });
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    const obj = URL.createObjectURL(blob);
+    return obj;
+  } catch(e) {
+    return null;
+  }
+}
+
+// Tab controls
+tabBuiltIn.addEventListener('click', () => { activeTab = 'built'; activeTabStyles(); renderTemplatesDynamic(); });
+tabTrending.addEventListener('click', async () => {
+  activeTab = 'trend'; activeTabStyles();
+  if (!trendingTemplates.length) await fetchImgflip();
+  renderTemplatesDynamic();
+});
+tplSearch.addEventListener('input', () => renderTemplatesDynamic());
+
+// Initialize default (built-in)
+activeTabStyles();
+renderTemplatesDynamic();
+
+  </script>
+</body>
+</html>
