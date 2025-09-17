@@ -78,6 +78,14 @@
     #audio.compact #aud-legend, #audio.compact #aud-results { display: none; }
   </style>
 
+
+  <style>
+    /* QOD light styling */
+    #qod blockquote { margin: 0; line-height: 1.5; }
+    #qod .muted { opacity: .85; }
+    #qod .small { font-size: .9rem; }
+  </style>
+
 </head>
 
 <body>
@@ -295,7 +303,22 @@
         <p class="hint small">Tip: Mix High + Niche audio to balance reach and relevance.</p>
       </div>
     </section>
-    </main>
+    
+    <!-- Quote of the Day (SEO-friendly, daily refresh) -->
+    <section id="qod" class="hh-section">
+      <div class="card">
+        <h2>Quote of the Day</h2>
+        <blockquote id="qod-text" class="text-lg"></blockquote>
+        <p id="qod-author" class="muted"></p>
+        <p id="qod-context" class="small muted"></p>
+        <script id="qod-ld" type="application/ld+json"></script>
+        <noscript>
+          <blockquote>“Creativity is intelligence having fun.”</blockquote>
+          <p class="small muted">Daily inspiration for creators. Try the HashHero Hashtag Generator.</p>
+        </noscript>
+      </div>
+    </section>
+</main>
 
   <footer class="hh-footer">
     <span>© 2025 HashHero</span>
@@ -393,6 +416,90 @@
   render([]);
 })();
 </script>
+
+
+  <script>
+  (function () {
+    const STORAGE_KEY = "hh_qod_cache_v1";
+    const INTERNAL_LINK = "/#generator";
+    const TAGS = ["hashtag generator","instagram hashtags","tiktok marketing","content strategy","engagement rate"];
+
+    function todayISO(){
+      const now = new Date();
+      return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
+        .toISOString().slice(0,10);
+    }
+    function setJSONLD(q){
+      const el = document.getElementById("qod-ld");
+      if (!el) return;
+      const ld = {
+        "@context": "https://schema.org",
+        "@type": "Quotation",
+        "text": q.text,
+        "spokenByCharacter": {"@type":"Person","name": q.author || "Unknown"},
+        "about": TAGS.slice(0,4),
+        "dateCreated": todayISO(),
+        "isPartOf": {"@type":"WebSite","name":"HashHero","url": location.origin}
+      };
+      el.textContent = JSON.stringify(ld);
+    }
+    function render(q){
+      const t = document.getElementById("qod-text");
+      const a = document.getElementById("qod-author");
+      const c = document.getElementById("qod-context");
+      if (!t || !a || !c) return;
+      t.textContent = `“${q.text}”`;
+      a.textContent = `— ${q.author || "Unknown"}`;
+      c.textContent = `Daily inspiration for creators: ${TAGS.slice(0,3).join(" • ")}. `;
+      const link = document.createElement("a");
+      link.href = INTERNAL_LINK;
+      link.textContent = "Open Hashtag Generator";
+      link.className = "underline";
+      c.appendChild(link);
+      setJSONLD(q);
+    }
+    function save(q){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify({date: todayISO(), quote: q})); } catch {} }
+    function load(){
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        const p = JSON.parse(raw);
+        if (p && p.date === todayISO() && p.quote && p.quote.text) return p.quote;
+      } catch {}
+      return null;
+    }
+    function fallback(){
+      const F = [
+        { text: "Consistency beats intensity. Post, learn, iterate.", author: "HashHero" },
+        { text: "Create for humans first; algorithms will follow.", author: "HashHero" },
+        { text: "Specific beats generic. Niche tags find your people.", author: "HashHero" },
+        { text: "Batch today so you can post calmly tomorrow.", author: "HashHero" }
+      ];
+      return F[Math.floor(Math.random() * F.length)];
+    }
+    async function zen(){
+      const r = await fetch("https://zenquotes.io/api/today", { cache: "no-store" });
+      if (!r.ok) throw 0;
+      const d = await r.json();
+      if (!Array.isArray(d) || !d[0] || !d[0].q) throw 0;
+      return { text: d[0].q, author: d[0].a };
+    }
+    async function quot(){
+      const r = await fetch("https://api.quotable.io/random", { cache: "no-store" });
+      if (!r.ok) throw 0;
+      const d = await r.json();
+      if (!d || !d.content) throw 0;
+      return { text: d.content, author: d.author };
+    }
+    (async function init(){
+      const cached = load();
+      if (cached){ render(cached); return; }
+      try { const q1 = await zen(); save(q1); render(q1); }
+      catch { try { const q2 = await quot(); save(q2); render(q2); }
+      catch { const q3 = fallback(); save(q3); render(q3); } }
+    })();
+  })();
+  </script>
 
 </body>
 </html>
