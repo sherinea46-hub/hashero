@@ -228,8 +228,8 @@
         return;
       }
       templatesEl.innerHTML = arr.map(m => `
-        <div class="template">
-          <img src="${m.url}" alt="${m.name}">
+        <div class="template" data-url="${encodeURIComponent(m.url)}" style="cursor:pointer;">
+          <img src="${m.url}" alt="${m.name}" data-url="${encodeURIComponent(m.url)}">
           <div style="padding:8px; display:flex; align-items:center; justify-content:space-between;">
             <span class="small muted" title="${m.name}">${m.name}</span>
             <div style="display:flex; gap:6px;">
@@ -238,13 +238,26 @@
             </div>
           </div>
         </div>`).join('');
+      // Clicking "Use" button
       templatesEl.querySelectorAll('[data-use]').forEach(btn => {
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
           const url = decodeURIComponent(btn.getAttribute('data-use'));
           const blobUrl = await safeLoadToBlobUrl(url);
           if (blobUrl) loadImage(blobUrl, true);
           else loadImage(url);
         });
+      });
+      // Clicking the card or image also selects
+      templatesEl.querySelectorAll('.template, .template img').forEach(el => {
+        el.addEventListener('click', async (e) => {
+          const encoded = e.target.getAttribute('data-url') || e.currentTarget.getAttribute('data-url');
+          if (!encoded) return;
+          const url = decodeURIComponent(encoded);
+          const blobUrl = await safeLoadToBlobUrl(url);
+          if (blobUrl) loadImage(blobUrl, true);
+          else loadImage(url);
+        }, { passive: true });
       });
     }
 
