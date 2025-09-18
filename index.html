@@ -172,6 +172,7 @@
             <div class="small muted"><span id="g-count">0</span> / <span id="g-maxcap">30</span></div>
           </div>
           <textarea id="g-out" class="output" rows="10" readonly></textarea>
+<pre id="g-ai-explain" class="outputblock" style="display:none;margin-top:.5rem;"></pre>
           <div id="g-warnings" class="muted small"></div>
         </div>
       </div>
@@ -710,6 +711,368 @@
   elSec?.addEventListener("input", readInputs);
 
   readInputs();
+})();
+</script>
+
+
+<script id="generator-smart-v3-pro">
+/**
+ * HashHero Smart Hashtag Generator v3 (PRO) + AI Bridge
+ * - Proper FILM/CINEMA topic support
+ * - Bias mixing (reach/balanced/niche)
+ * - Platform caps
+ * - Fill-to-cap backfills
+ * - Suggestions chipbar
+ * - AI Boost & Explain buttons
+ */
+(function(){
+  const $ = (s)=>document.querySelector(s);
+  const outEl = $("#g-out");
+  const warnEl = $("#g-warnings");
+  const countEl = $("#g-count");
+  const maxcapEl = $("#g-maxcap");
+  const descEl = $("#g-desc");
+  const platEl = $("#g-platform");
+  const biasEl = $("#g-bias");
+  const maxEl = $("#g-max");
+  const btnGen = $("#g-generate");
+  const btnClr = $("#g-clear");
+  const btnCopy = $("#g-copy");
+  const suggBar = $("#g-suggestions");
+  const expEl = $("#g-ai-explain");
+
+  if (!outEl || !btnGen) return; // generator not present on this page
+
+  // ---- Config ----
+  const STOP = new Set(("a,an,the,and,or,of,in,on,for,to,with,at,by,from,about,as,into,like,through,after,over,between,out,against,during,without,within,along,across,behind,beyond,plus,is,are,was,were,be,been,being,that,this,these,those,i,me,my,our,ours,we,you,your,he,she,they,them,it,its,just,very,more,most,so,up,down,how,what,when,why,who").split(","));
+
+  const PLATFORM_CAP = { Instagram: 30, TikTok: 33, Twitter: 20, YouTube: 15, LinkedIn: 15 };
+  const GENERIC = {
+    Instagram: ["reels","explorepage","viral","instagood","contentcreator","creator","instagram"],
+    TikTok: ["fyp","foryou","viral","trending","tiktok","tiktoktips"],
+    Twitter: ["content","marketing","growth"],
+    YouTube: ["shorts","youtube","youtubeshorts","contentcreator"],
+    LinkedIn: ["contentmarketing","socialmediamarketing","personalbranding"]
+  };
+
+  const TOPIC = {
+    travel: {
+      h:["travel","vacation","wanderlust","travelgram","traveldiaries"],
+      m:["budgettravel","solotravel","citybreak","travelreels","postcards"],
+      n:["hiddenparis","cozycafes","offthebeatenpath","slowtravel","eurovlog"]
+    },
+    vlog: {
+      h:["vlog","dailyvlog","travelvlog","vlogger"],
+      m:["cinematic","broll","vlogreel","aestheticvibes"],
+      n:["povwalk","whatsinmybag","dayinmylife","fpv"]
+    },
+    film: {
+      h:["cinema","film","movies","filmmaking","cinematography","director","movie"],
+      m:["filmphotography","filmcommunity","movienight","shortfilm","filmfestival","filmedit","colorgrading"],
+      n:["cinephile","filmstudy","movieedits","brollcinema","anamorphic","storyboarding","behindthescenes"]
+    },
+    tech: {
+      h:["tech","technology","gadgets","innovation"],
+      m:["ai","productivity","creatortools","appreview"],
+      n:["nocode","solopreneur","indiehacker"]
+    },
+    photography: {
+      h:["photography","photooftheday","photographer"],
+      m:["streetphotography","travelphotography","portraitphotography"],
+      n:["filmlook","cinestill","nightphotowalk"]
+    },
+    music: {
+      h:["music","musician","songwriter"],
+      m:["guitarloops","pianocover","indiepop"],
+      n:["lofimusic","bedroomproducer","citypop"]
+    },
+    fashion: {
+      h:["fashion","style","ootd"],
+      m:["streetstyle","capsulewardrobe","minimalstyle"],
+      n:["parisianstyle","neutralpalette","slowfashion"]
+    },
+    food: {
+      h:["food","foodie","yummy","delicious","foodstagram"],
+      m:["homecooking","recipeoftheday","comfortfood","mealprep","streetfood"],
+      n:["pariscafes","budgetbites","coffeenook","aestheticbakes"]
+    }
+  };
+
+  const SYN = {
+    cinema:["film","films","movies","movie","filmmaking","cinematography","cinephile","director","shortfilm","colorgrading","cine"],
+    film:["cinema","movies","filmmaking","cinematography","cinematic"],
+    movie:["cinema","film","filmmaking","cinematography"],
+    cinematic:["cinema","cinematography","film"],
+    reels:["reel","shorts"], reel:["reels","shorts"], shorts:["reels","ytshorts"],
+    paris:["france","eiffel","louvre"], tokyo:["japan","shibuya","asakusa"]
+  };
+
+  const BANNED = new Set(["followforfollow","like4like","sub4sub","giveaway","nsfw","spam","clickbait"]);
+
+  const GENERAL_CONTENT = ["content","creator","creators","create","viral","trending","tips","tutorial","howto"];
+  const GENERAL_CREATOR  = ["behindthescenes","workflow","setup","gear","aesthetic","storytelling","branding"];
+
+  // ---- Helpers ----
+  function tokenize(text){
+    return (text||"")
+      .toLowerCase()
+      .replace(/[#@]/g," ")
+      .replace(/[^a-z0-9\s\-]/g," ")
+      .split(/\s+/)
+      .filter(w=>w && !STOP.has(w) && w.length>1);
+  }
+  function stem(w){ return w.replace(/(ingly|edly|ing|ed|es|s)$/,""); }
+  function expand(keys){
+    const out = new Set(keys);
+    keys.forEach(k => (SYN[k]||[]).forEach(x=>out.add(x)));
+    return Array.from(out);
+  }
+  function toTag(w){ return w.replace(/[^a-z0-9]+/g,"").toLowerCase(); }
+  function uniqSanitize(tags){
+    const seen = new Set(); const out=[];
+    for (const t of tags){
+      const c = toTag(t);
+      if (!c || BANNED.has(c) || seen.has(c)) continue;
+      seen.add(c); out.push("#"+c);
+    }
+    return out;
+  }
+  function seedsFor(keys){
+    const res = {h:[], m:[], n:[]};
+    keys.forEach(k=>{ const t = TOPIC[k]; if (t){ res.h.push(...t.h); res.m.push(...t.m); res.n.push(...t.n); } });
+    return res;
+  }
+  function guessTopics(keys){
+    const hits = new Set(Object.keys(TOPIC).filter(k=>keys.includes(k)));
+    if (keys.includes("cinema") || keys.includes("film") || keys.includes("movie") || keys.includes("cinematic")) hits.add("film");
+    if (keys.includes("vlog") || keys.includes("broll")) hits.add("vlog");
+    return Array.from(hits);
+  }
+  function mixByBias(cands, bias, need){
+    let wh=0.6, wm=0.3, wn=0.1;
+    if (bias==="niche"){ wh=0.2; wm=0.35; wn=0.45; }
+    if (bias==="reach"){ wh=0.65; wm=0.25; wn=0.10; }
+    const take=(arr,n)=>arr.slice(0,Math.max(0,n));
+    const H=take(cands.h,Math.round(need*wh));
+    const M=take(cands.m.filter(x=>!H.includes(x)), Math.round(need*wm));
+    const N=take(cands.n.filter(x=>!H.includes(x)&&!M.includes(x)), need-(H.length+M.length));
+    return uniqSanitize([...H,...M,...N]);
+  }
+  function platformExtras(plat){
+    return (GENERIC[plat]||[]).map(x=>"#"+toTag(x));
+  }
+  function fillToCap(list, cap, tokens, plat){
+    const want = cap - list.length;
+    if (want <= 0) return list.slice(0,cap);
+    const adders = [];
+
+    // 1) Keywords themselves
+    tokens.forEach(t => adders.push("#"+toTag(t)));
+
+    // 2) Generic creator fillers
+    adders.push(...GENERAL_CONTENT.map(x=>"#"+x), ...GENERAL_CREATOR.map(x=>"#"+x));
+
+    // 3) Platform extras
+    adders.push(...platformExtras(plat));
+
+    // Unique append
+    const seen = new Set(list);
+    for (const a of adders){
+      if (!a || seen.has(a)) continue;
+      seen.add(a); list.push(a);
+      if (list.length >= cap) break;
+    }
+    return list.slice(0,cap);
+  }
+
+  // ---- Main generation ----
+  function makeTags(){
+    const desc = (descEl?.value||"").trim();
+    const plat = (platEl?.value||"Instagram");
+    const bias = (biasEl?.value||"balanced").toLowerCase();
+    const cap = Math.min(parseInt(maxEl?.value||"25",10), PLATFORM_CAP[plat]||25);
+    if (maxcapEl) maxcapEl.textContent = String(cap);
+
+    let tokens = tokenize(desc).map(stem);
+    if (!tokens.length){
+      if (warnEl) warnEl.textContent = "Describe your post for better results (topic, location, format).";
+      if (outEl) outEl.value = "";
+      if (countEl) countEl.textContent = "0";
+      if (suggBar) suggBar.innerHTML = "";
+      return;
+    }
+    tokens = expand(tokens);
+
+    const topics = guessTopics(tokens);
+    const seeds = seedsFor(topics);
+
+    // Keyword-derived tags
+    const kwTags = tokens.slice(0,10).map(toTag).map(x=>"#"+x);
+
+    // Candidate pool (rank roughly by order)
+    const pool = {
+      h: uniqSanitize([...seeds.h, ...kwTags]),
+      m: uniqSanitize(seeds.m),
+      n: uniqSanitize(seeds.n)
+    };
+
+    // Mix by bias and trim
+    let mixed = mixByBias(pool, bias, cap - 0);
+
+    // Heuristic adds (locations / formats)
+    const locLike = tokens.filter(t=>/(paris|tokyo|london|india|canada|europe|asia|usa|mumbai|toronto|delhi|vancouver|la|nyc|berlin)/.test(t)).slice(0,3).map(toTag).map(x=>"#"+x);
+    const fmtLike = tokens.filter(t=>/(cinematic|pov|tutorial|tips|broll|reel|shorts|edit|storyboard|grade|bts)/.test(t)).slice(0,3).map(toTag).map(x=>"#"+x);
+    mixed = uniqSanitize([...locLike, ...fmtLike, ...mixed]);
+
+    // Platform extras + fill to cap
+    mixed = fillToCap(mixed, cap, tokens, plat);
+
+    // Render
+    outEl.value = mixed.join(" ");
+    if (countEl) countEl.textContent = String(mixed.length);
+    if (warnEl) warnEl.textContent = mixed.length < cap ? "Tip: Add specifics (camera, lens, location) to unlock more targeted tags." : "";
+
+    // Suggestions
+    if (suggBar){
+      const extras = platformExtras(plat).slice(0,6);
+      const suggest = Array.from(new Set([
+        ...kwTags,
+        ...(topics.length? ["#"+topics[0]]: []),
+        ...extras
+      ])).slice(0, 20);
+      suggBar.innerHTML = suggest.map(s=>`<button class="chip" data-tag="${s}">${s}</button>`).join("");
+      suggBar.querySelectorAll("[data-tag]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const cur = outEl.value.trim().split(/\s+/).filter(Boolean);
+          if (cur.includes(b.dataset.tag)){
+            const nxt = cur.filter(x=>x!==b.dataset.tag);
+            outEl.value = nxt.join(" ");
+            if (countEl) countEl.textContent = String(nxt.length);
+          }else{
+            const capNow = Math.min(parseInt(maxEl?.value||"25",10), PLATFORM_CAP[plat]||25);
+            if (cur.length >= capNow) return;
+            outEl.value = (cur.concat([b.dataset.tag])).join(" ");
+            if (countEl) countEl.textContent = String(cur.length+1);
+          }
+        });
+      });
+    }
+  }
+
+  // Wire actions
+  btnGen.addEventListener("click", makeTags);
+  btnClr?.addEventListener("click", ()=>{ outEl.value=""; if (countEl) countEl.textContent="0"; if (warnEl) warnEl.textContent=""; });
+  btnCopy?.addEventListener("click", async ()=>{ try{ await navigator.clipboard.writeText(outEl.value); if (warnEl){ warnEl.textContent="Copied!"; setTimeout(()=>warnEl.textContent="",1200);} }catch{} });
+  descEl?.addEventListener("keydown", (e)=>{ if ((e.ctrlKey||e.metaKey) && e.key==="Enter"){ e.preventDefault(); makeTags(); } });
+
+  // ---- AI Bridge ----
+  const btnRow = btnGen.parentElement;
+  if (btnRow && !document.getElementById("g-ai-boost")){
+    const mkBtn = (id, label, ghost=false) => {
+      const b = document.createElement("button");
+      b.id = id; b.className = "btn" + (ghost ? " btn-ghost" : "");
+      b.textContent = label; return b;
+    };
+    const btnBoost = mkBtn("g-ai-boost","AI Boost");
+    const btnExplain = mkBtn("g-ai-explain-btn","Explain", true);
+    btnRow.insertBefore(btnBoost, btnGen.nextSibling);
+    btnRow.insertBefore(btnExplain, btnBoost.nextSibling);
+
+    function capForPlatform(plat, fallback){ return PLATFORM_CAP[plat] || fallback || 25; }
+    function sanitizeHashList(text){
+      const found = (text||"").match(/#[a-z0-9_]+/gi) || [];
+      const seen = new Set(); const clean=[];
+      for (const t of found){ const k=t.toLowerCase(); if (seen.has(k)) continue; seen.add(k); clean.push(k); }
+      return clean;
+    }
+    function mergeToCap(baseList, aiList, cap){
+      const seen = new Set(baseList.map(x=>x.toLowerCase()));
+      const out = baseList.slice();
+      for (const t of aiList){
+        if (out.length >= cap) break;
+        const low = t.toLowerCase();
+        if (seen.has(low)) continue;
+        seen.add(low);
+        out.push(t);
+      }
+      return out.slice(0, cap);
+    }
+    async function callAskAI(prompt){
+      if (typeof window.hashheroAskAI === "function"){
+        const txt = await window.hashheroAskAI(prompt);
+        return String(txt||"");
+      }
+      try{
+        const r = await fetch("/api/ask", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ q: prompt }) });
+        if (r.ok){ return await r.text(); }
+      }catch(e){}
+      throw new Error("No Ask AI endpoint available.");
+    }
+
+    btnBoost.addEventListener("click", async () => {
+      const desc = (descEl?.value||"").trim();
+      const plat = (platEl?.value||"Instagram");
+      const bias = (biasEl?.value||"balanced").toLowerCase();
+      const cap = Math.min(parseInt(maxEl?.value||"25",10), capForPlatform(plat,25));
+      if (!desc){ if (expEl){ expEl.style.display="block"; expEl.textContent="Please describe your post first."; } return; }
+
+      const prompt = [
+        "You are an expert social media strategist.",
+        `Platform: ${plat}. Bias: ${bias}. Max hashtags: ${cap}.`,
+        "Task: Return ONLY a space-separated list of relevant hashtags (no extra text).",
+        "Balance high-reach and niche film/cinema tags when relevant. Avoid spammy tags.",
+        `Post: "${desc}"`
+      ].join(" ");
+
+      const prev = btnBoost.textContent;
+      btnBoost.textContent = "Thinking…";
+      btnBoost.disabled = true;
+      if (expEl){ expEl.style.display="block"; expEl.textContent="Talking to Ask AI…"; }
+
+      try{
+        const text = await callAskAI(prompt);
+        const aiTags = sanitizeHashList(text);
+        const current = (outEl.value.trim().match(/#[a-z0-9_]+/gi) || []);
+        const merged = mergeToCap(current, aiTags, cap);
+        outEl.value = merged.join(" ");
+        if (countEl) countEl.textContent = String(merged.length);
+        if (expEl) expEl.textContent = aiTags.length ? "AI Boost applied." : "AI returned no hashtags; try a more detailed description.";
+      }catch(e){
+        if (expEl) expEl.textContent = "Couldn't reach Ask AI. Ensure /api/ask or window.hashheroAskAI is available.";
+      }finally{
+        btnBoost.textContent = prev;
+        btnBoost.disabled = false;
+      }
+    });
+
+    btnExplain.addEventListener("click", async () => {
+      const desc = (descEl?.value||"").trim();
+      const plat = (platEl?.value||"Instagram");
+      const bias = (biasEl?.value||"balanced").toLowerCase();
+      if (!desc){ if (expEl){ expEl.style.display="block"; expEl.textContent="Add a description first."; } return; }
+      const prompt = [
+        "Explain in 4 short bullet points the strategy behind the best hashtags for this post.",
+        "Mention reach vs niche and any location/format choices. No fluff.",
+        `Platform: ${plat}. Bias: ${bias}.`,
+        `Post: "${desc}"`
+      ].join(" ");
+
+      const prev = btnExplain.textContent;
+      btnExplain.textContent = "Thinking…";
+      btnExplain.disabled = true;
+      if (expEl){ expEl.style.display = "block"; expEl.textContent = "Asking AI…"; }
+
+      try{
+        const text = await callAskAI(prompt);
+        if (expEl) expEl.textContent = text || "No explanation returned.";
+      }catch(e){
+        if (expEl) expEl.textContent = "Couldn't reach Ask AI. Ensure /api/ask or window.hashheroAskAI is available.";
+      }finally{
+        btnExplain.textContent = prev;
+        btnExplain.disabled = false;
+      }
+    });
+  }
 })();
 </script>
 
