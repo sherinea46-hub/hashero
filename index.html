@@ -87,12 +87,20 @@
   </style>
 
 
-<style id="timer-sound-ui-v5">
-  #timer .row.soundbar { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; margin-top:.75rem; }
-  #timer .row.soundbar .col { flex: 1 1 220px; }
-  #timer .row.soundbar .lbl { display:block; font-size:.9rem; opacity:.9; margin-bottom:.35rem; }
-  #timer .row.soundbar .input, #timer .row.soundbar .select, #timer .row.soundbar .text { width:100%; }
-  #timer .row.soundbar small { opacity:.65; display:block; margin-top:.35rem; }
+<style id="ai-boosting-style-v66">
+  body.ai-boosting #a-q,
+  body.ai-boosting #a-out { opacity: 0 !important; transition: opacity 150ms ease; }
+  #g-boost-note { margin-top:.5rem; font-size:.95rem; }
+  #g-boost-note strong { font-weight:700; }
+</style>
+
+
+<style id="timer-sound-ui-v2">
+  #timer .row.soundbar { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:.5rem; }
+  #timer .row.soundbar .col { flex: 1 1 200px; }
+  #timer .row.soundbar .lbl { display:block; font-size:.9rem; opacity:.9; }
+  #timer .row.soundbar .input, #timer .row.soundbar .select { width:100%; }
+  #timer .row.soundbar .btn { white-space:nowrap; }
 </style>
 
 </head>
@@ -181,6 +189,7 @@
             <div class="small muted"><span id="g-count">0</span> / <span id="g-maxcap">30</span></div>
           </div>
           <textarea id="g-out" class="output" rows="10" readonly></textarea>
+<pre id="g-ai-explain" class="outputblock" style="display:none;margin-top:.5rem;"></pre>
           <div id="g-warnings" class="muted small"></div>
         </div>
       </div>
@@ -254,78 +263,41 @@
         </div>
       </div>
     </section>
+
     <section id="timer" class="hh-section">
       <h1>Engagement Timer</h1>
       <div class="card">
-        <header class="row row-between" style="align-items:center;">
-          <div class="lbl" style="font-weight:600;">Timer</div>
-          <div id="t-status" class="muted small">Ready</div>
-        </header>
-
-        <div class="row" style="margin-top:.5rem;">
+        <div class="row">
           <div class="col">
-            <label class="lbl">Minutes</label>
-            <input id="t-min" class="input" type="number" value="0" min="0" />
+            <label class="lbl">Work (mins)</label>
+            <input id="t-work" class="input" type="number" value="20" min="1" />
           </div>
           <div class="col">
-            <label class="lbl">Seconds</label>
-            <input id="t-sec" class="input" type="number" value="30" min="0" max="59" />
+            <label class="lbl">Break (mins)</label>
+            <input id="t-break" class="input" type="number" value="5" min="1" />
           </div>
           <div class="col">
-            <label class="lbl">Auto-Repeat</label>
-            <select id="t-loop" class="select">
-              <option value="off" selected>Off</option>
-              <option value="on">On</option>
-            </select>
+            <label class="lbl">Cycles</label>
+            <input id="t-cycles" class="input" type="number" value="3" min="1" />
           </div>
         </div>
-
-        <div class="row" style="margin-top:.5rem;">
+        <div class="row">
           <button id="t-start" class="btn">Start</button>
-          <button id="t-pause" class="btn btn-ghost" disabled>Pause</button>
+          <button id="t-stop" class="btn btn-ghost">Stop</button>
           <button id="t-reset" class="btn btn-ghost">Reset</button>
-          <span class="muted" style="margin-left:auto;font-family:ui-monospace, SFMono-Regular, Menlo, monospace;" id="t-display" aria-live="polite">00:30</span>
+          <span id="t-status" class="muted small"></span>
         </div>
-
         <div class="ring">
           <svg viewBox="0 0 120 120">
             <circle cx="60" cy="60" r="54" class="ring-bg"/>
             <circle cx="60" cy="60" r="54" class="ring-fg" id="t-ring"/>
-            <text x="60" y="66" text-anchor="middle" class="ring-txt" id="t-clock">00:30</text>
+            <text x="60" y="66" text-anchor="middle" class="ring-txt" id="t-clock">00:00</text>
           </svg>
         </div>
-
-        <div class="row" style="margin-top:.75rem; border-top:1px solid rgba(255,255,255,.12); padding-top:.75rem;">
-          <div class="col">
-            <label class="lbl">Alert Sound</label>
-            <select id="t-sound" class="select">
-              <option value="chime" selected>Built-in Chime</option>
-              <option value="none">Silent</option>
-              <option value="file">Upload…</option>
-              <option value="url">From URL…</option>
-            </select>
-          </div>
-          <div class="col" id="t-file-wrap" style="display:none;">
-            <label class="lbl">Upload Audio (MP3/WAV)</label>
-            <input id="t-file" class="input" type="file" accept="audio/*" />
-          </div>
-          <div class="col" id="t-url-wrap" style="display:none;">
-            <label class="lbl">Audio URL</label>
-            <input id="t-url" class="input" type="url" placeholder="https://…" />
-          </div>
-        </div>
-
-        <div class="row" style="margin-top:.5rem;">
-          <label class="lbl" style="margin-right:.5rem;">Volume</label>
-          <input id="t-vol" type="range" min="0" max="1" step="0.01" value="0.8" style="flex:1;" />
-          <button id="t-preview" class="btn btn-ghost" style="margin-left:.5rem;">Preview</button>
-        </div>
-
-        <p class="hint">No auto-restart by default. Turn on Auto-Repeat if you want back-to-back intervals. On some phones, audio needs one user tap first.</p>
+        <p class="hint">Use during posting/comment sprints. We’ll beep at phase changes.</p>
+        <audio id="t-beep" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
       </div>
     </section>
-
-
 
   
     <section id="audio" class="hh-section compact">
@@ -558,189 +530,301 @@
   </script>
 
 
-
-
-
-<script id="timer-upgrade-v2">
+<script id="generator-smart-v6_6">
+/**
+ * HashHero Hashtag Generator v6.6
+ * - "Generate" now runs Generate + AI Boost (one click)
+ * - Adds locality & cuisine seeds (e.g., Mumbai, Vada Pav, Monsoon)
+ * - Robust Ask-AI bridge; clears/hides Ask-AI UI while boosting
+ * - Fill-to-cap; dedupe; near-dup guard (#pari vs #paris)
+ */
 (function(){
-  const $ = (s) => document.querySelector(s);
-  const pad = (n) => String(n).padStart(2, "0");
+  const $=(s)=>document.querySelector(s);
 
-  const elMin = $("#t-min");
-  const elSec = $("#t-sec");
-  const elLoop = $("#t-loop");
-  const elStart = $("#t-start");
-  const elPause = $("#t-pause");
-  const elReset = $("#t-reset");
-  const elDisplay = $("#t-display");
-  const elStatus = $("#t-status");
-  const elRing = $("#t-ring");
-  const elClock = $("#t-clock");
+  // Rebind buttons cleanly
+  const oldGen=$("#g-generate"); if(!oldGen) return;
+  const gen=oldGen.cloneNode(true); oldGen.parentNode.replaceChild(gen, oldGen);
+  const oldClr=$("#g-clear"); const clr=oldClr?oldClr.cloneNode(true):null; if(clr) oldClr.parentNode.replaceChild(clr, oldClr);
+  const oldCopy=$("#g-copy"); const copy=oldCopy?oldCopy.cloneNode(true):null; if(copy) oldCopy.parentNode.replaceChild(copy, oldCopy);
 
-  const elSound = $("#t-sound");
-  const elFileWrap = $("#t-file-wrap");
-  const elFile = $("#t-file");
-  const elUrlWrap = $("#t-url-wrap");
-  const elUrl = $("#t-url");
-  const elVol = $("#t-vol");
-  const elPrev = $("#t-preview");
+  const outEl=$("#g-out"), warnEl=$("#g-warnings"), countEl=$("#g-count"), maxcapEl=$("#g-maxcap"),
+        descEl=$("#g-desc"), platEl=$("#g-platform"), biasEl=$("#g-bias"), maxEl=$("#g-max"),
+        suggBar=$("#g-suggestions"), expEl=$("#g-ai-explain");
 
-  let audioEl = new Audio();
-  audioEl.preload = "auto";
-  audioEl.crossOrigin = "anonymous";
-  audioEl.volume = 0.8;
+  // Rename Generate to unified flow
+  try{
+    gen.textContent = "Generate + AI (recommended)";
+    gen.title = "Generates smart seeds, then boosts via Ask AI and merges to your cap.";
+  }catch(e){}
 
-  function setAudioSource(kind){
-    if (kind === "none"){ audioEl.removeAttribute('src'); return; }
-    if (kind === "chime"){
-      audioEl.src = "/assets/audio/singing_bowl.mp3"; // hosted singing bowl sound
-      return;
+  // Insert bold nudge
+  const row = gen.parentElement;
+  if(row && !document.getElementById("g-boost-note")){
+    const note = document.createElement("p");
+    note.id = "g-boost-note";
+    note.innerHTML = "<strong>Best results:</strong> Click <em>Generate + AI</em> to auto-boost your hashtags.";
+    row.parentElement && row.parentElement.insertBefore(note, row.nextSibling);
+  }
+
+  // ---------- Config ----------
+  const STOP=new Set("a,an,the,and,or,of,in,on,for,to,with,at,by,from,about,as,into,like,through,after,over,between,out,against,during,without,within,along,across,behind,beyond,plus,is,are,was,were,be,been,being,that,this,these,those,i,me,my,our,ours,we,you,your,he,she,they,them,it,its,just,very,more,most,so,up,down,how,what,when,why,who".split(","));
+  const PLATFORM_CAP={Instagram:30,TikTok:33,Twitter:20,YouTube:15,LinkedIn:15};
+  const PLATFORM_EXTRAS={Instagram:["reels","instareels","igers","explorepage","instagood","contentcreator","creator","instagram"]};
+  const BANNED=new Set(["followforfollow","like4like","sub4sub","giveaway","nsfw","spam","clickbait"]);
+  const FUZZY={"coffe":"coffee","cofee":"coffee","restraunt":"restaurant","mumbay":"mumbai"};
+
+  // Packs
+  const PACK={
+    coffee:{h:["coffee","coffeetime","coffeelover","coffeebreak","coffeeholic"],
+            m:["latte","espresso","cappuccino","latteart","thirdwavecoffee","baristalife","pourover","aeropress","flatwhite"],
+            n:["specialtycoffee","singleorigin","coffeebeans","cozycafe","cafescene","manualbrew"]},
+    film:{h:["cinema","film","movies","filmmaking","cinematography","director","movie"],
+          m:["filmphotography","filmcommunity","movienight","shortfilm","filmfestival","filmedit","colorgrading","videography","setlife"],
+          n:["cinephile","filmstudy","movieedits","brollcinema","anamorphic","storyboarding","behindthescenes","bts"]},
+    travel:{h:["travel","vacation","wanderlust","travelgram"],
+            m:["citybreak","solotravel","roadtrip","travelreels"],
+            n:["hiddenparis","cozycafes","offthebeatenpath","slowtravel"]},
+    vlog:{h:["vlog","dailyvlog","travelvlog"], m:["cinematic","broll","vlogreel"], n:["povwalk","dayinmylife","fpv"]},
+    food:{h:["food","foodie","yummy","delicious","foodstagram"], m:["streetfood","homecooking","recipeoftheday","mealprep"], n:["budgetbites","aestheticbakes","coffeenook"]},
+    fitness:{h:["fitness","gym","workout","fitlife"], m:["legday","homeworkout","strengthtraining","mobility"], n:["formcheck","hypertrophy","kneefriendly"]}
+  };
+
+  // Locality & cuisine dictionary (adds targeted seeds)
+  const LOCAL={
+    mumbai:["mumbai","mumbairains","mumbaifood","mumbaistreetfood","mumbaidiaries","purelybombay","tasteofmumbai","marineDrive","gatewayofindia","localtrain","vibeofmumbai","monsoonmumbai"],
+    delhi:["delhi","dillivalle","delhifood","delhistreetfood","delhigram","cpdelhi","oldDelhi","chandnichowk"],
+    tokyo:["tokyo","shibuyacrossing","asakusa","ueno","akihabara","tokyostreetphotography"],
+    paris:["paris","instaparis","parisianstyle","parisdiary","hiddenparis","cityoflights"],
+    nyc:["nyc","newyork","newyorkcity","manhattan","brooklyn","soho","nycfood"],
+  };
+  const CUISINE={
+    "vada pav":["vadapav","vadapavlove","streetfood","mumbaistreetfood","mumbaifood"],
+    "chaat":["chaat","streetfood","delhistreetfood"],
+    "pav bhaji":["pavbhaji","streetfood","mumbaistreetfood"],
+    "biryani":["biryani","indianfood","foodie"],
+  };
+  const SEASONAL={
+    monsoon:["monsoon","monsoonvibes","monsoonmood","rainyday","rainydayout","mumbairains","rainvibes"]
+  };
+
+  const SYN={
+    cinema:["film","films","movies","movie","filmmaking","cinematography","cinephile","director","shortfilm","colorgrading","cinematic"],
+    film:["cinema","movies","filmmaking","cinematography","cinematic"],
+    movie:["cinema","film","filmmaking","cinematography"],
+    cinematic:["cinema","film","cinematography","broll"],
+    coffee:["latte","espresso","cappuccino","latteart","coffeetime","coffeelover","coffeebreak"],
+    latte:["coffee","latteart","cafe","flatwhite"],
+    cafe:["coffee","cozycafe","coffeetime"],
+    vlog:["cinematic","broll","dailyvlog"],
+    rains:["rain","rainy","monsoon","rainyday","monsoonmood"],
+    monsoon:["rains","rain","rainyday","monsoonmood"],
+    "vada":["vadapav","streetfood","mumbai"],
+    "vada pav":["vadapav","streetfood","mumbai"],
+    mumbai:["mumbaidiaries","mumbaifood","mumbaistreetfood","mumbairains","purelybombay","tasteofmumbai"]
+  };
+
+  const GENERAL_CONTENT=["content","creator","viral","trending","tips","tutorial","howto"];
+  const GENERAL_CREATOR=["behindthescenes","workflow","setup","gear","aesthetic","storytelling","branding"];
+
+  // Helpers
+  const toClean=(w)=>w.replace(/[^a-z0-9]+/g,"").toLowerCase();
+  function tokenize(text){
+    return (text||"").toLowerCase().replace(/[#@]/g," ").replace(/[^a-z0-9\s\-]/g," ")
+      .split(/\s+/).filter(w=>w && !STOP.has(w) && w.length>1).map(w=>FUZZY[w]||w);
+  }
+  function expand(keys){ const out=new Set(keys); keys.forEach(k=>{ (SYN[k]||[]).forEach(x=>out.add(x)); }); return [...out]; }
+  function uniqSanitize(tags){
+    const seen=new Set(), out=[]; for(const t of tags){ const c=toClean(t); if(!c||BANNED.has(c)||seen.has(c)) continue; seen.add(c); out.push("#"+c); } return out;
+  }
+  function platformExtras(plat){ return (PLATFORM_EXTRAS[plat]||[]).map(x=>"#"+toClean(x)); }
+  function capForPlatform(plat,fallback){ return PLATFORM_CAP[plat]||fallback||25; }
+
+  function isNearDup(a,b){
+    a=a.slice(1).toLowerCase(); b=b.slice(1).toLowerCase();
+    if(a===b) return true;
+    const la=a.length, lb=b.length; if(Math.abs(la-lb)>1) return false;
+    let i=0,j=0,ed=0;
+    while(i<la && j<lb){
+      if(a[i]===b[j]){ i++; j++; continue; }
+      ed++; if(ed>1) return false;
+      if(la>lb) i++; else if(lb>la) j++; else { i++; j++; }
     }
-    if (kind === "file" && elFile.files && elFile.files[0]){
-      audioEl.src = URL.createObjectURL(elFile.files[0]); return;
-    }
-    if (kind === "url" && elUrl.value.trim()){
-      audioEl.src = elUrl.value.trim(); return;
-    }
+    if(i<la || j<lb) ed++;
+    return ed<=1;
   }
-  function updateSoundInputs(){
-    const v = elSound.value;
-    elFileWrap.style.display = (v === "file") ? "" : "none";
-    elUrlWrap.style.display = (v === "url") ? "" : "none";
-    setAudioSource(v);
-  }
-  function playSound(){
-    if (elSound.value === "none") return;
-    setAudioSource(elSound.value);
-    try{
-      audioEl.volume = parseFloat(elVol.value || "0.8");
-      audioEl.currentTime = 0;
-      audioEl.play();
-    }catch(e){}
-  }
-  elSound?.addEventListener("change", updateSoundInputs);
-  elFile?.addEventListener("change", () => setAudioSource("file"));
-  elUrl?.addEventListener("input", () => setAudioSource("url"));
-  elVol?.addEventListener("input", () => { audioEl.volume = parseFloat(elVol.value || "0.8"); });
-  elPrev?.addEventListener("click", (e) => { e.preventDefault(); playSound(); });
-  updateSoundInputs();
-
-  // ----- Ring math -----
-  const R = 54;
-  const C = 2 * Math.PI * R;
-  if (elRing){
-    elRing.style.strokeDasharray = String(C);
-    elRing.style.strokeDashoffset = String(C);
+  function dropNearDup(list){
+    const res=[];
+    for(const t of list){ if(res.some(x=>isNearDup(x,t))) continue; res.push(t); }
+    return res;
   }
 
-  let remainingMs = 30_000;
-  let totalMs = 30_000;
-  let timerId = null;
-  let running = false;
-  let paused = false;
-  let targetTs = null;
-
-  function render(ms){
-    const s = Math.max(0, Math.floor(ms/1000));
-    const mm = Math.floor(s/60);
-    const ss = s % 60;
-    const txt = `${pad(mm)}:${pad(ss)}`;
-    if (elDisplay) elDisplay.textContent = txt;
-    if (elClock) elClock.textContent = txt;
-    if (elRing){
-      const p = 1 - (ms / Math.max(1,totalMs)); // 0..1
-      elRing.style.strokeDashoffset = String(C * (1 - Math.max(0, Math.min(1, p))));
+  function seedsFor(topics){
+    const res={h:[],m:[],n:[]};
+    topics.forEach(k=>{ const p=PACK[k]; if(p){ res.h.push(...p.h); res.m.push(...p.m); res.n.push(...p.n); } });
+    return res;
+  }
+  function applyLocality(tokens, bag){
+    // City/local
+    for(const t of tokens){
+      if(LOCAL[t]){
+        bag.h.push(...LOCAL[t].slice(0,4));
+        bag.m.push(...LOCAL[t].slice(4,8));
+        bag.n.push(...LOCAL[t].slice(8));
+      }
+      if(CUISINE[t]){
+        bag.h.push(...CUISINE[t].slice(0,3));
+        bag.m.push(...CUISINE[t].slice(3));
+      }
+      if(SEASONAL[t]){
+        bag.h.push(...SEASONAL[t].slice(0,3));
+        bag.m.push(...SEASONAL[t].slice(3));
+      }
     }
   }
-  function readInputs(){
-    const m = Math.max(0, parseInt(elMin.value || "0", 10));
-    const s = Math.max(0, Math.min(59, parseInt(elSec.value || "0", 10)));
-    totalMs = remainingMs = (m*60 + s) * 1000 || 0;
-    render(remainingMs);
+  function guessTopics(tokens){
+    const hits=new Set();
+    Object.keys(PACK).forEach(k=>{ if(tokens.includes(k)) hits.add(k); });
+    // film
+    if(tokens.some(t=>["cinema","film","movie","cinematography","filmmaking","cinematic"].includes(t))) hits.add("film");
+    // coffee/food
+    if(tokens.some(t=>["coffee","latte","espresso","cappuccino","cafe","cafes","food","streetfood","foodie"].includes(t))) hits.add("food");
+    // travel by city words
+    if(tokens.some(t=>["travel","paris","tokyo","london","rome","newyork","nyc","berlin","mumbai","delhi"].includes(t))) hits.add("travel");
+    return [...hits];
   }
-  function notifyDone(){
-    playSound();
-    // Title flash
-    const orig = document.title;
-    let i = 0;
-    const fx = setInterval(()=>{ document.title = (i++%2) ? "⏰ Time!" : orig; }, 600);
-    setTimeout(()=>{ clearInterval(fx); document.title = orig; }, 6000);
+  function mixByBias(pool,bias,cap){
+    let wh=0.6, wm=0.3, wn=0.1;
+    if(bias==="niche"){ wh=0.2; wm=0.35; wn=0.45; }
+    if(bias==="reach"){ wh=0.65; wm=0.25; wn=0.10; }
+    const take=(arr,n)=>arr.slice(0,Math.max(0,Math.round(n)));
+    const H=take(pool.h,cap*wh);
+    const M=take(pool.m.filter(x=>!H.includes(x)),cap*wm);
+    const N=take(pool.n.filter(x=>!H.includes(x)&&!M.includes(x)),cap-(H.length+M.length));
+    return uniqSanitize([...H,...M,...N]);
   }
-  function tick(){
-    const now = Date.now();
-    const left = Math.max(0, targetTs - now);
-    render(left);
-    if (left <= 0){
-      stop(false);
-      notifyDone();
-      if (elLoop.value === "on"){ setTimeout(()=> start(), 800); }
+  function fillToCap(list,cap,tokens,plat){
+    const want=cap-list.length; if(want<=0) return dropNearDup(list.slice(0,cap));
+    const adders=[]; tokens.forEach(t=>adders.push("#"+toClean(t)));
+    adders.push(...GENERAL_CONTENT.map(x=>"#"+x), ...GENERAL_CREATOR.map(x=>"#"+x));
+    adders.push(...platformExtras(plat));
+    const seen=new Set(list);
+    for(const a of adders){ if(!a||seen.has(a)) continue; seen.add(a); list.push(a); if(list.length>=cap) break; }
+    return dropNearDup(list.slice(0,cap));
+  }
+
+  function makeTags(){
+    const desc=(descEl?.value||"").trim();
+    const plat=(platEl?.value||"Instagram");
+    const bias=(biasEl?.value||"balanced").toLowerCase();
+    const cap=Math.min(parseInt(maxEl?.value||"25",10)||25, capForPlatform(plat,25));
+    maxcapEl && (maxcapEl.textContent=String(cap));
+
+    const tokens=expand(tokenize(desc));
+    if(!tokens.length){ warnEl && (warnEl.textContent="Describe your post (topic, location, format)."); outEl.value=""; countEl&&(countEl.textContent="0"); suggBar&&(suggBar.innerHTML=""); return; }
+    const topics=guessTopics(tokens); const seeds=seedsFor(topics);
+    applyLocality(tokens, seeds);
+    const kw=uniqSanitize(tokens.map(toClean));
+    const pool={ h: uniqSanitize([...seeds.h, ...kw]), m: uniqSanitize(seeds.m), n: uniqSanitize(seeds.n) };
+    let mixed = mixByBias(pool, bias, cap);
+    mixed = fillToCap(mixed, cap, tokens, plat);
+    outEl.value = mixed.join(" ");
+    countEl && (countEl.textContent=String(mixed.length));
+    warnEl && (warnEl.textContent = mixed.length<cap ? "Tip: add format or location for even tighter tags." : "");
+  }
+
+  // Ask-AI bridge
+  const aQ=$("#a-q"), aAsk=$("#a-ask"), aOut=$("#a-out");
+  function getAIText(){ if(!aOut) return ""; return ("value" in aOut) ? aOut.value : aOut.textContent; }
+  function setAIText(v){ if(!aOut) return; if("value" in aOut) aOut.value = v; else aOut.textContent = v; }
+  async function callAskAI(prompt){
+    if(!(aQ && aAsk && aOut)) throw new Error("Ask-AI UI not found");
+    const prevQ = aQ.value;
+    document.body.classList.add("ai-boosting");
+    return new Promise((resolve)=>{
+      let last = (getAIText()||"").trim();
+      let stableTimer = null, done=false;
+      const finish=(txt)=>{ if(done) return; done=true;
+        observer.disconnect(); aOut.removeEventListener("input", onChange); aOut.removeEventListener("change", onChange);
+        aQ.value = prevQ; setAIText(""); document.body.classList.remove("ai-boosting"); resolve(txt);
+      };
+      const onChange=()=>{
+        const cur=(getAIText()||"").trim();
+        if(!cur || cur===last) return; last=cur;
+        if(stableTimer) clearTimeout(stableTimer);
+        stableTimer = setTimeout(()=>{ if(/#[A-Za-z0-9_]+/.test(last)) finish(last); }, 350);
+      };
+      const observer=new MutationObserver(onChange);
+      observer.observe(aOut, {childList:true, subtree:true, characterData:true});
+      aOut.addEventListener("input", onChange);
+      aOut.addEventListener("change", onChange);
+      aQ.value = prompt; aAsk.click();
+      setTimeout(()=>{ finish((getAIText()||"").trim()); }, 12000);
+    });
+  }
+  function sanitizeList(text){ return (text||"").match(/#[A-Za-z0-9_]+/g)||[]; }
+  function mergeToCap(base,ai,cap){
+    const out = base.slice();
+    const seen = new Set(out.map(x=>x.toLowerCase()));
+    for(const t of ai){
+      if(out.length>=cap) break;
+      const k = t.toLowerCase();
+      if(seen.has(k)) continue;
+      if(out.some(x=>isNearDup(x,t))) continue;
+      seen.add(k); out.push(t);
     }
-  }
-  function start(){
-    if (running && !paused) return;
-    if (!paused) readInputs();
-    running = true; paused = false;
-    targetTs = Date.now() + remainingMs;
-    clearInterval(timerId);
-    timerId = setInterval(tick, 200);
-    elStatus.textContent = "Running";
-    elStart.textContent = "Resume";
-    elStart.disabled = true;
-    elPause.disabled = false;
-  }
-  function pause(){
-    if (!running || paused) return;
-    paused = true; running = false;
-    clearInterval(timerId);
-    remainingMs = Math.max(0, targetTs - Date.now());
-    elStatus.textContent = "Paused";
-    elStart.textContent = "Resume";
-    elStart.disabled = false;
-    elPause.disabled = true;
-  }
-  function stop(resetDisplay=true){
-    running = false; paused = false;
-    clearInterval(timerId); timerId = null;
-    elStatus.textContent = "Finished";
-    elStart.textContent = "Start";
-    elStart.disabled = false;
-    elPause.disabled = true;
-    if (resetDisplay) readInputs();
-  }
-  function reset(){
-    stop(true);
-    elStatus.textContent = "Ready";
+    return dropNearDup(out).slice(0,cap);
   }
 
-  elStart?.addEventListener("click", start);
-  elPause?.addEventListener("click", pause);
-  elReset?.addEventListener("click", reset);
-  elMin?.addEventListener("input", readInputs);
-  elSec?.addEventListener("input", readInputs);
+  async function unifiedGenerateBoost(){
+    // base
+    makeTags();
+    const plat=(platEl?.value||"Instagram"); const bias=(biasEl?.value||"balanced").toLowerCase();
+    const cap=Math.min(parseInt(maxEl?.value||"25",10)||25, PLATFORM_CAP[plat]||25);
+    const desc=(descEl?.value||"").trim();
+    if(!desc){ expEl&&(expEl.style.display="block",expEl.textContent="Describe your post first."); return; }
+    const prompt=`Return ONLY space-separated hashtags (no extra text). Mix reach/medium/niche. Platform:${plat}. Bias:${bias}. Max:${cap}. Post:"${desc}"`;
+    const aiText = await callAskAI(prompt);
+    const aiTags = sanitizeList(aiText);
+    const cur=(outEl.value.match(/#[A-Za-z0-9_]+/g)||[]);
+    const merged = mergeToCap(cur, aiTags, cap);
+    outEl.value = merged.join(" ");
+    countEl && (countEl.textContent = String(merged.length));
+    expEl && (expEl.style.display="block", expEl.textContent = aiTags.length ? "AI Boost applied." : "AI didn't return hashtags.");
+  }
 
-  readInputs();
+  // Wire up clicks and hotkeys to unified flow
+  gen.addEventListener("click", async()=>{
+    const prev=gen.textContent; gen.textContent="Generating…"; gen.disabled=true;
+    try{ await unifiedGenerateBoost(); } finally { gen.textContent=prev; gen.disabled=false; }
+  });
+  // Ctrl/Cmd+Enter
+  descEl?.addEventListener("keydown", (e)=>{
+    if((e.ctrlKey||e.metaKey) && e.key==="Enter"){
+      e.preventDefault();
+      (async()=>{ try{ await unifiedGenerateBoost(); } catch(e){} })();
+    }
+  });
+
+  // Keep a separate AI Boost button (if present) pointing to same flow
+  const boost=document.getElementById("g-ai-boost");
+  if(boost){
+    boost.textContent="AI Boost (re-run)";
+    boost.addEventListener("click", async()=>{
+      const prev=boost.textContent; boost.textContent="Boosting…"; boost.disabled=true;
+      try{ await unifiedGenerateBoost(); } finally { boost.textContent="AI Boost (re-run)"; boost.disabled=false; }
+    }, {once:false});
+  }
 })();
 </script>
 
 
-<script id="timer-singing-bowl-v5">
-(function(){ 
-  const card = document.querySelector("#timer .card");
+<script id="timer-singing-bowl-v2">
+(function(){
+  const timerCard = document.querySelector("#timer .card");
   const beepEl = document.getElementById("t-beep");
-  if (!card || !beepEl) return;
+  if (!timerCard || !beepEl) return;
 
-  // Dedicated <audio> for bowl MP3 at assets/audio/singing_bowl.mp3
-  let bowlEl = document.getElementById("t-bowl");
-  if (!bowlEl) {
-    bowlEl = document.createElement("audio");
-    bowlEl.id = "t-bowl";
-    bowlEl.preload = "auto";
-    bowlEl.crossOrigin = "anonymous";
-    bowlEl.src = "assets/audio/singing_bowl.mp3";
-    beepEl.after(bowlEl);
-  }
-
-  // Controls row
+  // --- Inject compact UI (Alert Sound + Volume + Auto-Advance + Preview) ---
   if (!document.getElementById("t-sound")) {
     const bar = document.createElement("div");
     bar.className = "row soundbar";
@@ -748,136 +832,122 @@
       <div class="col">
         <label class="lbl">Alert Sound</label>
         <select id="t-sound" class="select">
-          <option value="bowl" selected>Singing Bowl (MP3)</option>
+          <option value="bowl" selected>Singing Bowl</option>
           <option value="beep">Beep</option>
           <option value="off">Off</option>
         </select>
       </div>
       <div class="col">
         <label class="lbl">Volume</label>
-        <input id="t-vol" class="input" type="range" min="0" max="1" step="0.01" value="0.85" />
+        <input id="t-vol" class="input" type="range" min="0" max="1" step="0.01" value="0.8" />
       </div>
       <div class="col">
-        <label class="lbl">Auto-Advance</label>
+        <label class="lbl">Auto-Advance (next phase)</label>
         <select id="t-auto" class="select">
-          <option value="cycle" selected>Within Cycle (stop after last)</option>
-          <option value="off">Off (stop after each phase)</option>
-          <option value="all">All Phases</option>
+          <option value="off" selected>Off</option>
+          <option value="on">On</option>
         </select>
-      </div>
-      <div class="col">
-        <label class="lbl">Bowl MP3 URL</label>
-        <input id="t-url" class="text" type="url" value="assets/audio/singing_bowl.mp3" />
-        <small>File path relative to this page. Default points to assets/audio/singing_bowl.mp3.</small>
       </div>
       <div class="col" style="max-width:160px">
         <label class="lbl" style="visibility:hidden">Preview</label>
         <button id="t-preview" class="btn btn-ghost">Preview</button>
       </div>
     `;
-    const hint = card.querySelector("p.hint");
+    const hint = timerCard.querySelector("p.hint");
     (hint ? hint : beepEl).before(bar);
   }
 
-  const sel = document.getElementById("t-sound");
-  const vol = document.getElementById("t-vol");
+  const soundSel = document.getElementById("t-sound");
+  const volEl = document.getElementById("t-vol");
   const autoSel = document.getElementById("t-auto");
-  const urlIn = document.getElementById("t-url");
-  const preview = document.getElementById("t-preview");
+  const previewBtn = document.getElementById("t-preview");
 
-  function setVolume(v){
-    v = Math.max(0, Math.min(1, parseFloat(v||"0.85")));
-    beepEl.volume = v;
-    bowlEl.volume = v;
+  // --- WebAudio Singing Bowl synth ---
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  const ctx = AudioCtx ? new AudioCtx() : null;
+  const master = ctx ? ctx.createGain() : null;
+  if (ctx && master) { master.connect(ctx.destination); master.gain.value = parseFloat(volEl.value || "0.8"); }
+
+  function ensureAudioReady(){
+    if (!ctx) return;
+    if (ctx.state === "suspended") ctx.resume();
   }
-  vol.addEventListener("input", e=> setVolume(e.target.value));
-  setVolume(vol.value);
+  function setVolumeUI(v){
+    v = Math.max(0, Math.min(1, parseFloat(v||"0.8")));
+    if (master) master.gain.value = v;
+    if (beepEl) beepEl.volume = v;
+  }
+  volEl?.addEventListener("input", e => setVolumeUI(e.target.value));
 
-  // Tools
+  function bowl(){
+    if (!ctx || !master) return;
+    const t0 = ctx.currentTime;
+    const dur = 6.0;
+    const partials = [196, 294, 392, 512, 660, 784]; // G-based stack
+
+    const g = ctx.createGain();
+    g.connect(master);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, master.gain.value), t0 + 0.03);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+
+    partials.forEach((f,i)=>{
+      const o = ctx.createOscillator();
+      const og = ctx.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(f, t0);
+      o.detune.setValueAtTime((i%2? -5: +5), t0); // subtle detune
+      og.gain.setValueAtTime(0.6/(i+1), t0+0.01);
+      og.gain.exponentialRampToValueAtTime(0.0001, t0 + dur*(0.7 + i*0.04));
+      o.connect(og); og.connect(g);
+      o.start(t0); o.stop(t0 + dur);
+    });
+  }
+
+  // To distinguish Preview from real phase-end chime
+  let previewing = false;
+  previewBtn?.addEventListener("click", () => {
+    const mode = (soundSel && soundSel.value) || "bowl";
+    if (mode === "off") return;
+    ensureAudioReady();
+    previewing = true;
+    if (mode === "bowl") bowl(); else { setVolumeUI(volEl.value); nativePlay && nativePlay(); }
+    setTimeout(()=>{ previewing=false; }, 50);
+  });
+
+  // --- Monkey‑patch the timer's beep so app.js keeps working ---
+  const nativePlay = beepEl.play ? beepEl.play.bind(beepEl) : null;
+  if (nativePlay) {
+    beepEl.play = function(...args){
+      const mode = (soundSel && soundSel.value) || "bowl";
+      if (mode === "off") {
+        // Still prevent auto-advance if requested
+        if (!previewing && autoSel && autoSel.value === "off") {
+          setTimeout(()=>{ (document.getElementById("t-stop")||document.getElementById("t-reset"))?.click(); }, 0);
+        }
+        return Promise.resolve();
+      }
+      if (mode === "bowl") {
+        ensureAudioReady();
+        bowl();
+      } else {
+        setVolumeUI(volEl.value);
+        nativePlay(...args);
+      }
+      // Stop auto-advance unless explicitly turned on
+      if (!previewing && autoSel && autoSel.value === "off") {
+        setTimeout(()=>{ (document.getElementById("t-stop")||document.getElementById("t-reset"))?.click(); }, 0);
+      }
+      return Promise.resolve();
+    };
+  }
+
+  // Resume audio on first user interaction (mobile)
   const startBtn = document.getElementById("t-start");
   const stopBtn  = document.getElementById("t-stop");
   const resetBtn = document.getElementById("t-reset");
+  [startBtn, stopBtn, resetBtn, previewBtn].forEach(b=> b && b.addEventListener("click", ensureAudioReady, { once:true }));
 
-  function stopNow(){
-    (stopBtn||resetBtn)?.click();
-  }
-
-  let beepCount = 0;
-  let cyclesTarget = 1;
-  function getCycles(){
-    const byId = document.getElementById("t-cycles");
-    if (byId) return Math.max(1, parseInt(byId.value||"1",10)||1);
-    const inputs = Array.from(card.querySelectorAll("input"));
-    for (const inp of inputs){
-      const lab = inp.closest(".col,div")?.querySelector("label");
-      if (lab && /cycles/i.test(lab.textContent||"")) {
-        const n = parseInt(inp.value||"1",10);
-        return Math.max(1, n||1);
-      }
-    }
-    return 1;
-  }
-
-  startBtn?.addEventListener("click", ()=>{
-    beepCount = 0;
-    cyclesTarget = getCycles();
-  });
-
-  // Preview handler
-  let previewing = false;
-  preview?.addEventListener("click", async ()=>{
-    previewing = true;
-    try{
-      const mode = sel.value;
-      const url  = (urlIn.value||"").trim();
-      if (mode === "bowl") {
-        if (url) bowlEl.src = url;
-        await bowlEl.play().catch(err=>console.warn("Bowl preview failed", err));
-      } else if (mode === "beep") {
-        await beepEl.play().catch(()=>{});
-      }
-    } finally {
-      setTimeout(()=>{ previewing=false; }, 60);
-    }
-  });
-
-  const nativePlay = beepEl.play ? beepEl.play.bind(beepEl) : null;
-  if (!nativePlay) return;
-
-  // Intercept phase-change beep
-  beepEl.play = async function(...args){
-    const mode = sel.value;
-    const auto = autoSel.value;
-    const url  = (urlIn.value||"").trim();
-
-    if (!previewing) beepCount += 1;
-
-    try{
-      if (mode === "bowl") {
-        if (url) bowlEl.src = url;
-        await bowlEl.play();
-      } else if (mode === "beep") {
-        await nativePlay(...args);
-      } else {
-        // off
-      }
-    }catch(e){
-      console.warn("Phase alert playback failed", e);
-    }
-
-    if (previewing) return Promise.resolve();
-
-    if (auto === "off") {
-      stopNow();
-    } else if (auto === "cycle") {
-      const beepsPerCycle = 2; // work end + break end
-      const totalBeeps = cyclesTarget * beepsPerCycle;
-      if (beepCount >= totalBeeps) stopNow();
-    } else {
-      // 'all' -> let it keep going
-    }
-    return Promise.resolve();
-  };
 })();
 </script>
 
