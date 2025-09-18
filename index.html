@@ -715,13 +715,13 @@
 </script>
 
 
-<script id="generator-smart-v5">
+<script id="generator-smart-v6">
 /**
- * HashHero Smart Hashtag Generator v5
- * - Topic packs: film/cinema, coffee, travel, vlog, food, fitness
- * - Fuzzy fixes for common typos (eg. "coffe" -> "coffee")
- * - Always fill to cap (platform-aware)
- * - AI Boost wired via hidden iframe to https://www.hashhero.app/ama/index.html
+ * HashHero Hashtag Generator v6
+ * - Topic packs: coffee, film, travel, vlog, food, fitness, photography, fashion, music, gaming
+ * - Synonym expansion + typo fixes (coffe->coffee)
+ * - Always fill to platform cap
+ * - AI Boost wired to on-page Ask AI (#a-q, #a-ask, #a-out). No cross-origin iframe.
  */
 (function(){
   const $=(s)=>document.querySelector(s);
@@ -736,94 +736,103 @@
   const PLATFORM_CAP={Instagram:30,TikTok:33,Twitter:20,YouTube:15,LinkedIn:15};
   const PLATFORM_EXTRAS={Instagram:["reels","instareels","igers","explorepage","instagood","contentcreator","creator","instagram"]};
   const BANNED=new Set(["followforfollow","like4like","sub4sub","giveaway","nsfw","spam","clickbait"]);
+  const FUZZY={"coffe":"coffee","cofee":"coffee","restraunt":"restaurant"};
 
-  // Topic packs
-  const PACK={ 
-    film: {
-      h:["cinema","film","movies","filmmaking","cinematography","director","movie"],
-      m:["filmphotography","filmcommunity","movienight","shortfilm","filmfestival","filmedit","colorgrading","videography","setlife"],
-      n:["cinephile","filmstudy","movieedits","brollcinema","anamorphic","storyboarding","behindthescenes","bts","dailies"]
-    },
-    coffee: {
-      h:["coffee","coffeetime","coffeelover","coffeebreak","coffeeholic"],
-      m:["latte","espresso","cappuccino","latteart","thirdwavecoffee","baristalife","pourOver","aeropress"],
-      n:["specialtycoffee","singleorigin","coffeebeans","cozycafe","cafescene","manualbrew","beanshot","flatwhite"]
-    },
-    travel: {
-      h:["travel","vacation","wanderlust","travelgram"],
-      m:["citybreak","solotravel","roadtrip","travelreels"],
-      n:["hiddenparis","cozycafes","offthebeatenpath","slowtravel"]
-    },
-    vlog: {
-      h:["vlog","dailyvlog","travelvlog"],
-      m:["cinematic","broll","vlogreel"],
-      n:["povwalk","dayinmylife","fpv"]
-    },
-    food: {
-      h:["food","foodie","yummy","delicious","foodstagram"],
-      m:["recipeoftheday","streetfood","homecooking","mealprep"],
-      n:["budgetbites","aestheticbakes","coffeenook"]
-    },
-    fitness: {
-      h:["fitness","gym","workout","fitlife"],
-      m:["legday","homeworkout","strengthtraining","mobility"],
-      n:["formcheck","hypertrophy","kneefriendly"]
-    }
+  const PACK={
+    coffee:{h:["coffee","coffeetime","coffeelover","coffeebreak","coffeeholic"],
+            m:["latte","espresso","cappuccino","latteart","thirdwavecoffee","baristalife","pourover","aeropress","flatwhite"],
+            n:["specialtycoffee","singleorigin","coffeebeans","cozycafe","cafescene","manualbrew"]},
+    film:{h:["cinema","film","movies","filmmaking","cinematography","director","movie"],
+          m:["filmphotography","filmcommunity","movienight","shortfilm","filmfestival","filmedit","colorgrading","videography","setlife"],
+          n:["cinephile","filmstudy","movieedits","brollcinema","anamorphic","storyboarding","behindthescenes","bts"]},
+    travel:{h:["travel","vacation","wanderlust","travelgram"],
+            m:["citybreak","solotravel","roadtrip","travelreels"],
+            n:["hiddenparis","cozycafes","offthebeatenpath","slowtravel"]},
+    vlog:{h:["vlog","dailyvlog","travelvlog"],
+          m:["cinematic","broll","vlogreel"],
+          n:["povwalk","dayinmylife","fpv"]},
+    food:{h:["food","foodie","yummy","delicious","foodstagram"],
+          m:["recipeoftheday","streetfood","homecooking","mealprep"],
+          n:["budgetbites","aestheticbakes","coffeenook"]},
+    fitness:{h:["fitness","gym","workout","fitlife"],
+             m:["legday","homeworkout","strengthtraining","mobility"],
+             n:["formcheck","hypertrophy","kneefriendly"]},
+    photography:{h:["photography","photooftheday","photographer"],
+                 m:["streetphotography","travelphotography","portraitphotography"],
+                 n:["filmlook","cinestill","nightphotowalk"]},
+    fashion:{h:["fashion","style","ootd"],
+             m:["streetstyle","capsulewardrobe","minimalstyle"],
+             n:["parisianstyle","neutralpalette","slowfashion"]},
+    music:{h:["music","musician","songwriter"],
+           m:["guitarloops","pianocover","indiepop"],
+           n:["lofimusic","bedroomproducer","citypop"]},
+    gaming:{h:["gaming","gamer"],
+            m:["pcgaming","console","walkthrough"],
+            n:["indiegames","speedrun","modding"]}
   };
 
-  const SYN={ 
+  const SYN={
     cinema:["film","films","movies","movie","filmmaking","cinematography","cinephile","director","shortfilm","colorgrading","cinematic"],
     film:["cinema","movies","filmmaking","cinematography","cinematic"],
     movie:["cinema","film","filmmaking","cinematography"],
     cinematic:["cinema","film","cinematography","broll"],
-    coffee:["latte","espresso","cappuccino","coffeetime","coffeelover","coffeebreak","latteart"],
-    latte:["coffee","latteart","cafe"],
-    cafe:["coffee","cozy","cozycafe","coffeetime"],
+    coffee:["latte","espresso","cappuccino","latteart","coffeetime","coffeelover","coffeebreak"],
+    latte:["coffee","latteart","cafe","flatwhite"],
+    cafe:["coffee","cozycafe","coffeetime"],
     vlog:["cinematic","broll","dailyvlog"],
     reel:["reels","shorts"], reels:["reel","shorts"], shorts:["reels","ytshorts"]
   };
-
-  const FUZZY={ "coffe":"coffee", "restraunt":"restaurant", "cofee":"coffee" };
 
   const GENERAL_CONTENT=["content","creator","viral","trending","tips","tutorial","howto"];
   const GENERAL_CREATOR=["behindthescenes","workflow","setup","gear","aesthetic","storytelling","branding"];
 
   // ---- Helpers ----
-  const toTag=(w)=>w.replace(/[^a-z0-9]+/g,"").toLowerCase();
+  const toClean=(w)=>w.replace(/[^a-z0-9]+/g,"").toLowerCase();
   function tokenize(text){
     return (text||"").toLowerCase().replace(/[#@]/g," ").replace(/[^a-z0-9\s\-]/g," ")
       .split(/\s+/).filter(w=>w && !STOP.has(w) && w.length>1).map(w=>FUZZY[w]||w);
   }
   function expand(keys){ const out=new Set(keys); keys.forEach(k=>(SYN[k]||[]).forEach(x=>out.add(x))); return [...out]; }
-  function uniqSanitize(tags){ const seen=new Set(), out=[]; for(const t of tags){ const c=toTag(t); if(!c||BANNED.has(c)||seen.has(c)) continue; seen.add(c); out.push("#"+c); } return out; }
-  function platformExtras(plat){ return (PLATFORM_EXTRAS[plat]||[]).map(x=>"#"+toTag(x)); }
+  function uniqSanitize(tags){
+    const seen=new Set(), out=[]; for(const t of tags){ const c=toClean(t); if(!c||BANNED.has(c)||seen.has(c)) continue; seen.add(c); out.push("#"+c); } return out;
+  }
+  function platformExtras(plat){ return (PLATFORM_EXTRAS[plat]||[]).map(x=>"#"+toClean(x)); }
   function capForPlatform(plat,fallback){ return PLATFORM_CAP[plat]||fallback||25; }
 
-  function seedsFor(keys){ const res={h:[],m:[],n:[]}; keys.forEach(k=>{ const p=PACK[k]; if(p){ res.h.push(...p.h); res.m.push(...p.m); res.n.push(...p.n); } }); return res; }
-  function guessTopics(tokens){ const hits=new Set(); for(const k of Object.keys(PACK)){ if(tokens.includes(k)) hits.add(k); }
+  function seedsFor(topics){
+    const res={h:[],m:[],n:[]};
+    topics.forEach(k=>{ const p=PACK[k]; if(p){ res.h.push(...p.h); res.m.push(...p.m); res.n.push(...p.n); } });
+    return res;
+  }
+  function guessTopics(tokens){
+    const hits=new Set();
+    Object.keys(PACK).forEach(k=>{ if(tokens.includes(k)) hits.add(k); });
     if(tokens.some(t=>["cinema","film","movie","cinematography","filmmaking","cinematic"].includes(t))) hits.add("film");
     if(tokens.some(t=>["coffee","latte","espresso","cappuccino","cafe","cafes"].includes(t))) hits.add("coffee");
     return [...hits];
   }
-
-  function mixByBias(cands,bias,cap){ let wh=0.6, wm=0.3, wn=0.1;
+  function mixByBias(pool,bias,cap){
+    let wh=0.6, wm=0.3, wn=0.1;
     if(bias==="niche"){ wh=0.2; wm=0.35; wn=0.45; }
     if(bias==="reach"){ wh=0.65; wm=0.25; wn=0.10; }
     const take=(arr,n)=>arr.slice(0,Math.max(0,Math.round(n)));
-    const H=take(cands.h,cap*wh);
-    const M=take(cands.m.filter(x=>!H.includes(x)),cap*wm);
-    const N=take(cands.n.filter(x=>!H.includes(x)&&!M.includes(x)),cap-(H.length+M.length));
+    const H=take(pool.h,cap*wh);
+    const M=take(pool.m.filter(x=>!H.includes(x)),cap*wm);
+    const N=take(pool.n.filter(x=>!H.includes(x)&&!M.includes(x)),cap-(H.length+M.length));
     return uniqSanitize([...H,...M,...N]);
   }
-
-  function fillToCap(list,cap,tokens,plat){ const want=cap-list.length; if(want<=0) return list.slice(0,cap);
-    const adders=[]; tokens.forEach(t=>adders.push("#"+toTag(t)));
+  function fillToCap(list,cap,tokens,plat){
+    const want=cap-list.length; if(want<=0) return list.slice(0,cap);
+    const adders=[];
+    tokens.forEach(t=>adders.push("#"+toClean(t)));
     adders.push(...GENERAL_CONTENT.map(x=>"#"+x), ...GENERAL_CREATOR.map(x=>"#"+x));
     adders.push(...platformExtras(plat));
-    const seen=new Set(list); for(const a of adders){ if(!a||seen.has(a)) continue; seen.add(a); list.push(a); if(list.length>=cap) break; }
+    const seen=new Set(list);
+    for(const a of adders){ if(!a||seen.has(a)) continue; seen.add(a); list.push(a); if(list.length>=cap) break; }
     return list.slice(0,cap);
   }
 
+  // ---- Main ----
   function makeTags(){
     const desc=(descEl?.value||"").trim();
     const plat=(platEl?.value||"Instagram");
@@ -831,104 +840,94 @@
     const cap=Math.min(parseInt(maxEl?.value||"25",10)||25, capForPlatform(plat,25));
     maxcapEl && (maxcapEl.textContent=String(cap));
 
-    let tokens=expand(tokenize(desc));
+    const tokens=expand(tokenize(desc));
     if(!tokens.length){ warnEl && (warnEl.textContent="Describe your post (topic, location, format)."); outEl.value=""; countEl&&(countEl.textContent="0"); suggBar&&(suggBar.innerHTML=""); return; }
 
     const topics=guessTopics(tokens);
     const seeds=seedsFor(topics);
-    const kw=uniqSanitize(tokens.map(toTag));
+    const kw=uniqSanitize(tokens.map(toClean));
     const pool={ h: uniqSanitize([...seeds.h, ...kw]), m: uniqSanitize(seeds.m), n: uniqSanitize(seeds.n) };
 
     let mixed = mixByBias(pool, bias, cap);
     mixed = fillToCap(mixed, cap, tokens, plat);
 
     outEl.value = mixed.join(" ");
-    countEl && (countEl.textContent=String(mixed.length));
-    warnEl && (warnEl.textContent = mixed.length<cap ? "Tip: add format (latte art, pour-over), gear, or location to refine." : "");
+    countEl && (countEl.textContent = String(mixed.length));
+    warnEl && (warnEl.textContent = mixed.length<cap ? "Tip: add format (latte art, POV), gear, or location to refine." : "");
 
     // suggestions
-    if(suggBar){ const extra = platformExtras(plat).slice(0,6);
-      const suggest = Array.from(new Set([...(PACK.coffee.h||[]), ...(PACK.film.h||[]), ...extra])).slice(0,18).map(x=>"#"+toTag(x));
+    if(suggBar){
+      const extra = platformExtras(plat).slice(0,6);
+      const suggest = Array.from(new Set([...(PACK.coffee?.h||[]), ...(PACK.film?.h||[]), ...extra])).slice(0,18).map(x=>"#"+toClean(x));
       suggBar.innerHTML = suggest.map(s=>`<button class="chip" data-tag="${s}">${s}</button>`).join("");
-      suggBar.querySelectorAll("[data-tag]").forEach(b=>{ b.addEventListener("click",()=>{
-        const cur=outEl.value.trim().split(/\s+/).filter(Boolean);
-        const capNow=Math.min(parseInt(maxEl?.value||"25",10)||25, capForPlatform(plat,25));
-        if(cur.includes(b.dataset.tag)){ const nxt=cur.filter(x=>x!==b.dataset.tag); outEl.value=nxt.join(" "); countEl&&(countEl.textContent=String(nxt.length)); }
-        else{ if(cur.length>=capNow) return; outEl.value=cur.concat([b.dataset.tag]).join(" "); countEl&&(countEl.textContent=String(cur.length+1)); }
-      }); });
+      suggBar.querySelectorAll("[data-tag]").forEach(b=>{
+        b.addEventListener("click",()=>{
+          const cur=outEl.value.trim().split(/\s+/).filter(Boolean);
+          const capNow=Math.min(parseInt(maxEl?.value||"25",10)||25, capForPlatform(plat,25));
+          if(cur.includes(b.dataset.tag)){
+            const nxt=cur.filter(x=>x!==b.dataset.tag); outEl.value=nxt.join(" "); countEl&&(countEl.textContent=String(nxt.length));
+          }else{
+            if(cur.length>=capNow) return;
+            outEl.value=cur.concat([b.dataset.tag]).join(" "); countEl&&(countEl.textContent=String(cur.length+1));
+          }
+        });
+      });
     }
   }
 
-  // Wire local buttons
   btnGen.addEventListener("click", makeTags);
   btnClr?.addEventListener("click", ()=>{ outEl.value=""; countEl&&(countEl.textContent="0"); warnEl&&(warnEl.textContent=""); });
   btnCopy?.addEventListener("click", async ()=>{ try{ await navigator.clipboard.writeText(outEl.value); warnEl&&(warnEl.textContent="Copied!"); setTimeout(()=>{ warnEl&&(warnEl.textContent=""); },1200); }catch{} });
   descEl?.addEventListener("keydown", (e)=>{ if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){ e.preventDefault(); makeTags(); } });
 
-  // ---- AI Bridge via hidden iframe to AMA page ----
-  const AMA_URL = "https://www.hashhero.app/ama/index.html";
-  let amaDoc=null;
-  function ensureFrame(){
-    let f=document.getElementById("ai-bridge-frame");
-    if(!f){ f=document.createElement("iframe"); f.id="ai-bridge-frame"; f.src=AMA_URL; f.style.display="none"; document.body.appendChild(f); }
-    return new Promise((res)=>{ 
-      if(f.contentDocument){ amaDoc=f.contentDocument; return res(); }
-      f.addEventListener("load", ()=>{ amaDoc=f.contentDocument; res(); }, {once:true});
-    });
-  }
-  async function askViaIframe(prompt){
-    await ensureFrame();
-    if(!amaDoc) throw new Error("AMA not loaded");
-    const q=amaDoc.getElementById("a-q");
-    const ask=amaDoc.getElementById("a-ask");
-    const out=amaDoc.getElementById("a-out");
-    return new Promise((resolve)=>{
-      const prev = (out?.textContent||"").trim();
-      let done=false;
-      const obs=new MutationObserver(()=>{ 
-        const txt=(out?.textContent||"").trim();
-        if(!done && txt && txt!==prev){ done=true; obs.disconnect(); resolve(txt); }
+  // ---- AI Bridge (on-page Ask AI) ----
+  const aQ=$("#a-q"), aAsk=$("#a-ask"), aOut=$("#a-out");
+  async function callAskAI(prompt){
+    if(aQ && aAsk && aOut){
+      return new Promise((resolve)=>{
+        const prev=(aOut.textContent||"").trim();
+        let done=false;
+        const obs=new MutationObserver(()=>{
+          const txt=(aOut.textContent||"").trim();
+          if(!done && txt && txt!==prev){ done=true; obs.disconnect(); resolve(txt); }
+        });
+        obs.observe(aOut, {childList:true, subtree:true, characterData:true});
+        aQ.value = prompt;
+        aAsk.click();
+        setTimeout(()=>{ if(!done){ obs.disconnect(); resolve((aOut.textContent||"").trim()); } }, 8000);
       });
-      if(out) obs.observe(out, {childList:true, subtree:true, characterData:true});
-      if(q) q.value = prompt;
-      if(ask) ask.click();
-      setTimeout(()=>{ if(!done){ obs.disconnect(); resolve((out?.textContent||"").trim()); } }, 8000);
-    });
+    }
+    throw new Error("Ask AI elements not found on this page.");
   }
+  function sanitizeList(text){ return (text||"").match(/#[a-z0-9_]+/gi)||[]; }
+  function mergeToCap(base,ai,cap){ const seen=new Set(base.map(x=>x.toLowerCase())); const out=base.slice(); for(const t of ai){ if(out.length>=cap) break; const k=t.toLowerCase(); if(seen.has(k)) continue; seen.add(k); out.push(t); } return out.slice(0,cap); }
 
   const btnRow=btnGen.parentElement;
-  if(btnRow && !document.getElementById("g-ai-boost")){ 
+  if(btnRow && !document.getElementById("g-ai-boost")){
     const mk=(id,label,ghost=false)=>{ const b=document.createElement("button"); b.id=id; b.className="btn"+(ghost?" btn-ghost":""); b.textContent=label; return b; };
-    const boost=mk("g-ai-boost","AI Boost"); const explain=mk("g-ai-explain-btn","Explain",true);
+    const boost=mk("g-ai-boost","AI Boost"), explain=mk("g-ai-explain-btn","Explain",true);
     btnRow.insertBefore(boost, btnGen.nextSibling); btnRow.insertBefore(explain, boost.nextSibling);
 
-    function sanitizeList(text){ return (text||"").match(/#[a-z0-9_]+/gi)||[]; }
-    function mergeToCap(base,ai,cap){ const seen=new Set(base.map(x=>x.toLowerCase())); const out=base.slice(); for(const t of ai){ if(out.length>=cap) break; const key=t.toLowerCase(); if(seen.has(key)) continue; seen.add(key); out.push(t); } return out.slice(0,cap); }
-
-    boost.addEventListener("click", async()=>{ 
-      const desc=(descEl?.value||"").trim(); const plat=(platEl?.value||"Instagram"); const bias=(biasEl?.value||"balanced").toLowerCase();
+    boost.addEventListener("click", async()=>{
+      const desc=(descEl?.value||"").trim(), plat=(platEl?.value||"Instagram"), bias=(biasEl?.value||"balanced").toLowerCase();
       const cap=Math.min(parseInt(maxEl?.value||"25",10)||25, PLATFORM_CAP[plat]||25);
       if(!desc){ expEl&&(expEl.style.display="block",expEl.textContent="Describe your post first."); return; }
-      const prompt=[
-        "Return ONLY space-separated hashtags (no extra text).",
-        "Be relevant to the description, use a mix of high/medium/niche.",
-        `Platform: ${plat}. Bias: ${bias}. Max: ${cap}.`,
-        `Post: "${desc}"`
-      ].join(" ");
+      const prompt=`Return ONLY space-separated hashtags (no extra text). Mix reach/medium/niche. Platform:${plat}. Bias:${bias}. Max:${cap}. Post:"${desc}"`;
       const prev=boost.textContent; boost.textContent="Thinking…"; boost.disabled=true; expEl&&(expEl.style.display="block",expEl.textContent="Talking to Ask AI…");
-      try{ const txt=await askViaIframe(prompt); const ai=sanitizeList(txt); const cur=(outEl.value.match(/#[a-z0-9_]+/gi)||[]); const merged=mergeToCap(cur,ai,cap);
-           outEl.value=merged.join(" "); countEl&&(countEl.textContent=String(merged.length)); expEl&&(expEl.textContent= ai.length?"AI Boost applied.":"AI returned no hashtags."); }
-      catch(e){ expEl&&(expEl.textContent="AI Boost failed. Iframe couldn't access AMA page."); }
+      try{
+        const txt=await callAskAI(prompt); const ai=sanitizeList(txt); const cur=(outEl.value.match(/#[a-z0-9_]+/gi)||[]); const merged=mergeToCap(cur,ai,cap);
+        outEl.value=merged.join(" "); countEl&&(countEl.textContent=String(merged.length)); expEl&&(expEl.textContent= ai.length?"AI Boost applied.":"AI returned no hashtags.");
+      }catch(e){ expEl&&(expEl.textContent="AI Boost unavailable here (Ask AI UI not found)."); }
       finally{ boost.textContent="AI Boost"; boost.disabled=false; }
     });
 
-    explain.addEventListener("click", async()=>{ 
-      const desc=(descEl?.value||"").trim(); const plat=(platEl?.value||"Instagram"); const bias=(biasEl?.value||"balanced").toLowerCase();
+    explain.addEventListener("click", async()=>{
+      const desc=(descEl?.value||"").trim(), plat=(platEl?.value||"Instagram"), bias=(biasEl?.value||"balanced").toLowerCase();
       if(!desc){ expEl&&(expEl.style.display="block",expEl.textContent="Add a description first."); return; }
-      const prompt=`Explain in 4 short bullets a hashtag strategy for Platform:${plat}, Bias:${bias}, Post:"${desc}".`;
-      const prev=explain.textContent; explain.textContent="Thinking…"; explain.disabled=true; expEl&&(expEl.style.display="block",expEl.textContent="Asking Ask AI…");
-      try{ const txt=await askViaIframe(prompt); expEl&&(expEl.textContent=txt||"No explanation returned."); }
-      catch(e){ expEl&&(expEl.textContent="Explain failed. Iframe couldn't access AMA page."); }
+      const prompt=`Explain in 4 bullets the hashtag strategy for Platform:${plat}, Bias:${bias}, Post:"${desc}". Keep it concise.`;
+      const prev=explain.textContent; explain.textContent="Thinking…"; explain.disabled=true; expEl&&(expEl.style.display="block",expEl.textContent="Asking AI…");
+      try{ const txt=await callAskAI(prompt); expEl&&(expEl.textContent=txt||"No explanation returned."); }
+      catch(e){ expEl&&(expEl.textContent="Explain unavailable here (Ask AI UI not found)."); }
       finally{ explain.textContent="Explain"; explain.disabled=false; }
     });
   }
