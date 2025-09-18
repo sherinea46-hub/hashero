@@ -95,12 +95,12 @@
 </style>
 
 
-<style id="timer-sound-ui-v4">
-  #timer .row.soundbar { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; margin-top:.75rem; }
+<style id="timer-sound-ui-v1">
+  #timer .row.soundbar { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:.5rem; }
   #timer .row.soundbar .col { flex: 1 1 220px; }
-  #timer .row.soundbar .lbl { display:block; font-size:.9rem; opacity:.9; margin-bottom:.35rem; }
-  #timer .row.soundbar .input, #timer .row.soundbar .select, #timer .row.soundbar .text { width:100%; }
-  #timer .row.soundbar small { opacity:.65; display:block; margin-top:.35rem; }
+  #timer .row.soundbar .lbl { display:block; font-size: .9rem; opacity: .9; }
+  #timer .row.soundbar .input, #timer .row.soundbar .select { width:100%; }
+  #timer .row.soundbar .btn { white-space:nowrap; }
 </style>
 
 </head>
@@ -818,25 +818,13 @@
 </script>
 
 
-<script id="timer-singing-bowl-v4">
+<script id="timer-singing-bowl-v1">
 (function(){
-  const card = document.querySelector("#timer .card");
+  const timerCard = document.querySelector("#timer .card");
   const beepEl = document.getElementById("t-beep");
-  if (!card || !beepEl) return;
+  if (!timerCard || !beepEl) return;  // keep it safe & no-op if structure differs
 
-  // Add a dedicated <audio> element for the singing bowl MP3 (local file)
-  let bowlEl = document.getElementById("t-bowl");
-  if (!bowlEl) {
-    bowlEl = document.createElement("audio");
-    bowlEl.id = "t-bowl";
-    bowlEl.preload = "auto";
-    bowlEl.crossOrigin = "anonymous";
-    // Default to a local file that sits next to index.html
-    bowlEl.src = "singing_bowl.mp3";
-    beepEl.after(bowlEl);
-  }
-
-  // Inject the compact controls (Alert Sound / Volume / Auto-Advance / MP3 URL / Preview)
+  // --- Inject compact UI (Alert Sound + Volume + Preview) ---
   if (!document.getElementById("t-sound")) {
     const bar = document.createElement("div");
     bar.className = "row soundbar";
@@ -844,138 +832,101 @@
       <div class="col">
         <label class="lbl">Alert Sound</label>
         <select id="t-sound" class="select">
-          <option value="bowl" selected>Singing Bowl (MP3)</option>
+          <option value="bowl" selected>Singing Bowl</option>
           <option value="beep">Beep</option>
           <option value="off">Off</option>
         </select>
       </div>
       <div class="col">
         <label class="lbl">Volume</label>
-        <input id="t-vol" class="input" type="range" min="0" max="1" step="0.01" value="0.85" />
-      </div>
-      <div class="col">
-        <label class="lbl">Auto-Advance</label>
-        <select id="t-auto" class="select">
-          <option value="cycle" selected>Within Cycle (stop after last)</option>
-          <option value="off">Off (stop after each phase)</option>
-          <option value="all">All Phases</option>
-        </select>
-      </div>
-      <div class="col">
-        <label class="lbl">Bowl MP3 URL</label>
-        <input id="t-url" class="text" type="url" value="singing_bowl.mp3" />
-        <small>File should be alongside index.html. Change if you use a different path.</small>
+        <input id="t-vol" class="input" type="range" min="0" max="1" step="0.01" value="0.8" />
       </div>
       <div class="col" style="max-width:160px">
         <label class="lbl" style="visibility:hidden">Preview</label>
         <button id="t-preview" class="btn btn-ghost">Preview</button>
       </div>
     `;
-    const hint = card.querySelector("p.hint");
+    // insert right before the hint paragraph
+    const hint = timerCard.querySelector("p.hint");
     (hint ? hint : beepEl).before(bar);
   }
 
-  const sel = document.getElementById("t-sound");
-  const vol = document.getElementById("t-vol");
-  const autoSel = document.getElementById("t-auto");
-  const urlIn = document.getElementById("t-url");
-  const preview = document.getElementById("t-preview");
+  const soundSel = document.getElementById("t-sound");
+  const volEl = document.getElementById("t-vol");
+  const previewBtn = document.getElementById("t-preview");
 
-  function setVolume(v){
-    v = Math.max(0, Math.min(1, parseFloat(v||"0.85")));
-    beepEl.volume = v;
-    if (bowlEl) bowlEl.volume = v;
+  // --- WebAudio Singing Bowl synth ---
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  const ctx = AudioCtx ? new AudioCtx() : null;
+  const master = ctx ? ctx.createGain() : null;
+  if (ctx && master) { master.connect(ctx.destination); master.gain.value = parseFloat(volEl.value || "0.8"); }
+
+  function ensureAudioReady(){
+    if (!ctx) return;
+    if (ctx.state === "suspended") ctx.resume();
   }
-  vol.addEventListener("input", e=> setVolume(e.target.value));
-  setVolume(vol.value);
+  function setVolumeUI(v){
+    v = Math.max(0, Math.min(1, parseFloat(v||"0.8")));
+    if (master) master.gain.value = v;
+    if (beepEl) beepEl.volume = v;
+  }
+  volEl?.addEventListener("input", e => setVolumeUI(e.target.value));
 
-  // Utilities
+  function bowl(){
+    if (!ctx || !master) return;
+    const t0 = ctx.currentTime;
+    const dur = 6.0;
+    const partials = [196, 294, 392, 512, 660, 784]; // G-based stack
+
+    const g = ctx.createGain();
+    g.connect(master);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, master.gain.value), t0 + 0.03);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+
+    partials.forEach((f,i)=>{
+      const o = ctx.createOscillator();
+      const og = ctx.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(f, t0);
+      o.detune.setValueAtTime((i%2? -5: +5), t0); // subtle detune
+      og.gain.setValueAtTime(0.6/(i+1), t0+0.01);
+      og.gain.exponentialRampToValueAtTime(0.0001, t0 + dur*(0.7 + i*0.04));
+      o.connect(og); og.connect(g);
+      o.start(t0); o.stop(t0 + dur);
+    });
+  }
+
+  // --- Monkey‑patch the timer's beep so app.js keeps working ---
+  const nativePlay = beepEl.play ? beepEl.play.bind(beepEl) : null;
+  if (nativePlay) {
+    beepEl.play = function(...args){
+      const mode = (soundSel && soundSel.value) || "bowl";
+      if (mode === "off") return Promise.resolve();
+      if (mode === "bowl") {
+        ensureAudioReady();
+        bowl();
+        return Promise.resolve();
+      }
+      // 'beep' — set volume and call original
+      setVolumeUI(volEl.value);
+      return nativePlay(...args);
+    };
+  }
+
+  // Preview button
+  previewBtn?.addEventListener("click", () => {
+    const mode = (soundSel && soundSel.value) || "bowl";
+    if (mode === "off") return;
+    ensureAudioReady();
+    if (mode === "bowl") bowl(); else { setVolumeUI(volEl.value); nativePlay && nativePlay(); }
+  });
+
+  // Make sure first user action resumes audio context (mobile)
   const startBtn = document.getElementById("t-start");
   const stopBtn  = document.getElementById("t-stop");
   const resetBtn = document.getElementById("t-reset");
-
-  function stopNow(){
-    (stopBtn||resetBtn)?.click();
-  }
-
-  let beepCount = 0;
-  let cyclesTarget = 1;
-  function getCycles(){
-    const byId = document.getElementById("t-cycles");
-    if (byId) return Math.max(1, parseInt(byId.value||"1",10)||1);
-    const inputs = Array.from(card.querySelectorAll("input"));
-    for (const inp of inputs){
-      const lab = inp.closest(".col,div")?.querySelector("label");
-      if (lab && /cycles/i.test(lab.textContent||"")) {
-        const n = parseInt(inp.value||"1",10);
-        return Math.max(1, n||1);
-      }
-    }
-    return 1;
-  }
-
-  startBtn?.addEventListener("click", ()=>{
-    beepCount = 0;
-    cyclesTarget = getCycles();
-  });
-
-  // Preview
-  let previewing = false;
-  preview?.addEventListener("click", async ()=>{
-    previewing = true;
-    try{
-      const mode = sel.value;
-      const url  = (urlIn.value||"").trim();
-      if (mode === "bowl") {
-        if (url) { bowlEl.src = url; }
-        try{ await bowlEl.play(); }catch(e){ console.warn("Bowl preview failed", e); }
-      } else if (mode === "beep") {
-        try{ await beepEl.play(); }catch(e){}
-      }
-    } finally {
-      setTimeout(()=>{ previewing=false; }, 60);
-    }
-  });
-
-  // Monkey-patch the timer's beep playback
-  const nativePlay = beepEl.play ? beepEl.play.bind(beepEl) : null;
-  if (!nativePlay) return;
-
-  beepEl.play = async function(...args){
-    const mode = sel.value;
-    const auto = autoSel.value; // off | cycle | all
-    const url  = (urlIn.value||"").trim();
-
-    if (!previewing) {
-      beepCount += 1; // count real phase completions
-    }
-
-    try{
-      if (mode === "bowl") {
-        if (url) bowlEl.src = url;
-        await bowlEl.play();
-      } else if (mode === "beep") {
-        await nativePlay(...args);
-      } else {
-        // off: do nothing
-      }
-    }catch(e){}
-
-    if (previewing) return Promise.resolve();
-
-    if (auto === "off") {
-      stopNow(); // stop after each phase
-    } else if (auto === "cycle") {
-      const beepsPerCycle = 2; // work end + break end
-      const totalBeeps = cyclesTarget * beepsPerCycle;
-      if (beepCount >= totalBeeps) {
-        stopNow(); // stop after last cycle
-      }
-    } else {
-      // 'all' -> let it keep going
-    }
-    return Promise.resolve();
-  };
+  [startBtn, stopBtn, resetBtn, previewBtn].forEach(b=> b && b.addEventListener("click", ensureAudioReady, { once:true }));
 })();
 </script>
 
