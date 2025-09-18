@@ -275,7 +275,15 @@
           <button id="t-start" class="btn">Start</button>
           <button id="t-pause" class="btn btn-ghost" disabled>Pause</button>
           <button id="t-reset" class="btn btn-ghost">Reset</button>
-          <span class="muted" style="margin-left:auto;font-family:ui-monospace, SFMono-Regular, Menlo, monospace;" id="t-display">00:30</span>
+          <span class="muted" style="margin-left:auto;font-family:ui-monospace, SFMono-Regular, Menlo, monospace;" id="t-display" aria-live="polite">00:30</span>
+        </div>
+
+        <div class="ring">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="54" class="ring-bg"/>
+            <circle cx="60" cy="60" r="54" class="ring-fg" id="t-ring"/>
+            <text x="60" y="66" text-anchor="middle" class="ring-txt" id="t-clock">00:30</text>
+          </svg>
         </div>
 
         <div class="row" style="margin-top:.75rem; border-top:1px solid rgba(255,255,255,.12); padding-top:.75rem;">
@@ -307,6 +315,7 @@
         <p class="hint">No auto-restart by default. Turn on Auto-Repeat if you want back-to-back intervals. On some phones, audio needs one user tap first.</p>
       </div>
     </section>
+
 
 
   
@@ -539,6 +548,10 @@
   })();
   </script>
 
+
+
+
+
 <script id="timer-upgrade-v2">
 (function(){
   const $ = (s) => document.querySelector(s);
@@ -552,6 +565,8 @@
   const elReset = $("#t-reset");
   const elDisplay = $("#t-display");
   const elStatus = $("#t-status");
+  const elRing = $("#t-ring");
+  const elClock = $("#t-clock");
 
   const elSound = $("#t-sound");
   const elFileWrap = $("#t-file-wrap");
@@ -566,12 +581,12 @@
   audioEl.crossOrigin = "anonymous";
   audioEl.volume = 0.8;
 
-  // Replace this with your hosted file if preferred: '/assets/audio/chime.mp3'
-  const BUILT_IN_CHIME = "data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQAA";
-
   function setAudioSource(kind){
     if (kind === "none"){ audioEl.removeAttribute('src'); return; }
-    if (kind === "chime"){ audioEl.src = BUILT_IN_CHIME; return; }
+    if (kind === "chime"){
+      audioEl.src = "/assets/audio/singing_bowl.mp3"; // hosted singing bowl sound
+      return;
+    }
     if (kind === "file" && elFile.files && elFile.files[0]){
       audioEl.src = URL.createObjectURL(elFile.files[0]); return;
     }
@@ -585,18 +600,32 @@
     elUrlWrap.style.display = (v === "url") ? "" : "none";
     setAudioSource(v);
   }
+  function playSound(){
+    if (elSound.value === "none") return;
+    setAudioSource(elSound.value);
+    try{
+      audioEl.volume = parseFloat(elVol.value || "0.8");
+      audioEl.currentTime = 0;
+      audioEl.play();
+    }catch(e){}
+  }
   elSound?.addEventListener("change", updateSoundInputs);
   elFile?.addEventListener("change", () => setAudioSource("file"));
   elUrl?.addEventListener("input", () => setAudioSource("url"));
   elVol?.addEventListener("input", () => { audioEl.volume = parseFloat(elVol.value || "0.8"); });
-  elPrev?.addEventListener("click", (e) => {
-    e.preventDefault();
-    setAudioSource(elSound.value);
-    try{ audioEl.currentTime = 0; audioEl.play(); }catch{}
-  });
+  elPrev?.addEventListener("click", (e) => { e.preventDefault(); playSound(); });
   updateSoundInputs();
 
+  // ----- Ring math -----
+  const R = 54;
+  const C = 2 * Math.PI * R;
+  if (elRing){
+    elRing.style.strokeDasharray = String(C);
+    elRing.style.strokeDashoffset = String(C);
+  }
+
   let remainingMs = 30_000;
+  let totalMs = 30_000;
   let timerId = null;
   let running = false;
   let paused = false;
@@ -604,21 +633,28 @@
 
   function render(ms){
     const s = Math.max(0, Math.floor(ms/1000));
-    elDisplay.textContent = `${pad(Math.floor(s/60))}:${pad(s%60)}`;
+    const mm = Math.floor(s/60);
+    const ss = s % 60;
+    const txt = `${pad(mm)}:${pad(ss)}`;
+    if (elDisplay) elDisplay.textContent = txt;
+    if (elClock) elClock.textContent = txt;
+    if (elRing){
+      const p = 1 - (ms / Math.max(1,totalMs)); // 0..1
+      elRing.style.strokeDashoffset = String(C * (1 - Math.max(0, Math.min(1, p))));
+    }
   }
   function readInputs(){
     const m = Math.max(0, parseInt(elMin.value || "0", 10));
     const s = Math.max(0, Math.min(59, parseInt(elSec.value || "0", 10)));
-    remainingMs = (m*60 + s) * 1000;
+    totalMs = remainingMs = (m*60 + s) * 1000 || 0;
     render(remainingMs);
   }
   function notifyDone(){
-    if (elSound.value !== "none"){
-      setAudioSource(elSound.value);
-      try{ audioEl.currentTime = 0; audioEl.play(); }catch{}
-    }
+    playSound();
+    // Title flash
     const orig = document.title;
-    let i=0; const fx = setInterval(()=>{ document.title = (i++%2) ? "⏰ Time!" : orig; }, 600);
+    let i = 0;
+    const fx = setInterval(()=>{ document.title = (i++%2) ? "⏰ Time!" : orig; }, 600);
     setTimeout(()=>{ clearInterval(fx); document.title = orig; }, 6000);
   }
   function tick(){
