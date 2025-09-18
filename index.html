@@ -91,6 +91,12 @@
   body.ai-boosting #a-out { opacity: 0 !important; transition: opacity 180ms ease; }
 </style>
 
+
+<style id="ai-boosting-style-v64">
+  body.ai-boosting #a-q,
+  body.ai-boosting #a-out { opacity: 0 !important; transition: opacity 150ms ease; }
+</style>
+
 </head>
 
 <body>
@@ -720,20 +726,20 @@
 </script>
 
 
-<script id="generator-smart-v6_3">
+
+
+
+<script id="generator-smart-v6_4">
 /**
- * HashHero Hashtag Generator v6.3
- * - Strong topic packs & fill-to-cap
- * - AI Boost captures Ask-AI result robustly:
- *    • Waits until hashtags actually appear (#...) and output stabilizes
- *    • Hides Ask-AI output while boosting, then clears it
- *    • Merges hashtags into Generator Output
- * - Deduplicates older click handlers
+ * HashHero Hashtag Generator v6.4
+ * - Hides Ask-AI input/output while boosting, restores #a-q after
+ * - Clears #a-out after capture
+ * - Drops near-duplicate AI tags (e.g., #pari vs #paris)
  */
 (function(){
   const $=(s)=>document.querySelector(s);
 
-  // Rebind buttons to avoid legacy handlers
+  // Rebind buttons to avoid legacy listeners
   const oldGen=$("#g-generate"); if(!oldGen) return;
   const gen=oldGen.cloneNode(true); oldGen.parentNode.replaceChild(gen, oldGen);
   const oldClr=$("#g-clear"); const clr=oldClr?oldClr.cloneNode(true):null; if(clr) oldClr.parentNode.replaceChild(clr, oldClr);
@@ -761,11 +767,7 @@
             n:["hiddenparis","cozycafes","offthebeatenpath","slowtravel"]},
     vlog:{h:["vlog","dailyvlog","travelvlog"], m:["cinematic","broll","vlogreel"], n:["povwalk","dayinmylife","fpv"]},
     food:{h:["food","foodie","yummy","delicious","foodstagram"], m:["recipeoftheday","streetfood","homecooking","mealprep"], n:["budgetbites","aestheticbakes","coffeenook"]},
-    fitness:{h:["fitness","gym","workout","fitlife"], m:["legday","homeworkout","strengthtraining","mobility"], n:["formcheck","hypertrophy","kneefriendly"]},
-    photography:{h:["photography","photooftheday","photographer"], m:["streetphotography","travelphotography","portraitphotography"], n:["filmlook","cinestill","nightphotowalk"]},
-    fashion:{h:["fashion","style","ootd"], m:["streetstyle","capsulewardrobe","minimalstyle"], n:["parisianstyle","neutralpalette","slowfashion"]},
-    music:{h:["music","musician","songwriter"], m:["guitarloops","pianocover","indiepop"], n:["lofimusic","bedroomproducer","citypop"]},
-    gaming:{h:["gaming","gamer"], m:["pcgaming","console","walkthrough"], n:["indiegames","speedrun","modding"]}
+    fitness:{h:["fitness","gym","workout","fitlife"], m:["legday","homeworkout","strengthtraining","mobility"], n:["formcheck","hypertrophy","kneefriendly"]}
   };
 
   const SYN={
@@ -794,7 +796,36 @@
   }
   function platformExtras(plat){ return (PLATFORM_EXTRAS[plat]||[]).map(x=>"#"+toClean(x)); }
   function capForPlatform(plat,fallback){ return PLATFORM_CAP[plat]||fallback||25; }
-  function seedsFor(topics){ const res={h:[],m:[],n:[]}; topics.forEach(k=>{ const p=PACK[k]; if(p){ res.h.push(...p.h); res.m.push(...p.m); res.n.push(...p.n); } }); return res; }
+
+  // Near-duplicate guard (#pari vs #paris etc.)
+  function isNearDup(a,b){
+    a=a.slice(1).toLowerCase(); b=b.slice(1).toLowerCase();
+    if(a===b) return true;
+    const la=a.length, lb=b.length; if(Math.abs(la-lb)>1) return false;
+    let i=0,j=0,ed=0;
+    while(i<la && j<lb){
+      if(a[i]===b[j]){ i++; j++; continue; }
+      ed++; if(ed>1) return false;
+      if(la>lb) i++; else if(lb>la) j++; else { i++; j++; }
+    }
+    if(i<la || j<lb) ed++;
+    return ed<=1;
+  }
+
+  function dropNearDup(list){
+    const res=[];
+    for(const t of list){
+      if(res.some(x=>isNearDup(x,t))){ continue; }
+      res.push(t);
+    }
+    return res;
+  }
+
+  function seedsFor(topics){
+    const res={h:[],m:[],n:[]};
+    topics.forEach(k=>{ const p=PACK[k]; if(p){ res.h.push(...p.h); res.m.push(...p.m); res.n.push(...p.n); } });
+    return res;
+  }
   function guessTopics(tokens){
     const hits=new Set();
     Object.keys(PACK).forEach(k=>{ if(tokens.includes(k)) hits.add(k); });
@@ -814,12 +845,17 @@
     return uniqSanitize([...H,...M,...N]);
   }
   function fillToCap(list,cap,tokens,plat){
-    const want=cap-list.length; if(want<=0) return list.slice(0,cap);
+    const want=cap-list.length; if(want<=0) return dropNearDup(list.slice(0,cap));
     const adders=[]; tokens.forEach(t=>adders.push("#"+toClean(t)));
     adders.push(...GENERAL_CONTENT.map(x=>"#"+x), ...GENERAL_CREATOR.map(x=>"#"+x));
     adders.push(...platformExtras(plat));
-    const seen=new Set(list); for(const a of adders){ if(!a||seen.has(a)) continue; seen.add(a); list.push(a); if(list.length>=cap) break; }
-    return list.slice(0,cap);
+    const seen=new Set(list);
+    for(const a of adders){
+      if(!a||seen.has(a)) continue;
+      seen.add(a); list.push(a);
+      if(list.length>=cap) break;
+    }
+    return dropNearDup(list.slice(0,cap));
   }
 
   function makeTags(){
@@ -845,48 +881,58 @@
   copy && copy.addEventListener("click", async()=>{ try{ await navigator.clipboard.writeText(outEl.value); warnEl&&(warnEl.textContent="Copied!"); setTimeout(()=>{ warnEl&&(warnEl.textContent=""); },1200); }catch{} });
   descEl?.addEventListener("keydown", (e)=>{ if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){ e.preventDefault(); makeTags(); } });
 
-  // -------- AI Bridge (robust capture) --------
+  // ---- AI Bridge ----
   const aQ=$("#a-q"), aAsk=$("#a-ask"), aOut=$("#a-out");
   function getAIText(){ if(!aOut) return ""; return ("value" in aOut) ? aOut.value : aOut.textContent; }
   function setAIText(v){ if(!aOut) return; if("value" in aOut) aOut.value = v; else aOut.textContent = v; }
+
   async function callAskAI(prompt){
     if(!(aQ && aAsk && aOut)) throw new Error("Ask-AI UI not found");
+    const prevQ = aQ.value; // preserve user's text
     document.body.classList.add("ai-boosting");
     return new Promise((resolve)=>{
       let last = (getAIText()||"").trim();
-      let stableTimer = null, timeoutTimer = null, done=false;
-
+      let stableTimer = null, done=false;
       const finish=(txt)=>{ if(done) return; done=true;
         observer.disconnect(); aOut.removeEventListener("input", onChange); aOut.removeEventListener("change", onChange);
-        setAIText(""); document.body.classList.remove("ai-boosting"); resolve(txt);
+        // restore & clear
+        aQ.value = prevQ;
+        setAIText("");
+        document.body.classList.remove("ai-boosting");
+        resolve(txt);
       };
-
       const onChange=()=>{
         const cur=(getAIText()||"").trim();
         if(!cur || cur===last) return;
         last = cur;
-        // Debounce until stable and actually contains hashtags
         if(stableTimer) clearTimeout(stableTimer);
-        stableTimer = setTimeout(()=>{
-          if(/#[A-Za-z0-9_]+/.test(last)){ finish(last); }
-        }, 400);
+        stableTimer = setTimeout(()=>{ if(/#[A-Za-z0-9_]+/.test(last)) finish(last); }, 350);
       };
-
       const observer=new MutationObserver(onChange);
       observer.observe(aOut, {childList:true, subtree:true, characterData:true});
       aOut.addEventListener("input", onChange);
       aOut.addEventListener("change", onChange);
-
-      // Safety timeout
-      timeoutTimer = setTimeout(()=>{ finish((getAIText()||"").trim()); }, 12000);
-
-      // Kick it off
+      // kick
       aQ.value = prompt;
       aAsk.click();
+      setTimeout(()=>{ finish((getAIText()||"").trim()); }, 12000); // safety
     });
   }
+
   function sanitizeList(text){ return (text||"").match(/#[A-Za-z0-9_]+/g)||[]; }
-  function mergeToCap(base,ai,cap){ const seen=new Set(base.map(x=>x.toLowerCase())); const out=base.slice(); for(const t of ai){ if(out.length>=cap) break; const k=t.toLowerCase(); if(seen.has(k)) continue; seen.add(k); out.push(t); } return out.slice(0,cap); }
+  function mergeToCap(base,ai,cap){
+    const out = base.slice();
+    const seen = new Set(out.map(x=>x.toLowerCase()));
+    for(const t of ai){
+      if(out.length>=cap) break;
+      const k = t.toLowerCase();
+      if(seen.has(k)) continue;
+      // near-dup guard against existing tags
+      if(out.some(x=>isNearDup(x, t))) continue;
+      seen.add(k); out.push(t);
+    }
+    return dropNearDup(out).slice(0,cap);
+  }
 
   const row=gen.parentElement;
   if(row && !document.getElementById("g-ai-boost")){
