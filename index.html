@@ -94,6 +94,15 @@
   #g-boost-note strong { font-weight:700; }
 </style>
 
+
+<style id="timer-sound-ui-v2">
+  #timer .row.soundbar { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:.5rem; }
+  #timer .row.soundbar .col { flex: 1 1 200px; }
+  #timer .row.soundbar .lbl { display:block; font-size:.9rem; opacity:.9; }
+  #timer .row.soundbar .input, #timer .row.soundbar .select { width:100%; }
+  #timer .row.soundbar .btn { white-space:nowrap; }
+</style>
+
 </head>
 
 <body>
@@ -805,6 +814,140 @@
       try{ await unifiedGenerateBoost(); } finally { boost.textContent="AI Boost (re-run)"; boost.disabled=false; }
     }, {once:false});
   }
+})();
+</script>
+
+
+<script id="timer-singing-bowl-v2">
+(function(){
+  const timerCard = document.querySelector("#timer .card");
+  const beepEl = document.getElementById("t-beep");
+  if (!timerCard || !beepEl) return;
+
+  // --- Inject compact UI (Alert Sound + Volume + Auto-Advance + Preview) ---
+  if (!document.getElementById("t-sound")) {
+    const bar = document.createElement("div");
+    bar.className = "row soundbar";
+    bar.innerHTML = `
+      <div class="col">
+        <label class="lbl">Alert Sound</label>
+        <select id="t-sound" class="select">
+          <option value="bowl" selected>Singing Bowl</option>
+          <option value="beep">Beep</option>
+          <option value="off">Off</option>
+        </select>
+      </div>
+      <div class="col">
+        <label class="lbl">Volume</label>
+        <input id="t-vol" class="input" type="range" min="0" max="1" step="0.01" value="0.8" />
+      </div>
+      <div class="col">
+        <label class="lbl">Auto-Advance (next phase)</label>
+        <select id="t-auto" class="select">
+          <option value="off" selected>Off</option>
+          <option value="on">On</option>
+        </select>
+      </div>
+      <div class="col" style="max-width:160px">
+        <label class="lbl" style="visibility:hidden">Preview</label>
+        <button id="t-preview" class="btn btn-ghost">Preview</button>
+      </div>
+    `;
+    const hint = timerCard.querySelector("p.hint");
+    (hint ? hint : beepEl).before(bar);
+  }
+
+  const soundSel = document.getElementById("t-sound");
+  const volEl = document.getElementById("t-vol");
+  const autoSel = document.getElementById("t-auto");
+  const previewBtn = document.getElementById("t-preview");
+
+  // --- WebAudio Singing Bowl synth ---
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  const ctx = AudioCtx ? new AudioCtx() : null;
+  const master = ctx ? ctx.createGain() : null;
+  if (ctx && master) { master.connect(ctx.destination); master.gain.value = parseFloat(volEl.value || "0.8"); }
+
+  function ensureAudioReady(){
+    if (!ctx) return;
+    if (ctx.state === "suspended") ctx.resume();
+  }
+  function setVolumeUI(v){
+    v = Math.max(0, Math.min(1, parseFloat(v||"0.8")));
+    if (master) master.gain.value = v;
+    if (beepEl) beepEl.volume = v;
+  }
+  volEl?.addEventListener("input", e => setVolumeUI(e.target.value));
+
+  function bowl(){
+    if (!ctx || !master) return;
+    const t0 = ctx.currentTime;
+    const dur = 6.0;
+    const partials = [196, 294, 392, 512, 660, 784]; // G-based stack
+
+    const g = ctx.createGain();
+    g.connect(master);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, master.gain.value), t0 + 0.03);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+
+    partials.forEach((f,i)=>{
+      const o = ctx.createOscillator();
+      const og = ctx.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(f, t0);
+      o.detune.setValueAtTime((i%2? -5: +5), t0); // subtle detune
+      og.gain.setValueAtTime(0.6/(i+1), t0+0.01);
+      og.gain.exponentialRampToValueAtTime(0.0001, t0 + dur*(0.7 + i*0.04));
+      o.connect(og); og.connect(g);
+      o.start(t0); o.stop(t0 + dur);
+    });
+  }
+
+  // To distinguish Preview from real phase-end chime
+  let previewing = false;
+  previewBtn?.addEventListener("click", () => {
+    const mode = (soundSel && soundSel.value) || "bowl";
+    if (mode === "off") return;
+    ensureAudioReady();
+    previewing = true;
+    if (mode === "bowl") bowl(); else { setVolumeUI(volEl.value); nativePlay && nativePlay(); }
+    setTimeout(()=>{ previewing=false; }, 50);
+  });
+
+  // --- Monkey‑patch the timer's beep so app.js keeps working ---
+  const nativePlay = beepEl.play ? beepEl.play.bind(beepEl) : null;
+  if (nativePlay) {
+    beepEl.play = function(...args){
+      const mode = (soundSel && soundSel.value) || "bowl";
+      if (mode === "off") {
+        // Still prevent auto-advance if requested
+        if (!previewing && autoSel && autoSel.value === "off") {
+          setTimeout(()=>{ (document.getElementById("t-stop")||document.getElementById("t-reset"))?.click(); }, 0);
+        }
+        return Promise.resolve();
+      }
+      if (mode === "bowl") {
+        ensureAudioReady();
+        bowl();
+      } else {
+        setVolumeUI(volEl.value);
+        nativePlay(...args);
+      }
+      // Stop auto-advance unless explicitly turned on
+      if (!previewing && autoSel && autoSel.value === "off") {
+        setTimeout(()=>{ (document.getElementById("t-stop")||document.getElementById("t-reset"))?.click(); }, 0);
+      }
+      return Promise.resolve();
+    };
+  }
+
+  // Resume audio on first user interaction (mobile)
+  const startBtn = document.getElementById("t-start");
+  const stopBtn  = document.getElementById("t-stop");
+  const resetBtn = document.getElementById("t-reset");
+  [startBtn, stopBtn, resetBtn, previewBtn].forEach(b=> b && b.addEventListener("click", ensureAudioReady, { once:true }));
+
 })();
 </script>
 
