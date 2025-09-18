@@ -87,7 +87,7 @@
   </style>
 
 
-<style id="ai-boosting-style-v65">
+<style id="ai-boosting-style-v66">
   body.ai-boosting #a-q,
   body.ai-boosting #a-out { opacity: 0 !important; transition: opacity 150ms ease; }
   #g-boost-note { margin-top:.5rem; font-size:.95rem; }
@@ -521,18 +521,18 @@
   </script>
 
 
-<script id="generator-smart-v6_5">
+<script id="generator-smart-v6_6">
 /**
- * HashHero Hashtag Generator v6.5
- * - Merges Generate -> AI Boost (AI Boost runs base generation first, then boosts)
- * - Adds bold note telling users to click AI Boost
- * - Keeps robust Ask-AI capture, clears/hides its UI during boost
- * - Fill-to-cap + near-duplicate guard intact
+ * HashHero Hashtag Generator v6.6
+ * - "Generate" now runs Generate + AI Boost (one click)
+ * - Adds locality & cuisine seeds (e.g., Mumbai, Vada Pav, Monsoon)
+ * - Robust Ask-AI bridge; clears/hides Ask-AI UI while boosting
+ * - Fill-to-cap; dedupe; near-dup guard (#pari vs #paris)
  */
 (function(){
   const $=(s)=>document.querySelector(s);
 
-  // Rebind in case old listeners exist
+  // Rebind buttons cleanly
   const oldGen=$("#g-generate"); if(!oldGen) return;
   const gen=oldGen.cloneNode(true); oldGen.parentNode.replaceChild(gen, oldGen);
   const oldClr=$("#g-clear"); const clr=oldClr?oldClr.cloneNode(true):null; if(clr) oldClr.parentNode.replaceChild(clr, oldClr);
@@ -542,19 +542,18 @@
         descEl=$("#g-desc"), platEl=$("#g-platform"), biasEl=$("#g-bias"), maxEl=$("#g-max"),
         suggBar=$("#g-suggestions"), expEl=$("#g-ai-explain");
 
-  // Demote the basic Generate button visually & rename
+  // Rename Generate to unified flow
   try{
-    gen.textContent = "Generate (basic)";
-    gen.className = (gen.className||"btn").replace(/btn(?!-ghost)/,"btn btn-ghost");
-    gen.title = "Basic generator without AI. For best results use AI Boost.";
+    gen.textContent = "Generate + AI (recommended)";
+    gen.title = "Generates smart seeds, then boosts via Ask AI and merges to your cap.";
   }catch(e){}
 
-  // Insert the bold note once under the button row
+  // Insert bold nudge
   const row = gen.parentElement;
   if(row && !document.getElementById("g-boost-note")){
     const note = document.createElement("p");
     note.id = "g-boost-note";
-    note.innerHTML = "<strong>Best results:</strong> Click <em>AI Boost</em> (it generates + enhances your hashtags).";
+    note.innerHTML = "<strong>Best results:</strong> Click <em>Generate + AI</em> to auto-boost your hashtags.";
     row.parentElement && row.parentElement.insertBefore(note, row.nextSibling);
   }
 
@@ -563,8 +562,9 @@
   const PLATFORM_CAP={Instagram:30,TikTok:33,Twitter:20,YouTube:15,LinkedIn:15};
   const PLATFORM_EXTRAS={Instagram:["reels","instareels","igers","explorepage","instagood","contentcreator","creator","instagram"]};
   const BANNED=new Set(["followforfollow","like4like","sub4sub","giveaway","nsfw","spam","clickbait"]);
-  const FUZZY={"coffe":"coffee","cofee":"coffee","restraunt":"restaurant"};
+  const FUZZY={"coffe":"coffee","cofee":"coffee","restraunt":"restaurant","mumbay":"mumbai"};
 
+  // Packs
   const PACK={
     coffee:{h:["coffee","coffeetime","coffeelover","coffeebreak","coffeeholic"],
             m:["latte","espresso","cappuccino","latteart","thirdwavecoffee","baristalife","pourover","aeropress","flatwhite"],
@@ -576,8 +576,26 @@
             m:["citybreak","solotravel","roadtrip","travelreels"],
             n:["hiddenparis","cozycafes","offthebeatenpath","slowtravel"]},
     vlog:{h:["vlog","dailyvlog","travelvlog"], m:["cinematic","broll","vlogreel"], n:["povwalk","dayinmylife","fpv"]},
-    food:{h:["food","foodie","yummy","delicious","foodstagram"], m:["recipeoftheday","streetfood","homecooking","mealprep"], n:["budgetbites","aestheticbakes","coffeenook"]},
+    food:{h:["food","foodie","yummy","delicious","foodstagram"], m:["streetfood","homecooking","recipeoftheday","mealprep"], n:["budgetbites","aestheticbakes","coffeenook"]},
     fitness:{h:["fitness","gym","workout","fitlife"], m:["legday","homeworkout","strengthtraining","mobility"], n:["formcheck","hypertrophy","kneefriendly"]}
+  };
+
+  // Locality & cuisine dictionary (adds targeted seeds)
+  const LOCAL={
+    mumbai:["mumbai","mumbairains","mumbaifood","mumbaistreetfood","mumbaidiaries","purelybombay","tasteofmumbai","marineDrive","gatewayofindia","localtrain","vibeofmumbai","monsoonmumbai"],
+    delhi:["delhi","dillivalle","delhifood","delhistreetfood","delhigram","cpdelhi","oldDelhi","chandnichowk"],
+    tokyo:["tokyo","shibuyacrossing","asakusa","ueno","akihabara","tokyostreetphotography"],
+    paris:["paris","instaparis","parisianstyle","parisdiary","hiddenparis","cityoflights"],
+    nyc:["nyc","newyork","newyorkcity","manhattan","brooklyn","soho","nycfood"],
+  };
+  const CUISINE={
+    "vada pav":["vadapav","vadapavlove","streetfood","mumbaistreetfood","mumbaifood"],
+    "chaat":["chaat","streetfood","delhistreetfood"],
+    "pav bhaji":["pavbhaji","streetfood","mumbaistreetfood"],
+    "biryani":["biryani","indianfood","foodie"],
+  };
+  const SEASONAL={
+    monsoon:["monsoon","monsoonvibes","monsoonmood","rainyday","rainydayout","mumbairains","rainvibes"]
   };
 
   const SYN={
@@ -589,7 +607,11 @@
     latte:["coffee","latteart","cafe","flatwhite"],
     cafe:["coffee","cozycafe","coffeetime"],
     vlog:["cinematic","broll","dailyvlog"],
-    reel:["reels","shorts"], reels:["reel","shorts"], shorts:["reels","ytshorts"]
+    rains:["rain","rainy","monsoon","rainyday","monsoonmood"],
+    monsoon:["rains","rain","rainyday","monsoonmood"],
+    "vada":["vadapav","streetfood","mumbai"],
+    "vada pav":["vadapav","streetfood","mumbai"],
+    mumbai:["mumbaidiaries","mumbaifood","mumbaistreetfood","mumbairains","purelybombay","tasteofmumbai"]
   };
 
   const GENERAL_CONTENT=["content","creator","viral","trending","tips","tutorial","howto"];
@@ -601,7 +623,7 @@
     return (text||"").toLowerCase().replace(/[#@]/g," ").replace(/[^a-z0-9\s\-]/g," ")
       .split(/\s+/).filter(w=>w && !STOP.has(w) && w.length>1).map(w=>FUZZY[w]||w);
   }
-  function expand(keys){ const out=new Set(keys); keys.forEach(k=>(SYN[k]||[]).forEach(x=>out.add(x))); return [...out]; }
+  function expand(keys){ const out=new Set(keys); keys.forEach(k=>{ (SYN[k]||[]).forEach(x=>out.add(x)); }); return [...out]; }
   function uniqSanitize(tags){
     const seen=new Set(), out=[]; for(const t of tags){ const c=toClean(t); if(!c||BANNED.has(c)||seen.has(c)) continue; seen.add(c); out.push("#"+c); } return out;
   }
@@ -623,10 +645,7 @@
   }
   function dropNearDup(list){
     const res=[];
-    for(const t of list){
-      if(res.some(x=>isNearDup(x,t))) continue;
-      res.push(t);
-    }
+    for(const t of list){ if(res.some(x=>isNearDup(x,t))) continue; res.push(t); }
     return res;
   }
 
@@ -635,12 +654,33 @@
     topics.forEach(k=>{ const p=PACK[k]; if(p){ res.h.push(...p.h); res.m.push(...p.m); res.n.push(...p.n); } });
     return res;
   }
+  function applyLocality(tokens, bag){
+    // City/local
+    for(const t of tokens){
+      if(LOCAL[t]){
+        bag.h.push(...LOCAL[t].slice(0,4));
+        bag.m.push(...LOCAL[t].slice(4,8));
+        bag.n.push(...LOCAL[t].slice(8));
+      }
+      if(CUISINE[t]){
+        bag.h.push(...CUISINE[t].slice(0,3));
+        bag.m.push(...CUISINE[t].slice(3));
+      }
+      if(SEASONAL[t]){
+        bag.h.push(...SEASONAL[t].slice(0,3));
+        bag.m.push(...SEASONAL[t].slice(3));
+      }
+    }
+  }
   function guessTopics(tokens){
     const hits=new Set();
     Object.keys(PACK).forEach(k=>{ if(tokens.includes(k)) hits.add(k); });
+    // film
     if(tokens.some(t=>["cinema","film","movie","cinematography","filmmaking","cinematic"].includes(t))) hits.add("film");
-    if(tokens.some(t=>["coffee","latte","espresso","cappuccino","cafe","cafes"].includes(t))) hits.add("coffee");
-    if(tokens.some(t=>["travel","paris","tokyo","london","rome","newyork","nyc","berlin"].includes(t))) hits.add("travel");
+    // coffee/food
+    if(tokens.some(t=>["coffee","latte","espresso","cappuccino","cafe","cafes","food","streetfood","foodie"].includes(t))) hits.add("food");
+    // travel by city words
+    if(tokens.some(t=>["travel","paris","tokyo","london","rome","newyork","nyc","berlin","mumbai","delhi"].includes(t))) hits.add("travel");
     return [...hits];
   }
   function mixByBias(pool,bias,cap){
@@ -672,7 +712,9 @@
 
     const tokens=expand(tokenize(desc));
     if(!tokens.length){ warnEl && (warnEl.textContent="Describe your post (topic, location, format)."); outEl.value=""; countEl&&(countEl.textContent="0"); suggBar&&(suggBar.innerHTML=""); return; }
-    const topics=guessTopics(tokens); const seeds=seedsFor(topics); const kw=uniqSanitize(tokens.map(toClean));
+    const topics=guessTopics(tokens); const seeds=seedsFor(topics);
+    applyLocality(tokens, seeds);
+    const kw=uniqSanitize(tokens.map(toClean));
     const pool={ h: uniqSanitize([...seeds.h, ...kw]), m: uniqSanitize(seeds.m), n: uniqSanitize(seeds.n) };
     let mixed = mixByBias(pool, bias, cap);
     mixed = fillToCap(mixed, cap, tokens, plat);
@@ -681,16 +723,10 @@
     warnEl && (warnEl.textContent = mixed.length<cap ? "Tip: add format or location for even tighter tags." : "");
   }
 
-  gen.addEventListener("click", makeTags);
-  clr && clr.addEventListener("click", ()=>{ outEl.value=""; countEl&&(countEl.textContent="0"); warnEl&&(warnEl.textContent=""); });
-  copy && copy.addEventListener("click", async()=>{ try{ await navigator.clipboard.writeText(outEl.value); warnEl&&(warnEl.textContent="Copied!"); setTimeout(()=>{ warnEl&&(warnEl.textContent=""); },1200); }catch{} });
-  descEl?.addEventListener("keydown", (e)=>{ if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){ e.preventDefault(); aiBoostFlow(); } });
-
-  // ---- AI Bridge (Ask AI on page) ----
+  // Ask-AI bridge
   const aQ=$("#a-q"), aAsk=$("#a-ask"), aOut=$("#a-out");
   function getAIText(){ if(!aOut) return ""; return ("value" in aOut) ? aOut.value : aOut.textContent; }
   function setAIText(v){ if(!aOut) return; if("value" in aOut) aOut.value = v; else aOut.textContent = v; }
-
   async function callAskAI(prompt){
     if(!(aQ && aAsk && aOut)) throw new Error("Ask-AI UI not found");
     const prevQ = aQ.value;
@@ -703,7 +739,8 @@
         aQ.value = prevQ; setAIText(""); document.body.classList.remove("ai-boosting"); resolve(txt);
       };
       const onChange=()=>{
-        const cur=(getAIText()||"").trim(); if(!cur || cur===last) return; last=cur;
+        const cur=(getAIText()||"").trim();
+        if(!cur || cur===last) return; last=cur;
         if(stableTimer) clearTimeout(stableTimer);
         stableTimer = setTimeout(()=>{ if(/#[A-Za-z0-9_]+/.test(last)) finish(last); }, 350);
       };
@@ -712,28 +749,10 @@
       aOut.addEventListener("input", onChange);
       aOut.addEventListener("change", onChange);
       aQ.value = prompt; aAsk.click();
-      setTimeout(()=>{ finish((getAIText()||"").trim()); }, 12000); // safety
+      setTimeout(()=>{ finish((getAIText()||"").trim()); }, 12000);
     });
   }
   function sanitizeList(text){ return (text||"").match(/#[A-Za-z0-9_]+/g)||[]; }
-  function isNearDup(a,b){
-    a=a.slice(1).toLowerCase(); b=b.slice(1).toLowerCase();
-    if(a===b) return true;
-    const la=a.length, lb=b.length; if(Math.abs(la-lb)>1) return false;
-    let i=0,j=0,ed=0;
-    while(i<la && j<lb){
-      if(a[i]===b[j]){ i++; j++; continue; }
-      ed++; if(ed>1) return false;
-      if(la>lb) i++; else if(lb>la) j++; else { i++; j++; }
-    }
-    if(i<la || j<lb) ed++;
-    return ed<=1;
-  }
-  function dropNearDup(list){
-    const res=[];
-    for(const t of list){ if(res.some(x=>isNearDup(x,t))) continue; res.push(t); }
-    return res;
-  }
   function mergeToCap(base,ai,cap){
     const out = base.slice();
     const seen = new Set(out.map(x=>x.toLowerCase()));
@@ -747,9 +766,8 @@
     return dropNearDup(out).slice(0,cap);
   }
 
-  // ---- Unified flow: Generate + AI Boost ----
-  async function aiBoostFlow(){
-    // Step 1: base generation
+  async function unifiedGenerateBoost(){
+    // base
     makeTags();
     const plat=(platEl?.value||"Instagram"); const bias=(biasEl?.value||"balanced").toLowerCase();
     const cap=Math.min(parseInt(maxEl?.value||"25",10)||25, PLATFORM_CAP[plat]||25);
@@ -765,30 +783,28 @@
     expEl && (expEl.style.display="block", expEl.textContent = aiTags.length ? "AI Boost applied." : "AI didn't return hashtags.");
   }
 
-  // Ensure AI buttons present (Boost will just call unified flow)
-  const boostBtnId="g-ai-boost";
-  let boost=document.getElementById(boostBtnId);
-  if(!boost){
-    boost=document.createElement("button");
-    boost.id=boostBtnId;
-    boost.className="btn";
-    boost.textContent="AI Boost";
-    gen.parentElement.insertBefore(boost, gen.nextSibling);
-  }
-  boost.addEventListener("click", async()=>{
-    const prev=boost.textContent; boost.textContent="Thinking…"; boost.disabled=true;
-    try{ await aiBoostFlow(); } finally { boost.textContent="AI Boost"; boost.disabled=false; }
+  // Wire up clicks and hotkeys to unified flow
+  gen.addEventListener("click", async()=>{
+    const prev=gen.textContent; gen.textContent="Generating…"; gen.disabled=true;
+    try{ await unifiedGenerateBoost(); } finally { gen.textContent=prev; gen.disabled=false; }
   });
-
-  // Also map Cmd/Ctrl+Enter to unified flow
+  // Ctrl/Cmd+Enter
   descEl?.addEventListener("keydown", (e)=>{
     if((e.ctrlKey||e.metaKey) && e.key==="Enter"){
       e.preventDefault();
-      (async()=>{
-        try{ await aiBoostFlow(); } catch(e){}
-      })();
+      (async()=>{ try{ await unifiedGenerateBoost(); } catch(e){} })();
     }
   });
+
+  // Keep a separate AI Boost button (if present) pointing to same flow
+  const boost=document.getElementById("g-ai-boost");
+  if(boost){
+    boost.textContent="AI Boost (re-run)";
+    boost.addEventListener("click", async()=>{
+      const prev=boost.textContent; boost.textContent="Boosting…"; boost.disabled=true;
+      try{ await unifiedGenerateBoost(); } finally { boost.textContent="AI Boost (re-run)"; boost.disabled=false; }
+    }, {once:false});
+  }
 })();
 </script>
 
