@@ -86,6 +86,11 @@
     #qod .small { font-size: .9rem; }
   </style>
 
+
+<style id="ai-boosting-style">
+  body.ai-boosting #a-out { opacity: 0 !important; transition: opacity 180ms ease; }
+</style>
+
 </head>
 
 <body>
@@ -715,26 +720,24 @@
 </script>
 
 
-<script id="generator-smart-v6_2">
+<script id="generator-smart-v6_3">
 /**
- * HashHero Hashtag Generator v6.2
- * - Robust topic packs (coffee, film, travel, vlog, food, fitness, photo, fashion, music, gaming)
- * - Fill-to-cap always
- * - Clones action buttons to remove older listeners (prevents 5-tag overwrite)
- * - AI Boost uses on-page Ask AI (#a-q, #a-ask, #a-out), captures output silently
- *   and clears/hides #a-out so nothing appears in the Ask panel
+ * HashHero Hashtag Generator v6.3
+ * - Strong topic packs & fill-to-cap
+ * - AI Boost captures Ask-AI result robustly:
+ *    • Waits until hashtags actually appear (#...) and output stabilizes
+ *    • Hides Ask-AI output while boosting, then clears it
+ *    • Merges hashtags into Generator Output
+ * - Deduplicates older click handlers
  */
 (function(){
   const $=(s)=>document.querySelector(s);
 
-  // --- Rebind buttons to avoid legacy handlers overwriting output ---
-  const oldGen=$("#g-generate"); const oldClr=$("#g-clear"); const oldCopy=$("#g-copy");
-  if(!oldGen) return;
+  // Rebind buttons to avoid legacy handlers
+  const oldGen=$("#g-generate"); if(!oldGen) return;
   const gen=oldGen.cloneNode(true); oldGen.parentNode.replaceChild(gen, oldGen);
-  const clr=oldClr ? (oldClr.cloneNode ? oldClr.cloneNode(true) : oldClr) : null;
-  if(clr && oldClr){ oldClr.parentNode.replaceChild(clr, oldClr); }
-  const copy=oldCopy ? (oldCopy.cloneNode ? oldCopy.cloneNode(true) : oldCopy) : null;
-  if(copy && oldCopy){ oldCopy.parentNode.replaceChild(copy, oldCopy); }
+  const oldClr=$("#g-clear"); const clr=oldClr?oldClr.cloneNode(true):null; if(clr) oldClr.parentNode.replaceChild(clr, oldClr);
+  const oldCopy=$("#g-copy"); const copy=oldCopy?oldCopy.cloneNode(true):null; if(copy) oldCopy.parentNode.replaceChild(copy, oldCopy);
 
   const outEl=$("#g-out"), warnEl=$("#g-warnings"), countEl=$("#g-count"), maxcapEl=$("#g-maxcap"),
         descEl=$("#g-desc"), platEl=$("#g-platform"), biasEl=$("#g-bias"), maxEl=$("#g-max"),
@@ -756,27 +759,13 @@
     travel:{h:["travel","vacation","wanderlust","travelgram"],
             m:["citybreak","solotravel","roadtrip","travelreels"],
             n:["hiddenparis","cozycafes","offthebeatenpath","slowtravel"]},
-    vlog:{h:["vlog","dailyvlog","travelvlog"],
-          m:["cinematic","broll","vlogreel"],
-          n:["povwalk","dayinmylife","fpv"]},
-    food:{h:["food","foodie","yummy","delicious","foodstagram"],
-          m:["recipeoftheday","streetfood","homecooking","mealprep"],
-          n:["budgetbites","aestheticbakes","coffeenook"]},
-    fitness:{h:["fitness","gym","workout","fitlife"],
-             m:["legday","homeworkout","strengthtraining","mobility"],
-             n:["formcheck","hypertrophy","kneefriendly"]},
-    photography:{h:["photography","photooftheday","photographer"],
-                 m:["streetphotography","travelphotography","portraitphotography"],
-                 n:["filmlook","cinestill","nightphotowalk"]},
-    fashion:{h:["fashion","style","ootd"],
-             m:["streetstyle","capsulewardrobe","minimalstyle"],
-             n:["parisianstyle","neutralpalette","slowfashion"]},
-    music:{h:["music","musician","songwriter"],
-           m:["guitarloops","pianocover","indiepop"],
-           n:["lofimusic","bedroomproducer","citypop"]},
-    gaming:{h:["gaming","gamer"],
-            m:["pcgaming","console","walkthrough"],
-            n:["indiegames","speedrun","modding"]}
+    vlog:{h:["vlog","dailyvlog","travelvlog"], m:["cinematic","broll","vlogreel"], n:["povwalk","dayinmylife","fpv"]},
+    food:{h:["food","foodie","yummy","delicious","foodstagram"], m:["recipeoftheday","streetfood","homecooking","mealprep"], n:["budgetbites","aestheticbakes","coffeenook"]},
+    fitness:{h:["fitness","gym","workout","fitlife"], m:["legday","homeworkout","strengthtraining","mobility"], n:["formcheck","hypertrophy","kneefriendly"]},
+    photography:{h:["photography","photooftheday","photographer"], m:["streetphotography","travelphotography","portraitphotography"], n:["filmlook","cinestill","nightphotowalk"]},
+    fashion:{h:["fashion","style","ootd"], m:["streetstyle","capsulewardrobe","minimalstyle"], n:["parisianstyle","neutralpalette","slowfashion"]},
+    music:{h:["music","musician","songwriter"], m:["guitarloops","pianocover","indiepop"], n:["lofimusic","bedroomproducer","citypop"]},
+    gaming:{h:["gaming","gamer"], m:["pcgaming","console","walkthrough"], n:["indiegames","speedrun","modding"]}
   };
 
   const SYN={
@@ -794,7 +783,6 @@
   const GENERAL_CONTENT=["content","creator","viral","trending","tips","tutorial","howto"];
   const GENERAL_CREATOR=["behindthescenes","workflow","setup","gear","aesthetic","storytelling","branding"];
 
-  // Helpers
   const toClean=(w)=>w.replace(/[^a-z0-9]+/g,"").toLowerCase();
   function tokenize(text){
     return (text||"").toLowerCase().replace(/[#@]/g," ").replace(/[^a-z0-9\s\-]/g," ")
@@ -806,11 +794,7 @@
   }
   function platformExtras(plat){ return (PLATFORM_EXTRAS[plat]||[]).map(x=>"#"+toClean(x)); }
   function capForPlatform(plat,fallback){ return PLATFORM_CAP[plat]||fallback||25; }
-  function seedsFor(topics){
-    const res={h:[],m:[],n:[]};
-    topics.forEach(k=>{ const p=PACK[k]; if(p){ res.h.push(...p.h); res.m.push(...p.m); res.n.push(...p.n); } });
-    return res;
-  }
+  function seedsFor(topics){ const res={h:[],m:[],n:[]}; topics.forEach(k=>{ const p=PACK[k]; if(p){ res.h.push(...p.h); res.m.push(...p.m); res.n.push(...p.n); } }); return res; }
   function guessTopics(tokens){
     const hits=new Set();
     Object.keys(PACK).forEach(k=>{ if(tokens.includes(k)) hits.add(k); });
@@ -839,10 +823,10 @@
   }
 
   function makeTags(){
-    const desc=($('#g-desc')?.value||"").trim();
-    const plat=($('#g-platform')?.value||"Instagram");
-    const bias=($('#g-bias')?.value||"balanced").toLowerCase();
-    const cap=Math.min(parseInt($('#g-max')?.value||"25",10)||25, capForPlatform(plat,25));
+    const desc=(descEl?.value||"").trim();
+    const plat=(platEl?.value||"Instagram");
+    const bias=(biasEl?.value||"balanced").toLowerCase();
+    const cap=Math.min(parseInt(maxEl?.value||"25",10)||25, capForPlatform(plat,25));
     maxcapEl && (maxcapEl.textContent=String(cap));
 
     const tokens=expand(tokenize(desc));
@@ -859,37 +843,49 @@
   gen.addEventListener("click", makeTags);
   clr && clr.addEventListener("click", ()=>{ outEl.value=""; countEl&&(countEl.textContent="0"); warnEl&&(warnEl.textContent=""); });
   copy && copy.addEventListener("click", async()=>{ try{ await navigator.clipboard.writeText(outEl.value); warnEl&&(warnEl.textContent="Copied!"); setTimeout(()=>{ warnEl&&(warnEl.textContent=""); },1200); }catch{} });
-  $('#g-desc')?.addEventListener("keydown", (e)=>{ if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){ e.preventDefault(); makeTags(); } });
+  descEl?.addEventListener("keydown", (e)=>{ if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){ e.preventDefault(); makeTags(); } });
 
-  // ---- AI Bridge (on-page Ask AI) ----
+  // -------- AI Bridge (robust capture) --------
   const aQ=$("#a-q"), aAsk=$("#a-ask"), aOut=$("#a-out");
-  function getAIText(){ return aOut ? ("value" in aOut ? aOut.value : aOut.textContent) : ""; }
+  function getAIText(){ if(!aOut) return ""; return ("value" in aOut) ? aOut.value : aOut.textContent; }
   function setAIText(v){ if(!aOut) return; if("value" in aOut) aOut.value = v; else aOut.textContent = v; }
-  function hideAIOut(hide){ if(!aOut) return; aOut.style.transition="opacity 180ms ease"; aOut.style.opacity = hide ? "0" : "1"; }
-
   async function callAskAI(prompt){
-    if(aQ && aAsk && aOut){
-      return new Promise((resolve)=>{
-        const prev=(getAIText()||"").trim();
-        let done=false;
-        const onAnyUpdate=()=>{
-          const txt=(getAIText()||"").trim();
-          if(!done && txt && txt!==prev){ done=true; cleanup(); const ret=txt; setAIText(""); hideAIOut(false); resolve(ret); }
-        };
-        function cleanup(){ aOut.removeEventListener("input", onAnyUpdate); aOut.removeEventListener("change", onAnyUpdate); if(obs){ obs.disconnect(); } }
-        const obs=new MutationObserver(onAnyUpdate);
-        obs.observe(aOut, {childList:true, subtree:true, characterData:true});
-        aOut.addEventListener("input", onAnyUpdate);
-        aOut.addEventListener("change", onAnyUpdate);
-        hideAIOut(true);
-        aQ.value = prompt;
-        aAsk.click();
-        setTimeout(()=>{ if(!done){ const txt=(getAIText()||"").trim(); cleanup(); setAIText(""); hideAIOut(false); resolve(txt); } }, 10000);
-      });
-    }
-    throw new Error("Ask AI elements not found on this page.");
+    if(!(aQ && aAsk && aOut)) throw new Error("Ask-AI UI not found");
+    document.body.classList.add("ai-boosting");
+    return new Promise((resolve)=>{
+      let last = (getAIText()||"").trim();
+      let stableTimer = null, timeoutTimer = null, done=false;
+
+      const finish=(txt)=>{ if(done) return; done=true;
+        observer.disconnect(); aOut.removeEventListener("input", onChange); aOut.removeEventListener("change", onChange);
+        setAIText(""); document.body.classList.remove("ai-boosting"); resolve(txt);
+      };
+
+      const onChange=()=>{
+        const cur=(getAIText()||"").trim();
+        if(!cur || cur===last) return;
+        last = cur;
+        // Debounce until stable and actually contains hashtags
+        if(stableTimer) clearTimeout(stableTimer);
+        stableTimer = setTimeout(()=>{
+          if(/#[A-Za-z0-9_]+/.test(last)){ finish(last); }
+        }, 400);
+      };
+
+      const observer=new MutationObserver(onChange);
+      observer.observe(aOut, {childList:true, subtree:true, characterData:true});
+      aOut.addEventListener("input", onChange);
+      aOut.addEventListener("change", onChange);
+
+      // Safety timeout
+      timeoutTimer = setTimeout(()=>{ finish((getAIText()||"").trim()); }, 12000);
+
+      // Kick it off
+      aQ.value = prompt;
+      aAsk.click();
+    });
   }
-  function sanitizeList(text){ return (text||"").match(/#[a-z0-9_]+/gi)||[]; }
+  function sanitizeList(text){ return (text||"").match(/#[A-Za-z0-9_]+/g)||[]; }
   function mergeToCap(base,ai,cap){ const seen=new Set(base.map(x=>x.toLowerCase())); const out=base.slice(); for(const t of ai){ if(out.length>=cap) break; const k=t.toLowerCase(); if(seen.has(k)) continue; seen.add(k); out.push(t); } return out.slice(0,cap); }
 
   const row=gen.parentElement;
@@ -899,19 +895,20 @@
     row.insertBefore(boost, gen.nextSibling); row.insertBefore(explain, boost.nextSibling);
 
     boost.addEventListener("click", async()=>{
-      const desc=(($('#g-desc')||{}).value||"").trim(), plat=(($('#g-platform')||{}).value||"Instagram"), bias=(($('#g-bias')||{}).value||"balanced").toLowerCase();
-      const cap=Math.min(parseInt((($('#g-max')||{}).value||"25"),10)||25, PLATFORM_CAP[plat]||25);
+      const desc=(descEl?.value||"").trim(), plat=(platEl?.value||"Instagram"), bias=(biasEl?.value||"balanced").toLowerCase();
+      const cap=Math.min(parseInt(maxEl?.value||"25",10)||25, PLATFORM_CAP[plat]||25);
       if(!desc){ expEl&&(expEl.style.display="block",expEl.textContent="Describe your post first."); return; }
       const prompt=`Return ONLY space-separated hashtags (no extra text). Mix reach/medium/niche. Platform:${plat}. Bias:${bias}. Max:${cap}. Post:"${desc}"`;
       const prev=boost.textContent; boost.textContent="Thinking…"; boost.disabled=true; expEl&&(expEl.style.display="block",expEl.textContent="Talking to Ask AI…");
-      try{ const txt=await callAskAI(prompt); const ai=sanitizeList(txt); const cur=(outEl.value.match(/#[a-z0-9_]+/gi)||[]); const merged=mergeToCap(cur,ai,cap);
-           outEl.value=merged.join(" "); countEl&&(countEl.textContent=String(merged.length)); expEl&&(expEl.textContent= ai.length?"AI Boost applied.":"AI didn't return hashtags."); }
-      catch(e){ expEl&&(expEl.textContent="AI Boost unavailable here (Ask AI UI not found)."); }
+      try{
+        const txt=await callAskAI(prompt); const ai=sanitizeList(txt); const cur=(outEl.value.match(/#[A-Za-z0-9_]+/g)||[]); const merged=mergeToCap(cur,ai,cap);
+        outEl.value=merged.join(" "); countEl&&(countEl.textContent=String(merged.length)); expEl&&(expEl.textContent= ai.length?"AI Boost applied.":"AI didn't return hashtags.");
+      }catch(e){ expEl&&(expEl.textContent="AI Boost unavailable here (Ask AI UI not found)."); }
       finally{ boost.textContent="AI Boost"; boost.disabled=false; }
     });
 
     explain.addEventListener("click", async()=>{
-      const desc=(($('#g-desc')||{}).value||"").trim(), plat=(($('#g-platform')||{}).value||"Instagram"), bias=(($('#g-bias')||{}).value||"balanced").toLowerCase();
+      const desc=(descEl?.value||"").trim(), plat=(platEl?.value||"Instagram"), bias=(biasEl?.value||"balanced").toLowerCase();
       if(!desc){ expEl&&(expEl.style.display="block",expEl.textContent="Add a description first."); return; }
       const prompt=`Explain in 4 bullets the hashtag strategy for Platform:${plat}, Bias:${bias}, Post:"${desc}". Keep it concise.`;
       const prev=explain.textContent; explain.textContent="Thinking…"; explain.disabled=true; expEl&&(expEl.style.display="block",expEl.textContent="Asking AI…");
