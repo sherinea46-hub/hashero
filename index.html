@@ -951,5 +951,65 @@
 })();
 </script>
 
+
+<!-- Minimal Timer Patch: bowl mp3 + stop after final cycle (no UI changes) -->
+<script id="timer-bowl-minimal-v1">
+(function () {
+  const beepEl  = document.getElementById('t-beep');
+  const startEl = document.getElementById('t-start');
+  const stopEl  = document.getElementById('t-stop') || document.getElementById('t-reset');
+  if (!beepEl) return;
+
+  // Prefer auto-advance inside cycles, then we stop after last
+  const autoSel = document.getElementById('t-auto');
+  if (autoSel && autoSel.value !== 'on') autoSel.value = 'on';
+
+  // Use your hosted bowl audio
+  const bowl = new Audio('assets/audio/singing_bowl.mp3');
+  bowl.preload = 'auto';
+
+  // Helpers to read numbers
+  function val(el, d) {
+    const n = parseInt(el && el.value, 10);
+    return isNaN(n) ? d : n;
+  }
+  function byId(id){ return document.getElementById(id); }
+
+  const workIn   = byId('t-work');
+  const breakIn  = byId('t-break');
+  const cyclesIn = byId('t-cycles');
+
+  // Count phase-end beeps and stop after final
+  let beeps = 0;
+  let totalBeeps = Infinity;
+
+  function recomputeTargets() {
+    const work   = Math.max(0, val(workIn, 20));
+    const brk    = Math.max(0, val(breakIn, 5));
+    const cycles = Math.max(1,  val(cyclesIn, 1));
+    const phasesPerCycle = (work > 0 ? 1 : 0) + (brk > 0 ? 1 : 0);
+    totalBeeps = Math.max(1, phasesPerCycle) * cycles;
+    beeps = 0;
+  }
+
+  startEl && startEl.addEventListener('click', recomputeTargets);
+  [workIn, breakIn, cyclesIn].forEach(el => el && el.addEventListener('input', recomputeTargets));
+
+  const nativePlay = beepEl.play && beepEl.play.bind(beepEl);
+  if (!nativePlay) return;
+
+  beepEl.play = function (...args) {
+    beeps += 1;
+    let p;
+    try { bowl.currentTime = 0; p = bowl.play(); }
+    catch (e) { p = nativePlay(...args); }
+    if (beeps >= totalBeeps) {
+      setTimeout(() => { stopEl && stopEl.click(); }, 0); // hard stop after last cycle
+    }
+    return p;
+  };
+})();
+</script>
+
 </body>
 </html>
