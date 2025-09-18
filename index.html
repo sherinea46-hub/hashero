@@ -103,6 +103,61 @@
   #timer .row.soundbar .btn { white-space:nowrap; }
 </style>
 
+
+<!-- Mobile Optimization v1 -->
+<style id="mobile-opt-v1">
+  /* hamburger button hidden on desktop */
+  .hh-menu-btn { display: none; }
+
+  @media (max-width: 640px) {
+    /* sticky, compact header */
+    .hh-header { position: sticky; top: 0; z-index: 50; background: #0f1220; padding: 10px 12px; }
+    .hh-brand { font-size: 1.1rem; }
+
+    /* collapse nav into drawer */
+    .hh-nav { display: none; flex-direction: column; gap: 8px; padding: 10px 0; }
+    body.menu-open .hh-nav { display: flex; }
+    .hh-nav .hh-link { padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.04); }
+
+    /* show hamburger */
+    .hh-menu-btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 10px; border: 1px solid rgba(255,255,255,.15); background: transparent; border-radius: 10px; color: #fff; margin-left: auto; }
+
+    /* layout & spacing */
+    .hh-main { padding-top: 8px; }
+    .hh-section { padding: 16px 12px; }
+    .card { padding: 14px; }
+
+    /* 2-col grids -> 1 col */
+    .grid2 { display: grid; grid-template-columns: 1fr !important; gap: 12px; }
+
+    /* rows stack */
+    .row { gap: 10px; }
+    .row.row-mobile-stack { flex-direction: column; align-items: stretch; }
+    .btnrow { gap: 8px; }
+
+    /* buttons full width for easier tapping */
+    .btn, .btn.btn-ghost { width: 100%; }
+
+    /* inputs readable + avoid iOS zoom on focus */
+    .input, .select, textarea { font-size: 16px; }
+    textarea.input, textarea.output { min-height: 140px; }
+
+    /* timer ring scales down */
+    #timer .ring { max-width: 260px; margin: 0 auto; }
+
+    /* QR image responsive */
+    #qr-img.qrimg { max-width: 100%; height: auto; }
+
+    /* examples & chips scroll horizontally if overflow */
+    .hh-examples { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    .exbar, .chipbar { overflow-x: auto; white-space: nowrap; scrollbar-width: thin; }
+    .exbar .ex { display: inline-block; margin: 0 8px 8px 0; }
+
+    /* small copy under generator */
+    #g-boost-note { font-size: .9rem; }
+  }
+</style>
+
 </head>
 
 <body>
@@ -1008,6 +1063,44 @@
     }
     return p;
   };
+})();
+</script>
+
+
+<script id="mobile-opt-nav-v1">
+(function(){
+  const header = document.querySelector('.hh-header');
+  const nav = document.querySelector('.hh-nav');
+  if (!header || !nav) return;
+
+  // inject hamburger if not present
+  if (!document.getElementById('hh-menu-toggle')) {
+    const btn = document.createElement('button');
+    btn.id = 'hh-menu-toggle';
+    btn.className = 'hh-menu-btn';
+    btn.setAttribute('aria-label', 'Menu');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.innerHTML = '☰';
+    header.insertBefore(btn, nav);
+    btn.addEventListener('click', () => {
+      const open = document.body.classList.toggle('menu-open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  }
+
+  // close drawer when a nav link is clicked
+  nav.addEventListener('click', (e) => {
+    if (e.target.closest('a')) {
+      document.body.classList.remove('menu-open');
+      const b = document.getElementById('hh-menu-toggle');
+      b && b.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // make non-critical images lazy
+  document.querySelectorAll('img:not([loading])').forEach(img => {
+    img.loading = 'lazy';
+  });
 })();
 </script>
 
