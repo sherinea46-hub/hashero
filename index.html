@@ -160,7 +160,30 @@
                 <option>YouTube</option>
                 <option>LinkedIn</option>
               </select>
+            
+            <div class="col">
+              <label class="lbl">Language</label>
+              <select id="g-lang" class="select">
+                <option value="en" selected>English</option>
+                <option value="hi">हिन्दी (Hindi)</option>
+                <option value="zh">中文 (Chinese)</option>
+                <option value="es">Español (Spanish)</option>
+                <option value="ar">العربية (Arabic)</option>
+                <option value="pt">Português (Portuguese)</option>
+                <option value="fr">Français (French)</option>
+                <option value="de">Deutsch (German)</option>
+                <option value="ja">日本語 (Japanese)</option>
+                <option value="ko">한국어 (Korean)</option>
+                <option value="ru">Русский (Russian)</option>
+                <option value="id">Bahasa Indonesia</option>
+                <option value="tr">Türkçe (Turkish)</option>
+                <option value="ta">தமிழ் (Tamil)</option>
+                <option value="bn">বাংলা (Bengali)</option>
+                <option value="vi">Tiếng Việt (Vietnamese)</option>
+                <option value="th">ไทย (Thai)</option>
+              </select>
             </div>
+          </div>
             <div class="col">
               <label class="lbl">Bias</label>
               <select id="g-bias" class="select">
@@ -761,7 +784,28 @@
       setTimeout(()=>{ finish((getAIText()||"").trim()); }, 12000);
     });
   }
-  function sanitizeList(text){ return (text||"").match(/#[A-Za-z0-9_]+/g)||[]; }
+  
+function sanitizeList(text){ return (text||"").match(/#[\p{L}\p{N}_]+/gu)||[]; }
+  const SCRIPT_REGEX = {
+    hi: /[\u0900-\u097F]/u,
+    ar: /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/u,
+    ru: /[\u0400-\u04FF]/u,
+    ta: /[\u0B80-\u0BFF]/u,
+    bn: /[\u0980-\u09FF]/u,
+    th: /[\u0E00-\u0E7F]/u,
+    ja: /[\u3040-\u30FF\u31F0-\u31FF\u4E00-\u9FFF]/u,
+    ko: /[\uAC00-\uD7AF\u1100-\u11FF]/u,
+    zh: /[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF]/u
+  };
+  function scriptScore(lang, tags){
+    const rx = SCRIPT_REGEX[lang];
+    if(!rx) return 1;
+    if(!Array.isArray(tags) || !tags.length) return 0;
+    let ok = 0;
+    for(const t of tags){ if(rx.test(t)) ok++; }
+    return ok / tags.length;
+  }
+
   function mergeToCap(base,ai,cap){
     const out = base.slice();
     const seen = new Set(out.map(x=>x.toLowerCase()));
@@ -782,11 +826,22 @@
     const cap=Math.min(parseInt(maxEl?.value||"25",10)||25, PLATFORM_CAP[plat]||25);
     const desc=(descEl?.value||"").trim();
     if(!desc){ expEl&&(expEl.style.display="block",expEl.textContent="Describe your post first."); return; }
-    const prompt=`Return ONLY space-separated hashtags (no extra text). Mix reach/medium/niche. Platform:${plat}. Bias:${bias}. Max:${cap}. Post:"${desc}"`;
+    const langSel = document.getElementById("g-lang");
+    const lang = (langSel && langSel.value) || "en";
+    const LANG_NAME = { en:"English", hi:"Hindi", zh:"Chinese", es:"Spanish", ar:"Arabic", pt:"Portuguese", fr:"French", de:"German", ja:"Japanese", ko:"Korean", ru:"Russian", id:"Indonesian", tr:"Turkish", ta:"Tamil", bn:"Bengali", vi:"Vietnamese", th:"Thai" };
+    const prompt = `Return ONLY space-separated hashtags (no extra text). \nLanguage: ${LANG_NAME[lang] || "English"}.\nUse the native script of that language (no translation). \nMix reach/medium/niche. Platform:${plat}. Bias:${bias}. Max:${cap}. \nPost:"${desc}"`;
     const aiText = await callAskAI(prompt);
     const aiTags = sanitizeList(aiText);
-    const cur=(outEl.value.match(/#[A-Za-z0-9_]+/g)||[]);
-    const merged = mergeToCap(cur, aiTags, cap);
+    const cur=(outEl.value.match(/#[\p{L}\p{N}_]+/gu)||[]);
+    let finalAiTags = aiTags;
+    const score = scriptScore(lang, aiTags);
+    if (score < 0.6 && (lang in SCRIPT_REGEX)) {
+      const strictPrompt = `Regenerate STRICTLY in ${LANG_NAME[lang] || "the selected language"} native script only.\nReturn ONLY space-separated hashtags (no extra text). No English/Latin script.\nPlatform:${plat}. Bias:${bias}. Max:${cap}. Post:"${desc}"`;
+      const retryText = await callAskAI(strictPrompt);
+      const retryTags = sanitizeList(retryText);
+      if (scriptScore(lang, retryTags) >= score) { finalAiTags = retryTags; }
+    }
+    const merged = mergeToCap(cur, finalAiTags, cap);
     outEl.value = merged.join(" ");
     countEl && (countEl.textContent = String(merged.length));
     expEl && (expEl.style.display="block", expEl.textContent = aiTags.length ? "AI Boost applied." : "AI didn't return hashtags.");
@@ -1011,5 +1066,100 @@
 })();
 </script>
 
+
+<script id="generator-button-harness-v1">
+(function(){
+  function setLabel(){
+    const btn = document.getElementById('g-generate');
+    if(!btn) return;
+    const desired = "Generate + AI (recommended)";
+    if ((btn.textContent||"").trim() !== desired){
+      btn.textContent = desired;
+      btn.title = "Generates smart seeds, then boosts via Ask AI and merges to your cap.";
+    }
+  }
+  function observeLabel(){
+    const btn = document.getElementById('g-generate');
+    if(!btn || !window.MutationObserver) return;
+    const desired = "Generate + AI (recommended)";
+    const mo = new MutationObserver(()=> {
+      if ((btn.textContent||"").trim() !== desired){
+        btn.textContent = desired;
+        btn.title = "Generates smart seeds, then boosts via Ask AI and merges to your cap.";
+      }
+    });
+    mo.observe(btn, {childList:true, subtree:true, characterData:true});
+  }
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ setLabel(); observeLabel(); }, {once:true});
+  } else {
+    setLabel(); observeLabel();
+  }
+})();
+</script>
+
+<script id="lang-sync-askai-autodetect-v1">
+(function(){
+  const langSel = document.getElementById("g-lang");
+  const aAsk = document.getElementById("a-ask");
+  const aQ = document.getElementById("a-q");
+  const descEl = document.getElementById("g-desc");
+  if (!langSel) return;
+
+  const LANG_NAME = { en:"English", hi:"Hindi", zh:"Chinese", es:"Spanish", ar:"Arabic", pt:"Portuguese", fr:"French", de:"German", ja:"Japanese", ko:"Korean", ru:"Russian", id:"Indonesian", tr:"Turkish", ta:"Tamil", bn:"Bengali", vi:"Vietnamese", th:"Thai" };
+
+  const SCRIPT_REGEX = {
+    ar: /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/u,
+    hi: /[\u0900-\u097F]/u,
+    ta: /[\u0B80-\u0BFF]/u,
+    bn: /[\u0980-\u09FF]/u,
+    th: /[\u0E00-\u0E7F]/u,
+    ru: /[\u0400-\u04FF]/u,
+    ja: /[\u3040-\u30FF\u31F0-\u31FF\u4E00-\u9FFF]/u,
+    ko: /[\uAC00-\uD7AF\u1100-\u11FF]/u,
+    zh: /[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF]/u
+  };
+
+  let userTouchedLang = false;
+  langSel.addEventListener("change", ()=>{ userTouchedLang = true; }, { passive:true });
+
+  function detectLangFromText(t){
+    if (!t) return null;
+    const order = ["ar","hi","ta","bn","th","ru","ja","ko","zh"];
+    for (const code of order){ if (SCRIPT_REGEX[code] && SCRIPT_REGEX[code].test(t)) return code; }
+    const lower = t.toLowerCase();
+    if (/[áéíóúñ¡¿]/.test(t) || /\b(hola|gracias|porque|estoy|quiero)\b/.test(lower)) return "es";
+    if (/[ãõçáéíóú]/.test(t) || /\b(olá|obrigado|você|português)\b/.test(lower)) return "pt";
+    if (/[àâçéèêëîïôûùüÿœ]/.test(t) || /\b(bonjour|merci|pourquoi)\b/.test(lower)) return "fr";
+    if (/[äöüß]/.test(t) || /\b(hallo|danke|warum)\b/.test(lower)) return "de";
+    if (/\b(merhaba|teşekkür|neden)\b/.test(lower)) return "tr";
+    if (/\b(selamat|terima kasih|kenapa|apa)\b/.test(lower)) return "id";
+    if (/[ăâđêôơư]/.test(t) || /\b(xin chào|cảm ơn|tại sao)\b/.test(lower)) return "vi";
+    return null;
+  }
+
+  function maybeAutoSelect(inputEl){
+    if (userTouchedLang) return;
+    const t = (inputEl && inputEl.value) || "";
+    const detected = detectLangFromText(t);
+    if (detected && langSel.value !== detected){ langSel.value = detected; }
+  }
+
+  if (descEl) descEl.addEventListener("input", ()=> maybeAutoSelect(descEl), { passive:true });
+  if (aQ) aQ.addEventListener("input", ()=> maybeAutoSelect(aQ), { passive:true });
+
+  if (aAsk && aQ){
+    aAsk.addEventListener("click", function(){
+      const val = aQ.value || "";
+      const looksLikeGeneratorPrompt = /Return ONLY space-separated hashtags/i.test(val);
+      if (looksLikeGeneratorPrompt) return;
+      const code = langSel.value || "en";
+      const name = LANG_NAME[code] || "English";
+      const prefix = `Answer in ${name} using native script. Be concise.\n`;
+      if (!val.startsWith(prefix)){ aQ.value = prefix + val; }
+    }, true);
+  }
+})();
+</script>
 </body>
 </html>
