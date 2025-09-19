@@ -842,20 +842,17 @@ function sanitizeList(text){ return (text||"").match(/#[\p{L}\p{N}_]+/gu)||[]; }
     }
 let prompt;
     if (lang !== "en") {
-      prompt = `Return ONLY space-separated hashtags in ${LANG_NAME[lang]||"the selected language"} using native script (no English). Max:${cap}. Topic: "${desc}"`;
+      prompt = `Return ONLY hashtags in ${LANG_NAME[lang]||"the selected language"} native script.
+Each must start with #, no commas, no English.
+Topic: "${desc}"
+Example: #मिस्र #काहिरा #पिरामिड #सुंदर #यात्रा
+Max:${cap}`;
     } else {
       prompt = `Return ONLY space-separated hashtags (no extra text). Mix reach/medium/niche. Platform:${plat}. Bias:${bias}. Max:${cap}. Post:"${desc}"`;
+    }. Bias:${bias}. Max:${cap}. Post:"${desc}"`;
     }
     const aiText = await callAskAI(prompt);
-    let aiTags = sanitizeList(aiText);
-    // Retry fallback if AI did not return enough hashtags
-    if (aiTags.length < 6) {
-      const retryPrompt = `Return ONLY space-separated hashtags. DO NOT write sentences. Start every item with #. ${LANG_NAME[lang]||"Selected language"} ONLY (native script). Example: #मिस्र #काहिरा #पिरामिड #यात्रा\nTopic: "${desc}"\nMax:${cap}`;
-      const retryText = await callAskAI(retryPrompt);
-      const retryTags = sanitizeList(retryText);
-      if (retryTags.length >= aiTags.length) aiTags = retryTags;
-    }
-
+    const aiTags = sanitizeList(aiText);
     let cur=(outEl.value.match(/#[\p{L}\p{N}_]+/gu)||[]);
     if (NON_LATIN_LANGS.has(lang)) cur = [];
     if (NON_LATIN_LANGS.has(lang)) { cur = []; }
