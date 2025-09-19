@@ -562,6 +562,7 @@
  * - Fill-to-cap; dedupe; near-dup guard (#pari vs #paris)
  */
 (function(){
+  const NON_LATIN_LANGS=new Set(["hi","ar","zh","ja","ko","ru","ta","bn","th"]);
   const $=(s)=>document.querySelector(s);
 
   // Rebind buttons cleanly
@@ -832,7 +833,8 @@ function sanitizeList(text){ return (text||"").match(/#[\p{L}\p{N}_]+/gu)||[]; }
     const prompt = `Return ONLY space-separated hashtags (no extra text). \nLanguage: ${LANG_NAME[lang] || "English"}.\nUse the native script of that language (no translation). \nMix reach/medium/niche. Platform:${plat}. Bias:${bias}. Max:${cap}. \nPost:"${desc}"`;
     const aiText = await callAskAI(prompt);
     const aiTags = sanitizeList(aiText);
-    const cur=(outEl.value.match(/#[\p{L}\p{N}_]+/gu)||[]);
+    let cur=(outEl.value.match(/#[\p{L}\p{N}_]+/gu)||[]);
+    if (NON_LATIN_LANGS.has(lang)) { cur = []; }
     let finalAiTags = aiTags;
     const score = scriptScore(lang, aiTags);
     if (score < 0.6 && (lang in SCRIPT_REGEX)) {
@@ -841,7 +843,7 @@ function sanitizeList(text){ return (text||"").match(/#[\p{L}\p{N}_]+/gu)||[]; }
       const retryTags = sanitizeList(retryText);
       if (scriptScore(lang, retryTags) >= score) { finalAiTags = retryTags; }
     }
-    const merged = mergeToCap(cur, finalAiTags, cap);
+    const merged = (NON_LATIN_LANGS.has(lang) ? finalAiTags.slice(0, cap) : mergeToCap(cur, finalAiTags, cap));
     outEl.value = merged.join(" ");
     countEl && (countEl.textContent = String(merged.length));
     expEl && (expEl.style.display="block", expEl.textContent = aiTags.length ? "AI Boost applied." : "AI didn't return hashtags.");
