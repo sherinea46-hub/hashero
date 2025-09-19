@@ -842,10 +842,12 @@ function sanitizeList(text){ return (text||"").match(/#[\p{L}\p{N}_]+/gu)||[]; }
     }
 let prompt;
     if (lang !== "en") {
-      prompt = `Return ONLY hashtags in ${LANG_NAME[lang]||"the selected language"} native script.
+      prompt = `Topic: ${desc}
+Return ONLY hashtags in ${LANG_NAME[lang]||"the selected language"} native script.
 Each must start with #, no commas, no English.
-Topic: "${desc}"
-Example: #मिस्र #काहिरा #पिरामिड #सुंदर #यात्रा
+Include the topic keywords in the hashtags.
+Return at least 10 hashtags.
+Example for Egypt pyramids Cairo in Hindi: #मिस्र #काहिरा #पिरामिड #इतिहास #सुंदर #यात्रा #संस्कृति #प्रसिद्ध #पर्यटन #धरोहर
 Max:${cap}`;
     } else {
       prompt = `Return ONLY space-separated hashtags (no extra text). Mix reach/medium/niche. Platform:${plat}. Bias:${bias}. Max:${cap}. Post:"${desc}"`;
