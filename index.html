@@ -847,7 +847,15 @@ let prompt;
       prompt = `Return ONLY space-separated hashtags (no extra text). Mix reach/medium/niche. Platform:${plat}. Bias:${bias}. Max:${cap}. Post:"${desc}"`;
     }
     const aiText = await callAskAI(prompt);
-    const aiTags = sanitizeList(aiText);
+    let aiTags = sanitizeList(aiText);
+    // Retry fallback if AI did not return enough hashtags
+    if (aiTags.length < 6) {
+      const retryPrompt = `Return ONLY space-separated hashtags. DO NOT write sentences. Start every item with #. ${LANG_NAME[lang]||"Selected language"} ONLY (native script). Example: #मिस्र #काहिरा #पिरामिड #यात्रा\nTopic: "${desc}"\nMax:${cap}`;
+      const retryText = await callAskAI(retryPrompt);
+      const retryTags = sanitizeList(retryText);
+      if (retryTags.length >= aiTags.length) aiTags = retryTags;
+    }
+
     let cur=(outEl.value.match(/#[\p{L}\p{N}_]+/gu)||[]);
     if (NON_LATIN_LANGS.has(lang)) cur = [];
     if (NON_LATIN_LANGS.has(lang)) { cur = []; }
