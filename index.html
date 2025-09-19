@@ -1,33 +1,1015 @@
 <!doctype html>
 <html lang="en">
-<head> <meta charset="utf-8" /> <meta name="viewport" content="width=device-width, initial-scale=1" /> <meta name="theme-color" content="#0f1220" /> <meta name="robots" content="index, follow" /> <title>HashHero — Free AI Hashtag Generator, Ask AI, QR & Timer</title> <meta name="description" content="HashHero is a free toolkit for content creators: AI-powered hashtag generator with popularity tiers, Ask AI for captions & strategy, QR code maker, and an engagement timer—no login, no paywall." /> <link rel="canonical" href="https://hashhero.app/" /> <!-- Open Graph --> <meta property="og:type" content="website" /> <meta property="og:site_name" content="HashHero" /> <meta property="og:title" content="HashHero — Free AI Hashtag Generator, Ask AI, QR & Timer" /> <meta property="og:description" content="Smart hashtags with popularity tiers + impact, Ask AI for captions and strategy, QR codes, and a focused engagement timer." /> <meta property="og:url" content="https://hashhero.app/" /> <meta property="og:image" content="https://hashhero.app/assets/og/hashhero-og.jpg" /> <meta property="og:image:width" content="1200" /> <meta property="og:image:height" content="630" /> <meta property="og:locale" content="en_US" /> <!-- Twitter Cards --> <meta name="twitter:card" content="summary_large_image" /> <meta name="twitter:title" content="HashHero — Free AI Hashtag Generator, Ask AI, QR & Timer" /> <meta name="twitter:description" content="Free tools for creators—no login." /> <meta name="twitter:image" content="https://hashhero.app/assets/og/hashhero-og.jpg" /> <meta name="twitter:image:alt" content="HashHero — AI Hashtag Generator preview" /> <!-- Favicons --> <link rel="icon" type="image/svg+xml" href="/assets/icons/favicon.svg" /> <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" /> <link rel="manifest" href="/site.webmanifest" /> <!-- Preconnects / Performance --> <link rel="preconnect" href="https://api.qrserver.com" crossorigin> <!-- Optional: Preload hero/OG image for faster LCP --> <!-- <link rel="preload" as="image" href="/assets/og/hashhero-og.jpg" imagesrcset="/assets/og/hashhero-og.jpg 1200w" imagesizes="(max-width: 600px) 100vw, 1200px"> --> <!-- JSON-LD --> <script type="application/ld+json"> { "@context":"https://schema.org", "@graph":[ { "@type":"WebSite", "name":"HashHero", "url":"https://hashhero.app/", "potentialAction":{ "@type":"SearchAction", "target":"https://hashhero.app/#ama?q={search_term_string}", "query-input":"required name=search_term_string" } }, { "@type":"SoftwareApplication", "name":"HashHero AI Hashtag Generator", "applicationCategory":"BusinessApplication", "operatingSystem":"Web", "url":"https://hashhero.app/#generator", "description":"AI-powered hashtag generator with popularity tiers and impact scoring for Instagram, TikTok, YouTube, and more." } ] } </script> <!-- CSS/JS --> <link rel="stylesheet" href="/assets/css/site.css" /> <script defer src="/assets/js/app.js"></script> <style> #audio-badge { font-size:.75rem; margin-left:.5rem; padding:.15rem .45rem; border:1px solid rgba(255,255,255,.2); border-radius:999px; vertical-align:middle; } </style> <style> /* Compact Audio UI when idle */ #audio.compact #aud-legend, #audio.compact #aud-results { display: none; } </style> <style> /* QOD light styling */ #qod blockquote { margin: 0; line-height: 1.5; } #qod .muted { opacity: .85; } #qod .small { font-size: .9rem; } </style> <style id="ai-boosting-style-v66"> body.ai-boosting #a-q, body.ai-boosting #a-out { opacity: 0 !important; transition: opacity 150ms ease; } #g-boost-note { margin-top:.5rem; font-size:.95rem; } #g-boost-note strong { font-weight:700; }
-</style> <style id="timer-sound-ui-v2"> #timer .row.soundbar { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:.5rem; } #timer .row.soundbar .col { flex: 1 1 200px; } #timer .row.soundbar .lbl { display:block; font-size:.9rem; opacity:.9; } #timer .row.soundbar .input, #timer .row.soundbar .select { width:100%; } #timer .row.soundbar .btn { white-space:nowrap; }
-</style> </head> <body> <header class="hh-header"> <a class="hh-brand" href="#"> <span class="hh-dot">H</span><span>HashHero</span> </a> <nav class="hh-nav"> <a class="hh-link" href="#generator">Generator</a> <a class="hh-link askai" href="#ama">Ask AI</a> <a class="hh-link" href="#qr">QR Codes</a> <a class="hh-link" href="#timer">Timer</a> <a class="hh-link" href="#audio">Audio</a> <a class="hh-link" href="meme.html">Meme</a> <a class="hh-link" href="about.html">About</a> </nav> </header> <main class="hh-main"> <section id="promo" class="hh-section"> <div class="card highlight promo"> <div class="promo-col"> <h2>Ask AI Anything ✨</h2> <p class="muted"> Get instant, clear answers to grow your audience faster — strategy tips, hashtag help, captions, hooks, and more. </p> <ul class="hh-examples"> <li><button class="ex" data-q="Best hashtags for fitness reels?">Best hashtags for fitness reels?</button></li> <li><button class="ex" data-q="Give me 5 hooks for a travel vlog about Paris.">Give me 5 hooks for a travel vlog about Paris.</button></li> <li><button class="ex" data-q="How do I get more YouTube views in 30 days?">How do I get more YouTube views in 30 days?</button></li> </ul> </div> <div class="promo-col-right"> <a class="hh-cta" href="#ama">Try Ask AI</a> <span class="muted small">No login. Instant answers.</span> </div> </div> </section> <section id="generator" class="hh-section"> <h1>Smart Hashtag Generator</h1> <div class="grid2"> <div class="card"> <label class="lbl">Describe your post</label> <textarea id="g-desc" class="input" rows="6" placeholder="e.g., Paris café vlog, cinematic b-roll, budget travel tips for beginners"></textarea> <div class="row"> <div class="col"> <label class="lbl">Platform</label> <select id="g-platform" class="select"> <option>Instagram</option> <option>TikTok</option> <option>X</option> <option>YouTube</option> <option>LinkedIn</option> </select> <div class="col"> <label class="lbl">Language</label> <select id="g-lang" class="select"> <option value="en" selected>English</option> <option value="hi">हिन्दी (Hindi)</option> <option value="zh">中文 (Chinese)</option> <option value="es">Español (Spanish)</option> <option value="ar">العربية (Arabic)</option> <option value="pt">Português (Portuguese)</option> <option value="fr">Français (French)</option> <option value="de">Deutsch (German)</option> <option value="ja">日本語 (Japanese)</option> <option value="ko">한국어 (Korean)</option> <option value="ru">Русский (Russian)</option> <option value="id">Bahasa Indonesia</option> <option value="tr">Türkçe (Turkish)</option> <option value="ta">தமிழ் (Tamil)</option> <option value="bn">বাংলা (Bengali)</option> <option value="vi">Tiếng Việt (Vietnamese)</option> <option value="th">ไทย (Thai)</option> </select> </div> </div> <div class="col"> <label class="lbl">Bias</label> <select id="g-bias" class="select"> <option value="balanced">Balanced</option> <option value="reach">Reach (bigger)</option> <option value="niche">Niche (targeted)</option> </select> </div> <div class="col"> <label class="lbl">Max Tags</label> <input id="g-max" class="input" type="number" value="25" min="5" max="30"/> </div> </div> <div class="row"> <button id="g-generate" class="btn">Generate</button> <button id="g-clear" class="btn btn-ghost">Clear</button> <button id="g-copy" class="btn btn-ghost">Copy</button> </div> <p class="hint">Tip: add location, format (cinematic, POV, tutorial), and audience (beginners, pros) for better tags.</p> </div> <div class="card"> <div class="row row-between"> <div class="lbl">Output</div> <div class="small muted"><span id="g-count">0</span> / <span id="g-maxcap">30</span></div> </div> <textarea id="g-out" class="output" rows="10" readonly></textarea>
-<pre id="g-ai-explain" class="outputblock" style="display:none;margin-top:.5rem;"></pre> <div id="g-warnings" class="muted small"></div> </div> </div> <div class="chipbar" id="g-suggestions"></div> </section> <section id="ama" class="hh-section"> <h1>Ask AI</h1> <div class="card"> <p class="muted" style="margin-top:0"> Ask anything about content, growth, hashtags, captions, or strategy. Get instant, actionable answers. </p> <div class="row row-mobile-stack"> <input id="a-q" class="input" placeholder="Try: Best hashtags for morning workout reels?" /> <div class="row btnrow"> <button id="a-ask" class="btn">Ask</button> <button id="a-health" class="btn btn-ghost">Health</button> <button id="a-clear" class="btn btn-ghost">Clear</button> </div> </div> <div class="exbar"> <span class="muted small">Examples:</span> <button class="ex" data-q="Give me 5 caption ideas for a cozy coffee shot.">Caption ideas for a coffee shot</button> <button class="ex" data-q="How do I grow on TikTok without posting daily?">Grow on TikTok w/o daily posts</button> <button class="ex" data-q="What hooks work for travel reels about Tokyo?">Hooks for Tokyo travel reels</button> </div> <pre id="a-out" class="outputblock"></pre> <p class="hint">Hope i was useful as an AI assistant please provide feedback via the About page so that i can be better.</p> </div> </section> <section id="qr" class="hh-section"> <h1>QR Code Generator</h1> <div class="grid2"> <div class="card"> <label class="lbl">Content / URL</label> <input id="qr-data" class="input" placeholder="https://your-link or @handle" /> <div class="row"> <div class="col"> <label class="lbl">Preset</label> <select id="qr-preset" class="select"> <option value="ig">Instagram Profile</option> <option value="tt">TikTok Profile</option> <option value="yt">YouTube Channel</option> <option value="ln">LinkedIn Profile</option> <option value="custom">Custom</option> </select> </div> <div class="col"> <label class="lbl">Size</label> <select id="qr-size" class="select"> <option value="256">256</option> <option value="384">384</option> <option value="512" selected>512</option> </select> </div> <div class="col"> <label class="lbl">Margin</label> <input id="qr-margin" class="input" type="number" value="2" min="0" max="10"/> </div> </div> <div class="row"> <button id="qr-make" class="btn">Generate</button> <button id="qr-dl" class="btn btn-ghost">Download PNG</button> </div> <p class="hint">We use a reliable QR image service to produce a PNG—no tracking.</p> </div> <div class="card center"> <img id="qr-img" alt="QR preview" class="qrimg" /> </div> </div> </section> <section id="timer" class="hh-section"> <h1>Engagement Timer</h1> <div class="card"> <div class="row"> <div class="col"> <label class="lbl">Work (mins)</label> <input id="t-work" class="input" type="number" value="20" min="1" /> </div> <div class="col"> <label class="lbl">Break (mins)</label> <input id="t-break" class="input" type="number" value="5" min="1" /> </div> <div class="col"> <label class="lbl">Cycles</label> <input id="t-cycles" class="input" type="number" value="3" min="1" /> </div> </div> <div class="row"> <button id="t-start" class="btn">Start</button> <button id="t-stop" class="btn btn-ghost">Stop</button> <button id="t-reset" class="btn btn-ghost">Reset</button> <span id="t-status" class="muted small"></span> </div> <div class="ring"> <svg viewBox="0 0 120 120"> <circle cx="60" cy="60" r="54" class="ring-bg"/> <circle cx="60" cy="60" r="54" class="ring-fg" id="t-ring"/> <text x="60" y="66" text-anchor="middle" class="ring-txt" id="t-clock">00:00</text> </svg> </div> <p class="hint">Use during posting/comment sprints. We’ll beep at phase changes.</p> <audio id="t-beep" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio> </div> </section> <section id="audio" class="hh-section compact"> <h1>Trending Audio Finder <span id="audio-badge" class="pill">v1.3</span></h1> <div class="card"> <p class="muted" style="margin-top:0">Find fresh sounds for Reels, TikTok, and Shorts. Filter by keyword and platform, then copy the track title or open a search.</p> <div class="row row-mobile-stack"> <input id="aud-q" class="input" placeholder="Search keyword, e.g., travel, coffee, gym…" /> <select id="aud-platform" class="select"> <option value="all">All</option> <option value="TikTok">TikTok</option> <option value="Reels">Reels</option> <option value="Shorts">Shorts</option> </select> <button id="aud-find" class="btn">Find</button> <button id="aud-clear" class="btn btn-ghost">Clear</button> </div> <div id="aud-legend" class="row small muted" style="margin-top:.25rem"> <span>Volume: <strong>High</strong> (very popular) • <strong>Medium</strong> (balanced) • <strong>Niche</strong> (targeted)</span> </div> <div id="aud-results" class="list"></div> <p class="hint small">Tip: Mix High + Niche audio to balance reach and relevance.</p> </div> </section> <!-- Quote of the Day (SEO-friendly, daily refresh) --> <section id="qod" class="hh-section"> <div class="card"> <h2>Quote of the Day</h2> <blockquote id="qod-text" class="text-lg"></blockquote> <p id="qod-author" class="muted"></p> <p id="qod-context" class="small muted"></p> <script id="qod-ld" type="application/ld+json"></script> <noscript> <blockquote>“Creativity is intelligence having fun.”</blockquote> <p class="small muted">Daily inspiration for creators. Try the HashHero Hashtag Generator.</p> </noscript> </div> </section>
-</main> <div class="card" style="margin:20px auto; max-width:850px; border:1px dashed rgba(255,255,255,0.2); background:rgba(255,255,255,0.03); border-radius:14px; padding:14px;"> <strong>Disclaimer:</strong> <p class="small muted" style="margin-top:6px;"> Some tools may surface third-party content (e.g., meme templates). Please ensure you have the right to use any images, audio, or text you publish. HashHero provides tools only; usage is your responsibility. </p> </div> <footer class="hh-footer"> <span>© 2025 HashHero</span> </footer> <script id="audio-patch-v1_3">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f1220" />
+  <meta name="robots" content="index, follow" />
+
+  <title>HashHero — Free AI Hashtag Generator, Ask AI, QR & Timer</title>
+  <meta name="description" content="HashHero is a free toolkit for content creators: AI-powered hashtag generator with popularity tiers, Ask AI for captions & strategy, QR code maker, and an engagement timer—no login, no paywall." />
+  <link rel="canonical" href="https://hashhero.app/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="HashHero" />
+  <meta property="og:title" content="HashHero — Free AI Hashtag Generator, Ask AI, QR & Timer" />
+  <meta property="og:description" content="Smart hashtags with popularity tiers + impact, Ask AI for captions and strategy, QR codes, and a focused engagement timer." />
+  <meta property="og:url" content="https://hashhero.app/" />
+  <meta property="og:image" content="https://hashhero.app/assets/og/hashhero-og.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="HashHero — Free AI Hashtag Generator, Ask AI, QR & Timer" />
+  <meta name="twitter:description" content="Free tools for creators—no login." />
+  <meta name="twitter:image" content="https://hashhero.app/assets/og/hashhero-og.jpg" />
+  <meta name="twitter:image:alt" content="HashHero — AI Hashtag Generator preview" />
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+
+  <!-- Preconnects / Performance -->
+  <link rel="preconnect" href="https://api.qrserver.com" crossorigin>
+  <!-- Optional: Preload hero/OG image for faster LCP -->
+  <!-- <link rel="preload" as="image" href="/assets/og/hashhero-og.jpg" imagesrcset="/assets/og/hashhero-og.jpg 1200w" imagesizes="(max-width: 600px) 100vw, 1200px"> -->
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@graph":[
+      {
+        "@type":"WebSite",
+        "name":"HashHero",
+        "url":"https://hashhero.app/",
+        "potentialAction":{
+          "@type":"SearchAction",
+          "target":"https://hashhero.app/#ama?q={search_term_string}",
+          "query-input":"required name=search_term_string"
+        }
+      },
+      {
+        "@type":"SoftwareApplication",
+        "name":"HashHero AI Hashtag Generator",
+        "applicationCategory":"BusinessApplication",
+        "operatingSystem":"Web",
+        "url":"https://hashhero.app/#generator",
+        "description":"AI-powered hashtag generator with popularity tiers and impact scoring for Instagram, TikTok, YouTube, and more."
+      }
+    ]
+  }
+  </script>
+
+  <!-- CSS/JS -->
+  <link rel="stylesheet" href="/assets/css/site.css" />
+  <script defer src="/assets/js/app.js"></script>
+
+  <style>
+    #audio-badge { font-size:.75rem; margin-left:.5rem; padding:.15rem .45rem; border:1px solid rgba(255,255,255,.2); border-radius:999px; vertical-align:middle; }
+  </style>
+
+  <style>
+    /* Compact Audio UI when idle */
+    #audio.compact #aud-legend, #audio.compact #aud-results { display: none; }
+  </style>
+
+
+  <style>
+    /* QOD light styling */
+    #qod blockquote { margin: 0; line-height: 1.5; }
+    #qod .muted { opacity: .85; }
+    #qod .small { font-size: .9rem; }
+  </style>
+
+
+<style id="ai-boosting-style-v66">
+  body.ai-boosting #a-q,
+  body.ai-boosting #a-out { opacity: 0 !important; transition: opacity 150ms ease; }
+  #g-boost-note { margin-top:.5rem; font-size:.95rem; }
+  #g-boost-note strong { font-weight:700; }
+</style>
+
+
+<style id="timer-sound-ui-v2">
+  #timer .row.soundbar { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:.5rem; }
+  #timer .row.soundbar .col { flex: 1 1 200px; }
+  #timer .row.soundbar .lbl { display:block; font-size:.9rem; opacity:.9; }
+  #timer .row.soundbar .input, #timer .row.soundbar .select { width:100%; }
+  #timer .row.soundbar .btn { white-space:nowrap; }
+</style>
+
+</head>
+
+<body>
+  <header class="hh-header">
+    <a class="hh-brand" href="#">
+      <span class="hh-dot">H</span><span>HashHero</span>
+    </a>
+    <nav class="hh-nav">
+      <a class="hh-link hh-link--primary" href="#generator">Generator</a>
+      <a class="hh-link hh-link--primary askai" href="#ama">Ask AI</a>
+      <a class="hh-link" href="#qr">QR Codes</a>
+      <a class="hh-link" href="#timer">Timer</a>
+      <a class="hh-link" href="#audio">Audio</a>
+          <a class="hh-link" href="meme.html">Meme</a>
+          <a class="hh-link" href="about.html">About</a>
+    </nav>
+  </header>
+
+  <main class="hh-main">
+
+    <section id="promo" class="hh-section">
+      <div class="card highlight promo">
+        <div class="promo-col">
+          <h2>Ask AI Anything ✨</h2>
+          <p class="muted">
+            Get instant, clear answers to grow your audience faster — strategy tips, hashtag help, captions, hooks, and more.
+          </p>
+          <ul class="hh-examples">
+            <li><button class="ex" data-q="Best hashtags for fitness reels?">Best hashtags for fitness reels?</button></li>
+            <li><button class="ex" data-q="Give me 5 hooks for a travel vlog about Paris.">Give me 5 hooks for a travel vlog about Paris.</button></li>
+            <li><button class="ex" data-q="How do I get more YouTube views in 30 days?">How do I get more YouTube views in 30 days?</button></li>
+          </ul>
+        </div>
+        <div class="promo-col-right">
+          <a class="hh-cta" href="#ama">Try Ask AI</a>
+          <span class="muted small">No login. Instant answers.</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="generator" class="hh-section">
+      <h1>Smart Hashtag Generator</h1>
+      <div class="grid2">
+        <div class="card">
+          <label class="lbl">Describe your post</label>
+          <textarea id="g-desc" class="input" rows="6" placeholder="e.g., Paris café vlog, cinematic b-roll, budget travel tips for beginners"></textarea>
+
+          <div class="row">
+            <div class="col">
+              <label class="lbl">Platform</label>
+              <select id="g-platform" class="select">
+                <option>Instagram</option>
+                <option>TikTok</option>
+                <option>X</option>
+                <option>YouTube</option>
+                <option>LinkedIn</option>
+              </select>
+            </div>
+            <div class="col">
+              <label class="lbl">Bias</label>
+              <select id="g-bias" class="select">
+                <option value="balanced">Balanced</option>
+                <option value="reach">Reach (bigger)</option>
+                <option value="niche">Niche (targeted)</option>
+              </select>
+            </div>
+            <div class="col">
+              <label class="lbl">Max Tags</label>
+              <input id="g-max" class="input" type="number" value="25" min="5" max="30"/>
+            </div>
+          </div>
+
+          <div class="row">
+            <button id="g-generate" class="btn">Generate</button>
+            <button id="g-clear" class="btn btn-ghost">Clear</button>
+            <button id="g-copy" class="btn btn-ghost">Copy</button>
+          </div>
+          <p class="hint">Tip: add location, format (cinematic, POV, tutorial), and audience (beginners, pros) for better tags.</p>
+        </div>
+
+        <div class="card">
+          <div class="row row-between">
+            <div class="lbl">Output</div>
+            <div class="small muted"><span id="g-count">0</span> / <span id="g-maxcap">30</span></div>
+          </div>
+          <textarea id="g-out" class="output" rows="10" readonly></textarea>
+<pre id="g-ai-explain" class="outputblock" style="display:none;margin-top:.5rem;"></pre>
+          <div id="g-warnings" class="muted small"></div>
+        </div>
+      </div>
+      <div class="chipbar" id="g-suggestions"></div>
+    </section>
+
+    <section id="ama" class="hh-section">
+      <h1>Ask AI</h1>
+      <div class="card">
+        <p class="muted" style="margin-top:0">
+          Ask anything about content, growth, hashtags, captions, or strategy. Get instant, actionable answers.
+        </p>
+        <div class="row row-mobile-stack">
+          <input id="a-q" class="input" placeholder="Try: Best hashtags for morning workout reels?" />
+          <div class="row btnrow">
+            <button id="a-ask" class="btn">Ask</button>
+            <button id="a-health" class="btn btn-ghost">Health</button>
+            <button id="a-clear" class="btn btn-ghost">Clear</button>
+          </div>
+        </div>
+        <div class="exbar">
+          <span class="muted small">Examples:</span>
+          <button class="ex" data-q="Give me 5 caption ideas for a cozy coffee shot.">Caption ideas for a coffee shot</button>
+          <button class="ex" data-q="How do I grow on TikTok without posting daily?">Grow on TikTok w/o daily posts</button>
+          <button class="ex" data-q="What hooks work for travel reels about Tokyo?">Hooks for Tokyo travel reels</button>
+        </div>
+        <pre id="a-out" class="outputblock"></pre>
+        <p class="hint">Hope i was useful as an AI assistant please provide feedback via the About page so that i can be better.</p>
+      </div>
+    </section>
+
+    <section id="qr" class="hh-section">
+      <h1>QR Code Generator</h1>
+      <div class="grid2">
+        <div class="card">
+          <label class="lbl">Content / URL</label>
+          <input id="qr-data" class="input" placeholder="https://your-link or @handle" />
+          <div class="row">
+            <div class="col">
+              <label class="lbl">Preset</label>
+              <select id="qr-preset" class="select">
+                <option value="ig">Instagram Profile</option>
+                <option value="tt">TikTok Profile</option>
+                <option value="yt">YouTube Channel</option>
+                <option value="ln">LinkedIn Profile</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+            <div class="col">
+              <label class="lbl">Size</label>
+              <select id="qr-size" class="select">
+                <option value="256">256</option>
+                <option value="384">384</option>
+                <option value="512" selected>512</option>
+              </select>
+            </div>
+            <div class="col">
+              <label class="lbl">Margin</label>
+              <input id="qr-margin" class="input" type="number" value="2" min="0" max="10"/>
+            </div>
+          </div>
+          <div class="row">
+            <button id="qr-make" class="btn">Generate</button>
+            <button id="qr-dl" class="btn btn-ghost">Download PNG</button>
+          </div>
+          <p class="hint">We use a reliable QR image service to produce a PNG—no tracking.</p>
+        </div>
+
+        <div class="card center">
+          <img id="qr-img" alt="QR preview" class="qrimg" />
+        </div>
+      </div>
+    </section>
+
+    <section id="timer" class="hh-section">
+      <h1>Engagement Timer</h1>
+      <div class="card">
+        <div class="row">
+          <div class="col">
+            <label class="lbl">Work (mins)</label>
+            <input id="t-work" class="input" type="number" value="20" min="1" />
+          </div>
+          <div class="col">
+            <label class="lbl">Break (mins)</label>
+            <input id="t-break" class="input" type="number" value="5" min="1" />
+          </div>
+          <div class="col">
+            <label class="lbl">Cycles</label>
+            <input id="t-cycles" class="input" type="number" value="3" min="1" />
+          </div>
+        </div>
+        <div class="row">
+          <button id="t-start" class="btn">Start</button>
+          <button id="t-stop" class="btn btn-ghost">Stop</button>
+          <button id="t-reset" class="btn btn-ghost">Reset</button>
+          <span id="t-status" class="muted small"></span>
+        </div>
+        <div class="ring">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="54" class="ring-bg"/>
+            <circle cx="60" cy="60" r="54" class="ring-fg" id="t-ring"/>
+            <text x="60" y="66" text-anchor="middle" class="ring-txt" id="t-clock">00:00</text>
+          </svg>
+        </div>
+        <p class="hint">Use during posting/comment sprints. We’ll beep at phase changes.</p>
+        <audio id="t-beep" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+      </div>
+    </section>
+
+  
+    <section id="audio" class="hh-section compact">
+      <h1>Trending Audio Finder <span id="audio-badge" class="pill">v1.3</span></h1>
+      <div class="card">
+        <p class="muted" style="margin-top:0">Find fresh sounds for Reels, TikTok, and Shorts. Filter by keyword and platform, then copy the track title or open a search.</p>
+        <div class="row row-mobile-stack">
+          <input id="aud-q" class="input" placeholder="Search keyword, e.g., travel, coffee, gym…" />
+          <select id="aud-platform" class="select">
+            <option value="all">All</option>
+            <option value="TikTok">TikTok</option>
+            <option value="Reels">Reels</option>
+            <option value="Shorts">Shorts</option>
+          </select>
+          <button id="aud-find" class="btn">Find</button>
+          <button id="aud-clear" class="btn btn-ghost">Clear</button>
+        </div>
+        <div id="aud-legend" class="row small muted" style="margin-top:.25rem">
+          <span>Volume: <strong>High</strong> (very popular) • <strong>Medium</strong> (balanced) • <strong>Niche</strong> (targeted)</span>
+        </div>
+        <div id="aud-results" class="list"></div>
+        <p class="hint small">Tip: Mix High + Niche audio to balance reach and relevance.</p>
+      </div>
+    </section>
+    
+    <!-- Quote of the Day (SEO-friendly, daily refresh) -->
+    <section id="qod" class="hh-section">
+      <div class="card">
+        <h2>Quote of the Day</h2>
+        <blockquote id="qod-text" class="text-lg"></blockquote>
+        <p id="qod-author" class="muted"></p>
+        <p id="qod-context" class="small muted"></p>
+        <script id="qod-ld" type="application/ld+json"></script>
+        <noscript>
+          <blockquote>“Creativity is intelligence having fun.”</blockquote>
+          <p class="small muted">Daily inspiration for creators. Try the HashHero Hashtag Generator.</p>
+        </noscript>
+      </div>
+    </section>
+</main>
+
+  
+  <div class="card" style="margin:20px auto; max-width:850px; border:1px dashed rgba(255,255,255,0.2); background:rgba(255,255,255,0.03); border-radius:14px; padding:14px;">
+    <strong>Disclaimer:</strong>
+    <p class="small muted" style="margin-top:6px;">
+      Some tools may surface third-party content (e.g., meme templates). Please ensure you have the right to use any images, audio, or text you publish.
+      HashHero provides tools only; usage is your responsibility.
+    </p>
+  </div>
+
+  <footer class="hh-footer">
+    <span>© 2025 HashHero</span>
+  </footer>
+
+
+
+
+<script id="audio-patch-v1_3">
 // HashHero Audio Patch v1.3b — compact by default + synonyms + suggestions
-(function(){ const wrap = document.getElementById("audio"); const qEl = document.getElementById("aud-q"); const pEl = document.getElementById("aud-platform"); const listEl = document.getElementById("aud-results"); const legendEl = document.getElementById("aud-legend"); if (!wrap || !qEl || !pEl || !listEl) return; const CURATED = [ { title: "soft piano love theme", platform: "Reels", tags: ["romance","date-night","couples"], volume: "Medium" }, { title: "acoustic slow dance loop", platform: "TikTok", tags: ["romance","wedding","first-look"], volume: "Medium" }, { title: "lofi midnight kiss", platform: "Shorts", tags: ["romance","night","aesthetic"], volume: "Niche" }, { title: "indie duet chorus", platform: "Reels", tags: ["romance","valentine","couples"], volume: "High" }, { title: "city pop sunset (instrumental)", platform: "Reels", tags: ["travel","aesthetic","vlog"], volume: "Medium" }, { title: "lofi café rain loop", platform: "Reels", tags: ["coffee","study","cozy"], volume: "Medium" }, { title: "phonk sprint edit", platform: "TikTok", tags: ["gym","motivation","workout"], volume: "High" }, { title: "afrobeats chill groove", platform: "TikTok", tags: ["dance","summer","travel"], volume: "High" }, { title: "cinematic whoosh + riser", platform: "Shorts", tags: ["transitions","b-roll","edits"], volume: "Niche" } ]; const SYN = { romance: ["love","date night","valentine","couples","wedding","first dance","rom-com"] }; function exp(q){ if(!q) return []; const base=q.toLowerCase().trim(); const parts=base.split(/\s+/); const extra=SYN[base]||[]; return Array.from(new Set([base, ...parts, ...extra])); } function pill(t){ return `<span class="pill">${t}</span>`; } function url(p, t){ const q=encodeURIComponent(t); if(p==="TikTok")return `https://www.tiktok.com/search/music?q=${q}`; if(p==="Reels")return `https://www.google.com/search?q=${encodeURIComponent(t+" instagram reels audio")}`; if(p==="Shorts")return `https://www.youtube.com/results?search_query=${q}+shorts`; return `https://www.google.com/search?q=${q}`; } async function copy(text){ try{ await navigator.clipboard.writeText(text);}catch{} } function render(items){ // If nothing to show, keep compact if(!items.length){ wrap.classList.add("compact"); listEl.innerHTML = ""; if (legendEl) legendEl.style.display = "none"; return; } // Show results if (legendEl) legendEl.style.display = ""; wrap.classList.remove("compact"); listEl.innerHTML = items.map(it => { const tags=(it.tags||[]).slice(0,3).map(t=>`#${t}`).join(" "); return `<div class="aud-item"> <div class="meta"><div class="title">${it.title}</div> <div class="tag">${it.platform} ${it.volume?pill(it.volume):""} · ${tags}</div></div> <div class="actions"> <button class="btn btn-ghost" data-copy="${encodeURIComponent(it.title)}">Copy title</button> <a class="btn" href="${url(it.platform, it.title)}" target="_blank" rel="noopener">Open ${it.platform} search</a> </div></div>`; }).join(""); listEl.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => copy(decodeURIComponent(b.getAttribute("data-copy")||"")))); } function matches(it,q,plat){ const hay=[it.title,it.platform,...(it.tags||[])].join(" ").toLowerCase().replace(/\s+/g,''); const terms=exp(q).map(x=>x.replace(/\s+/g,'')); const okQ=!q||terms.some(t=>t&&hay.includes(t)); const okP=(plat==="all")||it.platform===plat; return okQ&&okP; } function synth(q){ const k=(q||"your theme").trim(); const baseTags=exp(k).slice(0,3); const m=[ {title:`${k} slow dance`, platform:"Reels", volume:"Medium"}, {title:`${k} lofi night`, platform:"Shorts", volume:"Niche"}, {title:`${k} acoustic duet`, platform:"Reels", volume:"High"}, {title:`${k} soft piano`, platform:"TikTok", volume:"Medium"} ]; return m.map(x=>({...x, tags: baseTags.length?baseTags:[k]})); } function run(){ const q=qEl.value||""; const plat=pEl.value||"all"; if (!q.trim().length){ render([]); return; } // keep compact when empty const base = CURATED; let hits=base.filter(it=>matches(it,q,plat)).slice(0,20); if(!hits.length){ hits = synth(q); } render(hits); } let t; const deb=()=>{ clearTimeout(t); t=setTimeout(run,250); }; qEl.addEventListener("input", deb); document.getElementById("aud-find")?.addEventListener("click", run); document.getElementById("aud-clear")?.addEventListener("click", ()=>{ qEl.value=""; pEl.value="all"; render([]); }); // Start compact render([]);
-})();
-</script> <script> (function () { const STORAGE_KEY = "hh_qod_cache_v1"; const INTERNAL_LINK = "/#generator"; const TAGS = ["hashtag generator","instagram hashtags","tiktok marketing","content strategy","engagement rate"]; function todayISO(){ const now = new Date(); return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())) .toISOString().slice(0,10); } function setJSONLD(q){ const el = document.getElementById("qod-ld"); if (!el) return; const ld = { "@context": "https://schema.org", "@type": "Quotation", "text": q.text, "spokenByCharacter": {"@type":"Person","name": q.author || "Unknown"}, "about": TAGS.slice(0,4), "dateCreated": todayISO(), "isPartOf": {"@type":"WebSite","name":"HashHero","url": location.origin} }; el.textContent = JSON.stringify(ld); } function render(q){ const t = document.getElementById("qod-text"); const a = document.getElementById("qod-author"); const c = document.getElementById("qod-context"); if (!t || !a || !c) return; t.textContent = `“${q.text}”`; a.textContent = `— ${q.author || "Unknown"}`; c.textContent = `Daily inspiration for creators: ${TAGS.slice(0,3).join(" • ")}. `; const link = document.createElement("a"); link.href = INTERNAL_LINK; link.textContent = "Open Hashtag Generator"; link.className = "underline"; c.appendChild(link); setJSONLD(q); } function save(q){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify({date: todayISO(), quote: q})); } catch {} } function load(){ try { const raw = localStorage.getItem(STORAGE_KEY); if (!raw) return null; const p = JSON.parse(raw); if (p && p.date === todayISO() && p.quote && p.quote.text) return p.quote; } catch {} return null; } function fallback(){ const F = [ { text: "Consistency beats intensity. Post, learn, iterate.", author: "HashHero" }, { text: "Create for humans first; algorithms will follow.", author: "HashHero" }, { text: "Specific beats generic. Niche tags find your people.", author: "HashHero" }, { text: "Batch today so you can post calmly tomorrow.", author: "HashHero" } ]; return F[Math.floor(Math.random() * F.length)]; } async function zen(){ const r = await fetch("https://zenquotes.io/api/today", { cache: "no-store" }); if (!r.ok) throw 0; const d = await r.json(); if (!Array.isArray(d) || !d[0] || !d[0].q) throw 0; return { text: d[0].q, author: d[0].a }; } async function quot(){ const r = await fetch("https://api.quotable.io/random", { cache: "no-store" }); if (!r.ok) throw 0; const d = await r.json(); if (!d || !d.content) throw 0; return { text: d.content, author: d.author }; } (async function init(){ const cached = load(); if (cached){ render(cached); return; } try { const q1 = await zen(); save(q1); render(q1); } catch { try { const q2 = await quot(); save(q2); render(q2); } catch { const q3 = fallback(); save(q3); render(q3); } } })(); })(); </script> <script id="generator-smart-v6_6">
-/** * HashHero Hashtag Generator v6.6 * - "Generate" now runs Generate + AI Boost (one click) * - Adds locality & cuisine seeds (e.g., Mumbai, Vada Pav, Monsoon) * - Robust Ask-AI bridge; clears/hides Ask-AI UI while boosting * - Fill-to-cap; dedupe; near-dup guard (#pari vs #paris) */
-(function(){ const NON_LATIN_LANGS=new Set(["hi","ar","zh","ja","ko","ru","ta","bn","th"]); const $=(s)=>document.querySelector(s); // Rebind buttons cleanly const oldGen=$("#g-generate"); if(!oldGen) return; const gen=oldGen.cloneNode(true); oldGen.parentNode.replaceChild(gen, oldGen); const oldClr=$("#g-clear"); const clr=oldClr?oldClr.cloneNode(true):null; if(clr) oldClr.parentNode.replaceChild(clr, oldClr); const oldCopy=$("#g-copy"); const copy=oldCopy?oldCopy.cloneNode(true):null; if(copy) oldCopy.parentNode.replaceChild(copy, oldCopy); const outEl=$("#g-out"), warnEl=$("#g-warnings"), countEl=$("#g-count"), maxcapEl=$("#g-maxcap"), descEl=$("#g-desc"), platEl=$("#g-platform"), biasEl=$("#g-bias"), maxEl=$("#g-max"), suggBar=$("#g-suggestions"), expEl=$("#g-ai-explain"); // Rename Generate to unified flow try{ gen.textContent = "Generate + AI (recommended)"; gen.title = "Generates smart seeds, then boosts via Ask AI and merges to your cap."; }catch(e){} // Insert bold nudge const row = gen.parentElement; if(row && !document.getElementById("g-boost-note")){ const note = document.createElement("p"); note.id = "g-boost-note"; note.innerHTML = "<strong>Best results:</strong> Click <em>Generate + AI</em> to auto-boost your hashtags."; row.parentElement && row.parentElement.insertBefore(note, row.nextSibling); } // ---------- Config ---------- const STOP=new Set("a,an,the,and,or,of,in,on,for,to,with,at,by,from,about,as,into,like,through,after,over,between,out,against,during,without,within,along,across,behind,beyond,plus,is,are,was,were,be,been,being,that,this,these,those,i,me,my,our,ours,we,you,your,he,she,they,them,it,its,just,very,more,most,so,up,down,how,what,when,why,who".split(",")); const PLATFORM_CAP={Instagram:30,TikTok:33,Twitter:20,YouTube:15,LinkedIn:15}; const PLATFORM_EXTRAS={Instagram:["reels","instareels","igers","explorepage","instagood","contentcreator","creator","instagram"]}; const BANNED=new Set(["followforfollow","like4like","sub4sub","giveaway","nsfw","spam","clickbait"]); const FUZZY={"coffe":"coffee","cofee":"coffee","restraunt":"restaurant","mumbay":"mumbai"}; // Packs const PACK={ coffee:{h:["coffee","coffeetime","coffeelover","coffeebreak","coffeeholic"], m:["latte","espresso","cappuccino","latteart","thirdwavecoffee","baristalife","pourover","aeropress","flatwhite"], n:["specialtycoffee","singleorigin","coffeebeans","cozycafe","cafescene","manualbrew"]}, film:{h:["cinema","film","movies","filmmaking","cinematography","director","movie"], m:["filmphotography","filmcommunity","movienight","shortfilm","filmfestival","filmedit","colorgrading","videography","setlife"], n:["cinephile","filmstudy","movieedits","brollcinema","anamorphic","storyboarding","behindthescenes","bts"]}, travel:{h:["travel","vacation","wanderlust","travelgram"], m:["citybreak","solotravel","roadtrip","travelreels"], n:["hiddenparis","cozycafes","offthebeatenpath","slowtravel"]}, vlog:{h:["vlog","dailyvlog","travelvlog"], m:["cinematic","broll","vlogreel"], n:["povwalk","dayinmylife","fpv"]}, food:{h:["food","foodie","yummy","delicious","foodstagram"], m:["streetfood","homecooking","recipeoftheday","mealprep"], n:["budgetbites","aestheticbakes","coffeenook"]}, fitness:{h:["fitness","gym","workout","fitlife"], m:["legday","homeworkout","strengthtraining","mobility"], n:["formcheck","hypertrophy","kneefriendly"]} }; // Locality & cuisine dictionary (adds targeted seeds) const LOCAL={ mumbai:["mumbai","mumbairains","mumbaifood","mumbaistreetfood","mumbaidiaries","purelybombay","tasteofmumbai","marineDrive","gatewayofindia","localtrain","vibeofmumbai","monsoonmumbai"], delhi:["delhi","dillivalle","delhifood","delhistreetfood","delhigram","cpdelhi","oldDelhi","chandnichowk"], tokyo:["tokyo","shibuyacrossing","asakusa","ueno","akihabara","tokyostreetphotography"], paris:["paris","instaparis","parisianstyle","parisdiary","hiddenparis","cityoflights"], nyc:["nyc","newyork","newyorkcity","manhattan","brooklyn","soho","nycfood"], }; const CUISINE={ "vada pav":["vadapav","vadapavlove","streetfood","mumbaistreetfood","mumbaifood"], "chaat":["chaat","streetfood","delhistreetfood"], "pav bhaji":["pavbhaji","streetfood","mumbaistreetfood"], "biryani":["biryani","indianfood","foodie"], }; const SEASONAL={ monsoon:["monsoon","monsoonvibes","monsoonmood","rainyday","rainydayout","mumbairains","rainvibes"] }; const SYN={ cinema:["film","films","movies","movie","filmmaking","cinematography","cinephile","director","shortfilm","colorgrading","cinematic"], film:["cinema","movies","filmmaking","cinematography","cinematic"], movie:["cinema","film","filmmaking","cinematography"], cinematic:["cinema","film","cinematography","broll"], coffee:["latte","espresso","cappuccino","latteart","coffeetime","coffeelover","coffeebreak"], latte:["coffee","latteart","cafe","flatwhite"], cafe:["coffee","cozycafe","coffeetime"], vlog:["cinematic","broll","dailyvlog"], rains:["rain","rainy","monsoon","rainyday","monsoonmood"], monsoon:["rains","rain","rainyday","monsoonmood"], "vada":["vadapav","streetfood","mumbai"], "vada pav":["vadapav","streetfood","mumbai"], mumbai:["mumbaidiaries","mumbaifood","mumbaistreetfood","mumbairains","purelybombay","tasteofmumbai"] }; const GENERAL_CONTENT=["content","creator","viral","trending","tips","tutorial","howto"]; const GENERAL_CREATOR=["behindthescenes","workflow","setup","gear","aesthetic","storytelling","branding"]; // Helpers const toClean=(w)=>w.replace(/[^a-z0-9]+/g,"").toLowerCase(); function tokenize(text){ return (text||"").toLowerCase().replace(/[#@]/g," ").replace(/[^a-z0-9\s\-]/g," ") .split(/\s+/).filter(w=>w && !STOP.has(w) && w.length>1).map(w=>FUZZY[w]||w); } function expand(keys){ const out=new Set(keys); keys.forEach(k=>{ (SYN[k]||[]).forEach(x=>out.add(x)); }); return [...out]; } function uniqSanitize(tags){ const seen=new Set(), out=[]; for(const t of tags){ const c=toClean(t); if(!c||BANNED.has(c)||seen.has(c)) continue; seen.add(c); out.push("#"+c); } return out; } function platformExtras(plat){ return (PLATFORM_EXTRAS[plat]||[]).map(x=>"#"+toClean(x)); } function capForPlatform(plat,fallback){ return PLATFORM_CAP[plat]||fallback||25; } function isNearDup(a,b){ a=a.slice(1).toLowerCase(); b=b.slice(1).toLowerCase(); if(a===b) return true; const la=a.length, lb=b.length; if(Math.abs(la-lb)>1) return false; let i=0,j=0,ed=0; while(i<la && j<lb){ if(a[i]===b[j]){ i++; j++; continue; } ed++; if(ed>1) return false; if(la>lb) i++; else if(lb>la) j++; else { i++; j++; } } if(i<la || j<lb) ed++; return ed<=1; } function dropNearDup(list){ const res=[]; for(const t of list){ if(res.some(x=>isNearDup(x,t))) continue; res.push(t); } return res; } function seedsFor(topics){ const res={h:[],m:[],n:[]}; topics.forEach(k=>{ const p=PACK[k]; if(p){ res.h.push(...p.h); res.m.push(...p.m); res.n.push(...p.n); } }); return res; } function applyLocality(tokens, bag){ // City/local for(const t of tokens){ if(LOCAL[t]){ bag.h.push(...LOCAL[t].slice(0,4)); bag.m.push(...LOCAL[t].slice(4,8)); bag.n.push(...LOCAL[t].slice(8)); } if(CUISINE[t]){ bag.h.push(...CUISINE[t].slice(0,3)); bag.m.push(...CUISINE[t].slice(3)); } if(SEASONAL[t]){ bag.h.push(...SEASONAL[t].slice(0,3)); bag.m.push(...SEASONAL[t].slice(3)); } } } function guessTopics(tokens){ const hits=new Set(); Object.keys(PACK).forEach(k=>{ if(tokens.includes(k)) hits.add(k); }); // film if(tokens.some(t=>["cinema","film","movie","cinematography","filmmaking","cinematic"].includes(t))) hits.add("film"); // coffee/food if(tokens.some(t=>["coffee","latte","espresso","cappuccino","cafe","cafes","food","streetfood","foodie"].includes(t))) hits.add("food"); // travel by city words if(tokens.some(t=>["travel","paris","tokyo","london","rome","newyork","nyc","berlin","mumbai","delhi"].includes(t))) hits.add("travel"); return [...hits]; } function mixByBias(pool,bias,cap){ let wh=0.6, wm=0.3, wn=0.1; if(bias==="niche"){ wh=0.2; wm=0.35; wn=0.45; } if(bias==="reach"){ wh=0.65; wm=0.25; wn=0.10; } const take=(arr,n)=>arr.slice(0,Math.max(0,Math.round(n))); const H=take(pool.h,cap*wh); const M=take(pool.m.filter(x=>!H.includes(x)),cap*wm); const N=take(pool.n.filter(x=>!H.includes(x)&&!M.includes(x)),cap-(H.length+M.length)); return uniqSanitize([...H,...M,...N]); } function fillToCap(list,cap,tokens,plat){ const want=cap-list.length; if(want<=0) return dropNearDup(list.slice(0,cap)); const adders=[]; tokens.forEach(t=>adders.push("#"+toClean(t))); adders.push(...GENERAL_CONTENT.map(x=>"#"+x), ...GENERAL_CREATOR.map(x=>"#"+x)); adders.push(...platformExtras(plat)); const seen=new Set(list); for(const a of adders){ if(!a||seen.has(a)) continue; seen.add(a); list.push(a); if(list.length>=cap) break; } return dropNearDup(list.slice(0,cap)); } function makeTags(){ const desc=(descEl?.value||"").trim(); const plat=(platEl?.value||"Instagram"); const bias=(biasEl?.value||"balanced").toLowerCase(); const cap=Math.min(parseInt(maxEl?.value||"25",10)||25, capForPlatform(plat,25)); maxcapEl && (maxcapEl.textContent=String(cap)); const tokens=expand(tokenize(desc)); if(!tokens.length){ warnEl && (warnEl.textContent="Describe your post (topic, location, format)."); outEl.value=""; countEl&&(countEl.textContent="0"); suggBar&&(suggBar.innerHTML=""); return; } const topics=guessTopics(tokens); const seeds=seedsFor(topics); applyLocality(tokens, seeds); const kw=uniqSanitize(tokens.map(toClean)); const pool={ h: uniqSanitize([...seeds.h, ...kw]), m: uniqSanitize(seeds.m), n: uniqSanitize(seeds.n) }; let mixed = mixByBias(pool, bias, cap); mixed = fillToCap(mixed, cap, tokens, plat); outEl.value = mixed.join(" "); countEl && (countEl.textContent=String(mixed.length)); warnEl && (warnEl.textContent = mixed.length<cap ? "Tip: add format or location for even tighter tags." : ""); } // Ask-AI bridge const aQ=$("#a-q"), aAsk=$("#a-ask"), aOut=$("#a-out"); function getAIText(){ if(!aOut) return ""; return ("value" in aOut) ? aOut.value : aOut.textContent; } function setAIText(v){ if(!aOut) return; if("value" in aOut) aOut.value = v; else aOut.textContent = v; } async function callAskAI(prompt){ if(!(aQ && aAsk && aOut)) throw new Error("Ask-AI UI not found"); const prevQ = aQ.value; document.body.classList.add("ai-boosting"); return new Promise((resolve)=>{ let last = (getAIText()||"").trim(); let stableTimer = null, done=false; const finish=(txt)=>{ if(done) return; done=true; observer.disconnect(); aOut.removeEventListener("input", onChange); aOut.removeEventListener("change", onChange); aQ.value = prevQ; setAIText(""); document.body.classList.remove("ai-boosting"); resolve(txt); }; const onChange=()=>{ const cur=(getAIText()||"").trim(); if(!cur || cur===last) return; last=cur; if(stableTimer) clearTimeout(stableTimer); stableTimer = setTimeout(()=>{ if(/#[A-Za-z0-9_]+/.test(last)) finish(last); }, 350); }; const observer=new MutationObserver(onChange); observer.observe(aOut, {childList:true, subtree:true, characterData:true}); aOut.addEventListener("input", onChange); aOut.addEventListener("change", onChange); aQ.value = prompt; aAsk.click(); setTimeout(()=>{ finish((getAIText()||"").trim()); }, 12000); }); } function sanitizeList(text){ return (text||"").match(/#[\p{L}\p{N}_]+/gu)||[]; } const SCRIPT_REGEX = { hi: /[\u0900-\u097F]/u, ar: /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/u, ru: /[\u0400-\u04FF]/u, ta: /[\u0B80-\u0BFF]/u, bn: /[\u0980-\u09FF]/u, th: /[\u0E00-\u0E7F]/u, ja: /[\u3040-\u30FF\u31F0-\u31FF\u4E00-\u9FFF]/u, ko: /[\uAC00-\uD7AF\u1100-\u11FF]/u, zh: /[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF]/u }; function scriptScore(lang, tags){ const rx = SCRIPT_REGEX[lang]; if(!rx) return 1; if(!Array.isArray(tags) || !tags.length) return 0; let ok = 0; for(const t of tags){ if(rx.test(t)) ok++; } return ok / tags.length; } function mergeToCap(base,ai,cap){ const out = base.slice(); const seen = new Set(out.map(x=>x.toLowerCase())); for(const t of ai){ if(out.length>=cap) break; const k = t.toLowerCase(); if(seen.has(k)) continue; if(out.some(x=>isNearDup(x,t))) continue; seen.add(k); out.push(t); } return dropNearDup(out).slice(0,cap); } async function unifiedGenerateBoost(){ // base makeTags(); const plat=(platEl?.value||"Instagram"); const bias=(biasEl?.value||"balanced").toLowerCase(); const cap=Math.min(parseInt(maxEl?.value||"25",10)||25, PLATFORM_CAP[plat]||25); const desc=(descEl?.value||"").trim(); if(!desc){ expEl&&(expEl.style.display="block",expEl.textContent="Describe your post first."); return; } const langSel = document.getElementById("g-lang"); const lang = (langSel && langSel.value) || "en"; const LANG_NAME = { en:"English", hi:"Hindi", zh:"Chinese", es:"Spanish", ar:"Arabic", pt:"Portuguese", fr:"French", de:"German", ja:"Japanese", ko:"Korean", ru:"Russian", id:"Indonesian", tr:"Turkish", ta:"Tamil", bn:"Bengali", vi:"Vietnamese", th:"Thai" }; if (NON_LATIN_LANGS.has(lang) && asciiOnly) { /* seedPrompt removed by direct-language prompt */ const _skipSeedPrompt = `In ${LANG_NAME[lang]||"the selected language"}, return ONLY a comma-separated list of 8-14 native-language keywords (nouns/proper nouns) for: "${desc}". Use common native names for places (e.g., Egypt→मिस्र/مصر, Cairo→काहिरा/القاهرة). No English or transliteration.`; try { const seedText = await callAskAI(seedPrompt); const parts = (seedText||"").split(/[，,،]+/).map(s=>s.trim()).filter(Boolean); if (parts.length) seedHints = parts.slice(0,14).join(", "); } catch(e){} }
-let prompt; if (lang !== "en") { prompt = `Return ONLY space-separated hashtags in ${LANG_NAME[lang]||"the selected language"} using native script (no English). Max:${cap}. Topic: "${desc}"`; } else { prompt = `Return ONLY space-separated hashtags (no extra text). Mix reach/medium/niche. Platform:${plat}. Bias:${bias}. Max:${cap}. Post:"${desc}"`; } const aiText = await callAskAI(prompt); const aiTags = sanitizeList(aiText); let cur=(outEl.value.match(/#[\p{L}\p{N}_]+/gu)||[]); if (NON_LATIN_LANGS.has(lang)) cur = []; if (NON_LATIN_LANGS.has(lang)) { cur = []; } let finalAiTags = aiTags; const score = scriptScore(lang, aiTags); if (score < 0.6 && (lang in SCRIPT_REGEX)) { const strictPrompt = `Regenerate STRICTLY in ${LANG_NAME[lang] || "the selected language"} native script only.\nReturn ONLY space-separated hashtags (no extra text). No English/Latin script.\nPlatform:${plat}. Bias:${bias}. Max:${cap}. Post:"${desc}"`; const retryText = await callAskAI(strictPrompt); const retryTags = sanitizeList(retryText); if (scriptScore(lang, retryTags) >= score) { finalAiTags = retryTags; } } const merged = (NON_LATIN_LANGS.has(lang) ? finalAiTags.slice(0, cap) : mergeToCap(cur, finalAiTags, cap)); outEl.value = merged.join(" "); countEl && (countEl.textContent = String(merged.length)); expEl && (expEl.style.display="block", expEl.textContent = aiTags.length ? "AI Boost applied." : "AI didn't return hashtags."); } // Wire up clicks and hotkeys to unified flow gen.addEventListener("click", async()=>{ const prev=gen.textContent; gen.textContent="Generating…"; gen.disabled=true; try{ await unifiedGenerateBoost(); } finally { gen.textContent=prev; gen.disabled=false; } }); // Ctrl/Cmd+Enter descEl?.addEventListener("keydown", (e)=>{ if((e.ctrlKey||e.metaKey) && e.key==="Enter"){ e.preventDefault(); (async()=>{ try{ await unifiedGenerateBoost(); } catch(e){} })(); } }); // Keep a separate AI Boost button (if present) pointing to same flow const boost=document.getElementById("g-ai-boost"); if(boost){ boost.textContent="AI Boost (re-run)"; boost.addEventListener("click", async()=>{ const prev=boost.textContent; boost.textContent="Boosting…"; boost.disabled=true; try{ await unifiedGenerateBoost(); } finally { boost.textContent="AI Boost (re-run)"; boost.disabled=false; } }, {once:false}); }
-})();
-</script> <script id="timer-singing-bowl-v2">
-(function(){ const timerCard = document.querySelector("#timer .card"); const beepEl = document.getElementById("t-beep"); if (!timerCard || !beepEl) return; // --- Inject compact UI (Alert Sound + Volume + Auto-Advance + Preview) --- if (!document.getElementById("t-sound")) { const bar = document.createElement("div"); bar.className = "row soundbar"; bar.innerHTML = ` <div class="col"> <label class="lbl">Alert Sound</label> <select id="t-sound" class="select"> <option value="bowl" selected>Singing Bowl</option> <option value="beep">Beep</option> <option value="off">Off</option> </select> </div> <div class="col"> <label class="lbl">Volume</label> <input id="t-vol" class="input" type="range" min="0" max="1" step="0.01" value="0.8" /> </div> <div class="col"> <label class="lbl">Auto-Advance (next phase)</label> <select id="t-auto" class="select"> <option value="off" selected>Off</option> <option value="on">On</option> </select> </div> <div class="col" style="max-width:160px"> <label class="lbl" style="visibility:hidden">Preview</label> <button id="t-preview" class="btn btn-ghost">Preview</button> </div> `; const hint = timerCard.querySelector("p.hint"); (hint ? hint : beepEl).before(bar); } const soundSel = document.getElementById("t-sound"); const volEl = document.getElementById("t-vol"); const autoSel = document.getElementById("t-auto"); const previewBtn = document.getElementById("t-preview"); // --- WebAudio Singing Bowl synth --- const AudioCtx = window.AudioContext || window.webkitAudioContext; const ctx = AudioCtx ? new AudioCtx() : null; const master = ctx ? ctx.createGain() : null; if (ctx && master) { master.connect(ctx.destination); master.gain.value = parseFloat(volEl.value || "0.8"); } function ensureAudioReady(){ if (!ctx) return; if (ctx.state === "suspended") ctx.resume(); } function setVolumeUI(v){ v = Math.max(0, Math.min(1, parseFloat(v||"0.8"))); if (master) master.gain.value = v; if (beepEl) beepEl.volume = v; } volEl?.addEventListener("input", e => setVolumeUI(e.target.value)); function bowl(){ if (!ctx || !master) return; const t0 = ctx.currentTime; const dur = 6.0; const partials = [196, 294, 392, 512, 660, 784]; // G-based stack const g = ctx.createGain(); g.connect(master); g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(Math.max(0.001, master.gain.value), t0 + 0.03); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur); partials.forEach((f,i)=>{ const o = ctx.createOscillator(); const og = ctx.createGain(); o.type = "sine"; o.frequency.setValueAtTime(f, t0); o.detune.setValueAtTime((i%2? -5: +5), t0); // subtle detune og.gain.setValueAtTime(0.6/(i+1), t0+0.01); og.gain.exponentialRampToValueAtTime(0.0001, t0 + dur*(0.7 + i*0.04)); o.connect(og); og.connect(g); o.start(t0); o.stop(t0 + dur); }); } // To distinguish Preview from real phase-end chime let previewing = false; previewBtn?.addEventListener("click", () => { const mode = (soundSel && soundSel.value) || "bowl"; if (mode === "off") return; ensureAudioReady(); previewing = true; if (mode === "bowl") bowl(); else { setVolumeUI(volEl.value); nativePlay && nativePlay(); } setTimeout(()=>{ previewing=false; }, 50); }); // --- Monkey‑patch the timer's beep so app.js keeps working --- const nativePlay = beepEl.play ? beepEl.play.bind(beepEl) : null; if (nativePlay) { beepEl.play = function(...args){ const mode = (soundSel && soundSel.value) || "bowl"; if (mode === "off") { // Still prevent auto-advance if requested if (!previewing && autoSel && autoSel.value === "off") { setTimeout(()=>{ (document.getElementById("t-stop")||document.getElementById("t-reset"))?.click(); }, 0); } return Promise.resolve(); } if (mode === "bowl") { ensureAudioReady(); bowl(); } else { setVolumeUI(volEl.value); nativePlay(...args); } // Stop auto-advance unless explicitly turned on if (!previewing && autoSel && autoSel.value === "off") { setTimeout(()=>{ (document.getElementById("t-stop")||document.getElementById("t-reset"))?.click(); }, 0); } return Promise.resolve(); }; } // Resume audio on first user interaction (mobile) const startBtn = document.getElementById("t-start"); const stopBtn = document.getElementById("t-stop"); const resetBtn = document.getElementById("t-reset"); [startBtn, stopBtn, resetBtn, previewBtn].forEach(b=> b && b.addEventListener("click", ensureAudioReady, { once:true })); })();
-</script> <!-- Minimal Timer Patch: bowl mp3 + stop after final cycle (no UI changes) -->
-<script id="timer-bowl-minimal-v1">
-(function () { const beepEl = document.getElementById('t-beep'); const startEl = document.getElementById('t-start'); const stopEl = document.getElementById('t-stop') || document.getElementById('t-reset'); if (!beepEl) return; // Prefer auto-advance inside cycles, then we stop after last const autoSel = document.getElementById('t-auto'); if (autoSel && autoSel.value !== 'on') autoSel.value = 'on'; // Use your hosted bowl audio const bowl = new Audio('assets/audio/singing_bowl.mp3'); bowl.preload = 'auto'; // Helpers to read numbers function val(el, d) { const n = parseInt(el && el.value, 10); return isNaN(n) ? d : n; } function byId(id){ return document.getElementById(id); } const workIn = byId('t-work'); const breakIn = byId('t-break'); const cyclesIn = byId('t-cycles'); // Count phase-end beeps and stop after final let beeps = 0; let totalBeeps = Infinity; function recomputeTargets() { const work = Math.max(0, val(workIn, 20)); const brk = Math.max(0, val(breakIn, 5)); const cycles = Math.max(1, val(cyclesIn, 1)); const phasesPerCycle = (work > 0 ? 1 : 0) + (brk > 0 ? 1 : 0); totalBeeps = Math.max(1, phasesPerCycle) * cycles; beeps = 0; } startEl && startEl.addEventListener('click', recomputeTargets); [workIn, breakIn, cyclesIn].forEach(el => el && el.addEventListener('input', recomputeTargets)); const nativePlay = beepEl.play && beepEl.play.bind(beepEl); if (!nativePlay) return; beepEl.play = function (...args) { beeps += 1; let p; try { bowl.currentTime = 0; p = bowl.play(); } catch (e) { p = nativePlay(...args); } if (beeps >= totalBeeps) { setTimeout(() => { stopEl && stopEl.click(); }, 0); // hard stop after last cycle } return p; };
-})();
-</script> <script id="generator-button-harness-v1">
-(function(){ function setLabel(){ const btn = document.getElementById('g-generate'); if(!btn) return; const desired = "Generate + AI (recommended)"; if ((btn.textContent||"").trim() !== desired){ btn.textContent = desired; btn.title = "Generates smart seeds, then boosts via Ask AI and merges to your cap."; } } function observeLabel(){ const btn = document.getElementById('g-generate'); if(!btn || !window.MutationObserver) return; const desired = "Generate + AI (recommended)"; const mo = new MutationObserver(()=> { if ((btn.textContent||"").trim() !== desired){ btn.textContent = desired; btn.title = "Generates smart seeds, then boosts via Ask AI and merges to your cap."; } }); mo.observe(btn, {childList:true, subtree:true, characterData:true}); } if (document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', function(){ setLabel(); observeLabel(); }, {once:true}); } else { setLabel(); observeLabel(); }
-})();
-</script> <script id="lang-sync-askai-autodetect-v1">
-(function(){ const langSel = document.getElementById("g-lang"); const aAsk = document.getElementById("a-ask"); const aQ = document.getElementById("a-q"); const descEl = document.getElementById("g-desc"); if (!langSel) return; const LANG_NAME = { en:"English", hi:"Hindi", zh:"Chinese", es:"Spanish", ar:"Arabic", pt:"Portuguese", fr:"French", de:"German", ja:"Japanese", ko:"Korean", ru:"Russian", id:"Indonesian", tr:"Turkish", ta:"Tamil", bn:"Bengali", vi:"Vietnamese", th:"Thai" }; const SCRIPT_REGEX = { ar: /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/u, hi: /[\u0900-\u097F]/u, ta: /[\u0B80-\u0BFF]/u, bn: /[\u0980-\u09FF]/u, th: /[\u0E00-\u0E7F]/u, ru: /[\u0400-\u04FF]/u, ja: /[\u3040-\u30FF\u31F0-\u31FF\u4E00-\u9FFF]/u, ko: /[\uAC00-\uD7AF\u1100-\u11FF]/u, zh: /[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF]/u }; let userTouchedLang = false; langSel.addEventListener("change", ()=>{ userTouchedLang = true; }, { passive:true }); function detectLangFromText(t){ if (!t) return null; const order = ["ar","hi","ta","bn","th","ru","ja","ko","zh"]; for (const code of order){ if (SCRIPT_REGEX[code] && SCRIPT_REGEX[code].test(t)) return code; } const lower = t.toLowerCase(); if (/[áéíóúñ¡¿]/.test(t) || /\b(hola|gracias|porque|estoy|quiero)\b/.test(lower)) return "es"; if (/[ãõçáéíóú]/.test(t) || /\b(olá|obrigado|você|português)\b/.test(lower)) return "pt"; if (/[àâçéèêëîïôûùüÿœ]/.test(t) || /\b(bonjour|merci|pourquoi)\b/.test(lower)) return "fr"; if (/[äöüß]/.test(t) || /\b(hallo|danke|warum)\b/.test(lower)) return "de"; if (/\b(merhaba|teşekkür|neden)\b/.test(lower)) return "tr"; if (/\b(selamat|terima kasih|kenapa|apa)\b/.test(lower)) return "id"; if (/[ăâđêôơư]/.test(t) || /\b(xin chào|cảm ơn|tại sao)\b/.test(lower)) return "vi"; return null; } function maybeAutoSelect(inputEl){ if (userTouchedLang) return; const t = (inputEl && inputEl.value) || ""; const detected = detectLangFromText(t); if (detected && langSel.value !== detected){ langSel.value = detected; } } if (descEl) descEl.addEventListener("input", ()=> maybeAutoSelect(descEl), { passive:true }); if (aQ) aQ.addEventListener("input", ()=> maybeAutoSelect(aQ), { passive:true }); if (aAsk && aQ){ aAsk.addEventListener("click", function(){ const val = aQ.value || ""; const looksLikeGeneratorPrompt = /Return ONLY space-separated hashtags/i.test(val); if (looksLikeGeneratorPrompt) return; const code = langSel.value || "en"; const name = LANG_NAME[code] || "English"; const prefix = `Answer in ${name} using native script. Be concise.\n`; if (!val.startsWith(prefix)){ aQ.value = prefix + val; } }, true); }
-})();
-</script> <script id="generator-language-output-filter-v2">
-(function(){ const outEl = document.getElementById("g-out"); const genBtn = document.getElementById("g-generate"); const langSel = document.getElementById("g-lang"); const capEl = document.getElementById("g-max"); if (!outEl || !genBtn || !langSel) return; const SCRIPT_REGEX = { hi: /[\u0900-\u097F]/u, ar: /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/u, ru: /[\u0400-\u04FF]/u, ta: /[\u0B80-\u0BFF]/u, bn: /[\u0980-\u09FF]/u, th: /[\u0E00-\u0E7F]/u, ja: /[\u3040-\u30FF\u31F0-\u31FF\u4E00-\u9FFF]/u, ko: /[\uAC00-\uD7AF\u1100-\u11FF]/u, zh: /[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF]/u }; const EN_EXTRAS = ["#reels","#instareels","#igers","#explorepage","#instagood","#contentcreator","#creator","#instagram","#viral","#trending","#shorts"]; const LOCAL_EXTRAS = { es: ["#reels","#viral","#tendencias","#explorar"], pt: ["#reels","#viral","#tendências","#explorar"], fr: ["#reels","#viral","#tendance","#explorer"], de: ["#reels","#viral","#trending","#entdecken"], tr: ["#reels","#viral","#trend","#keşfet"], id: ["#reels","#viral","#trending","#jelajah"], vi: ["#reels","#viral","#xuHướng","#khámPhá"], hi: ["#रील्स","#वायरल","#ट्रेंडिंग","#एक्सप्लोर"], ar: ["#ريلز","#فيرال","#ترند","#اكسبلور"], zh: ["#短视频","#热门","#爆款","#推荐"], ja: ["#リール","#バズる","#トレンド","#おすすめ"], ko: ["#릴스","#바이럴","#트렌드","#탐색"], ru: ["#рилс","#вирал","#втренде","#исследуй"], ta: ["#ரீல்ஸ்","#வைரல்","#பிரபலமாக","#கண்டறி"], bn: ["#রিলস","#ভাইরাল","#ট্রেন্ডিং","#এক্সপ্লোর"], th: ["#รีลส์","#ไวรัล","#กำลังมาแรง","#สำรวจ"] }; function parseTags(text){ return (text||"").match(/#[\p{L}\p{N}_]+/gu) || []; } function dedupe(arr){ const seen = new Set(), out = []; for (const t of arr){ const k = t.normalize("NFC").toLowerCase(); if (!seen.has(k)){ seen.add(k); out.push(t); } } return out; } function visibleLen(tag){ return Array.from(tag.slice(1)).length; } function cleanForLanguage(tags, lang){ const nonLatin = lang in SCRIPT_REGEX; if (!nonLatin) return tags; const rx = SCRIPT_REGEX[lang]; const minLen = (lang === "zh" || lang === "ja" || lang === "ko") ? 2 : 3; const filtered = []; for (const t of tags){ if (EN_EXTRAS.includes(t.toLowerCase())) continue; if (!rx.test(t)) continue; if (/[A-Za-z]/.test(t)) continue; if (visibleLen(t) < minLen) continue; filtered.push(t); } return filtered; } function addLocalizedExtras(tags, lang, cap){ const add = LOCAL_EXTRAS[lang]; if (!add || !add.length) return tags.slice(0, cap); const pool = dedupe(tags.concat(add)); return pool.slice(0, cap); } function run(){ const lang = langSel.value || "en"; const cap = Math.max(1, parseInt((capEl && capEl.value) || "25", 10)); const parsed = parseTags(outEl.value); let cleaned = dedupe(parsed); cleaned = cleanForLanguage(cleaned, lang); cleaned = addLocalizedExtras(cleaned, lang, cap); if (cleaned.length){ outEl.value = cleaned.join(" "); const countEl = document.getElementById("g-count"); if (countEl) countEl.textContent = String(cleaned.length); } } function schedule(){ setTimeout(run, 250); setTimeout(run, 800); } genHook(); function genHook(){ const btn = genBtn || document.getElementById("g-generate"); if (btn) btn.addEventListener("click", schedule); } const descEl = document.getElementById("g-desc"); if (descEl){ descEl.addEventListener("keydown", (e)=>{ if ((e.ctrlKey||e.metaKey) && e.key === "Enter") schedule(); }); }
+(function(){
+  const wrap = document.getElementById("audio");
+  const qEl = document.getElementById("aud-q");
+  const pEl = document.getElementById("aud-platform");
+  const listEl = document.getElementById("aud-results");
+  const legendEl = document.getElementById("aud-legend");
+  if (!wrap || !qEl || !pEl || !listEl) return;
+
+  const CURATED = [
+    { title: "soft piano love theme", platform: "Reels", tags: ["romance","date-night","couples"], volume: "Medium" },
+    { title: "acoustic slow dance loop", platform: "TikTok", tags: ["romance","wedding","first-look"], volume: "Medium" },
+    { title: "lofi midnight kiss", platform: "Shorts", tags: ["romance","night","aesthetic"], volume: "Niche" },
+    { title: "indie duet chorus", platform: "Reels", tags: ["romance","valentine","couples"], volume: "High" },
+    { title: "city pop sunset (instrumental)", platform: "Reels", tags: ["travel","aesthetic","vlog"], volume: "Medium" },
+    { title: "lofi café rain loop", platform: "Reels", tags: ["coffee","study","cozy"], volume: "Medium" },
+    { title: "phonk sprint edit", platform: "TikTok", tags: ["gym","motivation","workout"], volume: "High" },
+    { title: "afrobeats chill groove", platform: "TikTok", tags: ["dance","summer","travel"], volume: "High" },
+    { title: "cinematic whoosh + riser", platform: "Shorts", tags: ["transitions","b-roll","edits"], volume: "Niche" }
+  ];
+  const SYN = { romance: ["love","date night","valentine","couples","wedding","first dance","rom-com"] };
+
+  function exp(q){ if(!q) return []; const base=q.toLowerCase().trim();
+    const parts=base.split(/\s+/); const extra=SYN[base]||[];
+    return Array.from(new Set([base, ...parts, ...extra])); }
+
+  function pill(t){ return `<span class="pill">${t}</span>`; }
+  function url(p, t){ const q=encodeURIComponent(t);
+    if(p==="TikTok")return `https://www.tiktok.com/search/music?q=${q}`;
+    if(p==="Reels")return `https://www.google.com/search?q=${encodeURIComponent(t+" instagram reels audio")}`;
+    if(p==="Shorts")return `https://www.youtube.com/results?search_query=${q}+shorts`;
+    return `https://www.google.com/search?q=${q}`; }
+  async function copy(text){ try{ await navigator.clipboard.writeText(text);}catch{} }
+
+  function render(items){
+    // If nothing to show, keep compact
+    if(!items.length){ wrap.classList.add("compact"); listEl.innerHTML = ""; if (legendEl) legendEl.style.display = "none"; return; }
+    // Show results
+    if (legendEl) legendEl.style.display = "";
+    wrap.classList.remove("compact");
+    listEl.innerHTML = items.map(it => {
+      const tags=(it.tags||[]).slice(0,3).map(t=>`#${t}`).join(" ");
+      return `<div class="aud-item">
+        <div class="meta"><div class="title">${it.title}</div>
+        <div class="tag">${it.platform} ${it.volume?pill(it.volume):""} · ${tags}</div></div>
+        <div class="actions">
+          <button class="btn btn-ghost" data-copy="${encodeURIComponent(it.title)}">Copy title</button>
+          <a class="btn" href="${url(it.platform, it.title)}" target="_blank" rel="noopener">Open ${it.platform} search</a>
+        </div></div>`;
+    }).join("");
+    listEl.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () =>
+      copy(decodeURIComponent(b.getAttribute("data-copy")||""))));
+  }
+
+  function matches(it,q,plat){
+    const hay=[it.title,it.platform,...(it.tags||[])].join(" ").toLowerCase().replace(/\s+/g,'');
+    const terms=exp(q).map(x=>x.replace(/\s+/g,''));
+    const okQ=!q||terms.some(t=>t&&hay.includes(t));
+    const okP=(plat==="all")||it.platform===plat;
+    return okQ&&okP;
+  }
+
+  function synth(q){
+    const k=(q||"your theme").trim(); const baseTags=exp(k).slice(0,3);
+    const m=[ {title:`${k} slow dance`, platform:"Reels", volume:"Medium"},
+              {title:`${k} lofi night`, platform:"Shorts", volume:"Niche"},
+              {title:`${k} acoustic duet`, platform:"Reels", volume:"High"},
+              {title:`${k} soft piano`, platform:"TikTok", volume:"Medium"} ];
+    return m.map(x=>({...x, tags: baseTags.length?baseTags:[k]}));
+  }
+
+  function run(){
+    const q=qEl.value||""; const plat=pEl.value||"all";
+    if (!q.trim().length){ render([]); return; } // keep compact when empty
+    const base = CURATED;
+    let hits=base.filter(it=>matches(it,q,plat)).slice(0,20);
+    if(!hits.length){ hits = synth(q); }
+    render(hits);
+  }
+
+  let t; const deb=()=>{ clearTimeout(t); t=setTimeout(run,250); };
+  qEl.addEventListener("input", deb);
+  document.getElementById("aud-find")?.addEventListener("click", run);
+  document.getElementById("aud-clear")?.addEventListener("click", ()=>{ qEl.value=""; pEl.value="all"; render([]); });
+  // Start compact
+  render([]);
 })();
 </script>
+
+
+  <script>
+  (function () {
+    const STORAGE_KEY = "hh_qod_cache_v1";
+    const INTERNAL_LINK = "/#generator";
+    const TAGS = ["hashtag generator","instagram hashtags","tiktok marketing","content strategy","engagement rate"];
+
+    function todayISO(){
+      const now = new Date();
+      return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
+        .toISOString().slice(0,10);
+    }
+    function setJSONLD(q){
+      const el = document.getElementById("qod-ld");
+      if (!el) return;
+      const ld = {
+        "@context": "https://schema.org",
+        "@type": "Quotation",
+        "text": q.text,
+        "spokenByCharacter": {"@type":"Person","name": q.author || "Unknown"},
+        "about": TAGS.slice(0,4),
+        "dateCreated": todayISO(),
+        "isPartOf": {"@type":"WebSite","name":"HashHero","url": location.origin}
+      };
+      el.textContent = JSON.stringify(ld);
+    }
+    function render(q){
+      const t = document.getElementById("qod-text");
+      const a = document.getElementById("qod-author");
+      const c = document.getElementById("qod-context");
+      if (!t || !a || !c) return;
+      t.textContent = `“${q.text}”`;
+      a.textContent = `— ${q.author || "Unknown"}`;
+      c.textContent = `Daily inspiration for creators: ${TAGS.slice(0,3).join(" • ")}. `;
+      const link = document.createElement("a");
+      link.href = INTERNAL_LINK;
+      link.textContent = "Open Hashtag Generator";
+      link.className = "underline";
+      c.appendChild(link);
+      setJSONLD(q);
+    }
+    function save(q){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify({date: todayISO(), quote: q})); } catch {} }
+    function load(){
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        const p = JSON.parse(raw);
+        if (p && p.date === todayISO() && p.quote && p.quote.text) return p.quote;
+      } catch {}
+      return null;
+    }
+    function fallback(){
+      const F = [
+        { text: "Consistency beats intensity. Post, learn, iterate.", author: "HashHero" },
+        { text: "Create for humans first; algorithms will follow.", author: "HashHero" },
+        { text: "Specific beats generic. Niche tags find your people.", author: "HashHero" },
+        { text: "Batch today so you can post calmly tomorrow.", author: "HashHero" }
+      ];
+      return F[Math.floor(Math.random() * F.length)];
+    }
+    async function zen(){
+      const r = await fetch("https://zenquotes.io/api/today", { cache: "no-store" });
+      if (!r.ok) throw 0;
+      const d = await r.json();
+      if (!Array.isArray(d) || !d[0] || !d[0].q) throw 0;
+      return { text: d[0].q, author: d[0].a };
+    }
+    async function quot(){
+      const r = await fetch("https://api.quotable.io/random", { cache: "no-store" });
+      if (!r.ok) throw 0;
+      const d = await r.json();
+      if (!d || !d.content) throw 0;
+      return { text: d.content, author: d.author };
+    }
+    (async function init(){
+      const cached = load();
+      if (cached){ render(cached); return; }
+      try { const q1 = await zen(); save(q1); render(q1); }
+      catch { try { const q2 = await quot(); save(q2); render(q2); }
+      catch { const q3 = fallback(); save(q3); render(q3); } }
+    })();
+  })();
+  </script>
+
+
+<script id="generator-smart-v6_6">
+/**
+ * HashHero Hashtag Generator v6.6
+ * - "Generate" now runs Generate + AI Boost (one click)
+ * - Adds locality & cuisine seeds (e.g., Mumbai, Vada Pav, Monsoon)
+ * - Robust Ask-AI bridge; clears/hides Ask-AI UI while boosting
+ * - Fill-to-cap; dedupe; near-dup guard (#pari vs #paris)
+ */
+(function(){
+  const $=(s)=>document.querySelector(s);
+
+  // Rebind buttons cleanly
+  const oldGen=$("#g-generate"); if(!oldGen) return;
+  const gen=oldGen.cloneNode(true); oldGen.parentNode.replaceChild(gen, oldGen);
+  const oldClr=$("#g-clear"); const clr=oldClr?oldClr.cloneNode(true):null; if(clr) oldClr.parentNode.replaceChild(clr, oldClr);
+  const oldCopy=$("#g-copy"); const copy=oldCopy?oldCopy.cloneNode(true):null; if(copy) oldCopy.parentNode.replaceChild(copy, oldCopy);
+
+  const outEl=$("#g-out"), warnEl=$("#g-warnings"), countEl=$("#g-count"), maxcapEl=$("#g-maxcap"),
+        descEl=$("#g-desc"), platEl=$("#g-platform"), biasEl=$("#g-bias"), maxEl=$("#g-max"),
+        suggBar=$("#g-suggestions"), expEl=$("#g-ai-explain");
+
+  // Rename Generate to unified flow
+  try{
+    gen.textContent = "Generate + AI (recommended)";
+    gen.title = "Generates smart seeds, then boosts via Ask AI and merges to your cap.";
+  }catch(e){}
+
+  // Insert bold nudge
+  const row = gen.parentElement;
+  if(row && !document.getElementById("g-boost-note")){
+    const note = document.createElement("p");
+    note.id = "g-boost-note";
+    note.innerHTML = "<strong>Best results:</strong> Click <em>Generate + AI</em> to auto-boost your hashtags.";
+    row.parentElement && row.parentElement.insertBefore(note, row.nextSibling);
+  }
+
+  // ---------- Config ----------
+  const STOP=new Set("a,an,the,and,or,of,in,on,for,to,with,at,by,from,about,as,into,like,through,after,over,between,out,against,during,without,within,along,across,behind,beyond,plus,is,are,was,were,be,been,being,that,this,these,those,i,me,my,our,ours,we,you,your,he,she,they,them,it,its,just,very,more,most,so,up,down,how,what,when,why,who".split(","));
+  const PLATFORM_CAP={Instagram:30,TikTok:33,Twitter:20,YouTube:15,LinkedIn:15};
+  const PLATFORM_EXTRAS={Instagram:["reels","instareels","igers","explorepage","instagood","contentcreator","creator","instagram"]};
+  const BANNED=new Set(["followforfollow","like4like","sub4sub","giveaway","nsfw","spam","clickbait"]);
+  const FUZZY={"coffe":"coffee","cofee":"coffee","restraunt":"restaurant","mumbay":"mumbai"};
+
+  // Packs
+  const PACK={
+    coffee:{h:["coffee","coffeetime","coffeelover","coffeebreak","coffeeholic"],
+            m:["latte","espresso","cappuccino","latteart","thirdwavecoffee","baristalife","pourover","aeropress","flatwhite"],
+            n:["specialtycoffee","singleorigin","coffeebeans","cozycafe","cafescene","manualbrew"]},
+    film:{h:["cinema","film","movies","filmmaking","cinematography","director","movie"],
+          m:["filmphotography","filmcommunity","movienight","shortfilm","filmfestival","filmedit","colorgrading","videography","setlife"],
+          n:["cinephile","filmstudy","movieedits","brollcinema","anamorphic","storyboarding","behindthescenes","bts"]},
+    travel:{h:["travel","vacation","wanderlust","travelgram"],
+            m:["citybreak","solotravel","roadtrip","travelreels"],
+            n:["hiddenparis","cozycafes","offthebeatenpath","slowtravel"]},
+    vlog:{h:["vlog","dailyvlog","travelvlog"], m:["cinematic","broll","vlogreel"], n:["povwalk","dayinmylife","fpv"]},
+    food:{h:["food","foodie","yummy","delicious","foodstagram"], m:["streetfood","homecooking","recipeoftheday","mealprep"], n:["budgetbites","aestheticbakes","coffeenook"]},
+    fitness:{h:["fitness","gym","workout","fitlife"], m:["legday","homeworkout","strengthtraining","mobility"], n:["formcheck","hypertrophy","kneefriendly"]}
+  };
+
+  // Locality & cuisine dictionary (adds targeted seeds)
+  const LOCAL={
+    mumbai:["mumbai","mumbairains","mumbaifood","mumbaistreetfood","mumbaidiaries","purelybombay","tasteofmumbai","marineDrive","gatewayofindia","localtrain","vibeofmumbai","monsoonmumbai"],
+    delhi:["delhi","dillivalle","delhifood","delhistreetfood","delhigram","cpdelhi","oldDelhi","chandnichowk"],
+    tokyo:["tokyo","shibuyacrossing","asakusa","ueno","akihabara","tokyostreetphotography"],
+    paris:["paris","instaparis","parisianstyle","parisdiary","hiddenparis","cityoflights"],
+    nyc:["nyc","newyork","newyorkcity","manhattan","brooklyn","soho","nycfood"],
+  };
+  const CUISINE={
+    "vada pav":["vadapav","vadapavlove","streetfood","mumbaistreetfood","mumbaifood"],
+    "chaat":["chaat","streetfood","delhistreetfood"],
+    "pav bhaji":["pavbhaji","streetfood","mumbaistreetfood"],
+    "biryani":["biryani","indianfood","foodie"],
+  };
+  const SEASONAL={
+    monsoon:["monsoon","monsoonvibes","monsoonmood","rainyday","rainydayout","mumbairains","rainvibes"]
+  };
+
+  const SYN={
+    cinema:["film","films","movies","movie","filmmaking","cinematography","cinephile","director","shortfilm","colorgrading","cinematic"],
+    film:["cinema","movies","filmmaking","cinematography","cinematic"],
+    movie:["cinema","film","filmmaking","cinematography"],
+    cinematic:["cinema","film","cinematography","broll"],
+    coffee:["latte","espresso","cappuccino","latteart","coffeetime","coffeelover","coffeebreak"],
+    latte:["coffee","latteart","cafe","flatwhite"],
+    cafe:["coffee","cozycafe","coffeetime"],
+    vlog:["cinematic","broll","dailyvlog"],
+    rains:["rain","rainy","monsoon","rainyday","monsoonmood"],
+    monsoon:["rains","rain","rainyday","monsoonmood"],
+    "vada":["vadapav","streetfood","mumbai"],
+    "vada pav":["vadapav","streetfood","mumbai"],
+    mumbai:["mumbaidiaries","mumbaifood","mumbaistreetfood","mumbairains","purelybombay","tasteofmumbai"]
+  };
+
+  const GENERAL_CONTENT=["content","creator","viral","trending","tips","tutorial","howto"];
+  const GENERAL_CREATOR=["behindthescenes","workflow","setup","gear","aesthetic","storytelling","branding"];
+
+  // Helpers
+  const toClean=(w)=>w.replace(/[^a-z0-9]+/g,"").toLowerCase();
+  function tokenize(text){
+    return (text||"").toLowerCase().replace(/[#@]/g," ").replace(/[^a-z0-9\s\-]/g," ")
+      .split(/\s+/).filter(w=>w && !STOP.has(w) && w.length>1).map(w=>FUZZY[w]||w);
+  }
+  function expand(keys){ const out=new Set(keys); keys.forEach(k=>{ (SYN[k]||[]).forEach(x=>out.add(x)); }); return [...out]; }
+  function uniqSanitize(tags){
+    const seen=new Set(), out=[]; for(const t of tags){ const c=toClean(t); if(!c||BANNED.has(c)||seen.has(c)) continue; seen.add(c); out.push("#"+c); } return out;
+  }
+  function platformExtras(plat){ return (PLATFORM_EXTRAS[plat]||[]).map(x=>"#"+toClean(x)); }
+  function capForPlatform(plat,fallback){ return PLATFORM_CAP[plat]||fallback||25; }
+
+  function isNearDup(a,b){
+    a=a.slice(1).toLowerCase(); b=b.slice(1).toLowerCase();
+    if(a===b) return true;
+    const la=a.length, lb=b.length; if(Math.abs(la-lb)>1) return false;
+    let i=0,j=0,ed=0;
+    while(i<la && j<lb){
+      if(a[i]===b[j]){ i++; j++; continue; }
+      ed++; if(ed>1) return false;
+      if(la>lb) i++; else if(lb>la) j++; else { i++; j++; }
+    }
+    if(i<la || j<lb) ed++;
+    return ed<=1;
+  }
+  function dropNearDup(list){
+    const res=[];
+    for(const t of list){ if(res.some(x=>isNearDup(x,t))) continue; res.push(t); }
+    return res;
+  }
+
+  function seedsFor(topics){
+    const res={h:[],m:[],n:[]};
+    topics.forEach(k=>{ const p=PACK[k]; if(p){ res.h.push(...p.h); res.m.push(...p.m); res.n.push(...p.n); } });
+    return res;
+  }
+  function applyLocality(tokens, bag){
+    // City/local
+    for(const t of tokens){
+      if(LOCAL[t]){
+        bag.h.push(...LOCAL[t].slice(0,4));
+        bag.m.push(...LOCAL[t].slice(4,8));
+        bag.n.push(...LOCAL[t].slice(8));
+      }
+      if(CUISINE[t]){
+        bag.h.push(...CUISINE[t].slice(0,3));
+        bag.m.push(...CUISINE[t].slice(3));
+      }
+      if(SEASONAL[t]){
+        bag.h.push(...SEASONAL[t].slice(0,3));
+        bag.m.push(...SEASONAL[t].slice(3));
+      }
+    }
+  }
+  function guessTopics(tokens){
+    const hits=new Set();
+    Object.keys(PACK).forEach(k=>{ if(tokens.includes(k)) hits.add(k); });
+    // film
+    if(tokens.some(t=>["cinema","film","movie","cinematography","filmmaking","cinematic"].includes(t))) hits.add("film");
+    // coffee/food
+    if(tokens.some(t=>["coffee","latte","espresso","cappuccino","cafe","cafes","food","streetfood","foodie"].includes(t))) hits.add("food");
+    // travel by city words
+    if(tokens.some(t=>["travel","paris","tokyo","london","rome","newyork","nyc","berlin","mumbai","delhi"].includes(t))) hits.add("travel");
+    return [...hits];
+  }
+  function mixByBias(pool,bias,cap){
+    let wh=0.6, wm=0.3, wn=0.1;
+    if(bias==="niche"){ wh=0.2; wm=0.35; wn=0.45; }
+    if(bias==="reach"){ wh=0.65; wm=0.25; wn=0.10; }
+    const take=(arr,n)=>arr.slice(0,Math.max(0,Math.round(n)));
+    const H=take(pool.h,cap*wh);
+    const M=take(pool.m.filter(x=>!H.includes(x)),cap*wm);
+    const N=take(pool.n.filter(x=>!H.includes(x)&&!M.includes(x)),cap-(H.length+M.length));
+    return uniqSanitize([...H,...M,...N]);
+  }
+  function fillToCap(list,cap,tokens,plat){
+    const want=cap-list.length; if(want<=0) return dropNearDup(list.slice(0,cap));
+    const adders=[]; tokens.forEach(t=>adders.push("#"+toClean(t)));
+    adders.push(...GENERAL_CONTENT.map(x=>"#"+x), ...GENERAL_CREATOR.map(x=>"#"+x));
+    adders.push(...platformExtras(plat));
+    const seen=new Set(list);
+    for(const a of adders){ if(!a||seen.has(a)) continue; seen.add(a); list.push(a); if(list.length>=cap) break; }
+    return dropNearDup(list.slice(0,cap));
+  }
+
+  function makeTags(){
+    const desc=(descEl?.value||"").trim();
+    const plat=(platEl?.value||"Instagram");
+    const bias=(biasEl?.value||"balanced").toLowerCase();
+    const cap=Math.min(parseInt(maxEl?.value||"25",10)||25, capForPlatform(plat,25));
+    maxcapEl && (maxcapEl.textContent=String(cap));
+
+    const tokens=expand(tokenize(desc));
+    if(!tokens.length){ warnEl && (warnEl.textContent="Describe your post (topic, location, format)."); outEl.value=""; countEl&&(countEl.textContent="0"); suggBar&&(suggBar.innerHTML=""); return; }
+    const topics=guessTopics(tokens); const seeds=seedsFor(topics);
+    applyLocality(tokens, seeds);
+    const kw=uniqSanitize(tokens.map(toClean));
+    const pool={ h: uniqSanitize([...seeds.h, ...kw]), m: uniqSanitize(seeds.m), n: uniqSanitize(seeds.n) };
+    let mixed = mixByBias(pool, bias, cap);
+    mixed = fillToCap(mixed, cap, tokens, plat);
+    outEl.value = mixed.join(" ");
+    countEl && (countEl.textContent=String(mixed.length));
+    warnEl && (warnEl.textContent = mixed.length<cap ? "Tip: add format or location for even tighter tags." : "");
+  }
+
+  // Ask-AI bridge
+  const aQ=$("#a-q"), aAsk=$("#a-ask"), aOut=$("#a-out");
+  function getAIText(){ if(!aOut) return ""; return ("value" in aOut) ? aOut.value : aOut.textContent; }
+  function setAIText(v){ if(!aOut) return; if("value" in aOut) aOut.value = v; else aOut.textContent = v; }
+  async function callAskAI(prompt){
+    if(!(aQ && aAsk && aOut)) throw new Error("Ask-AI UI not found");
+    const prevQ = aQ.value;
+    document.body.classList.add("ai-boosting");
+    return new Promise((resolve)=>{
+      let last = (getAIText()||"").trim();
+      let stableTimer = null, done=false;
+      const finish=(txt)=>{ if(done) return; done=true;
+        observer.disconnect(); aOut.removeEventListener("input", onChange); aOut.removeEventListener("change", onChange);
+        aQ.value = prevQ; setAIText(""); document.body.classList.remove("ai-boosting"); resolve(txt);
+      };
+      const onChange=()=>{
+        const cur=(getAIText()||"").trim();
+        if(!cur || cur===last) return; last=cur;
+        if(stableTimer) clearTimeout(stableTimer);
+        stableTimer = setTimeout(()=>{ if(/#[A-Za-z0-9_]+/.test(last)) finish(last); }, 350);
+      };
+      const observer=new MutationObserver(onChange);
+      observer.observe(aOut, {childList:true, subtree:true, characterData:true});
+      aOut.addEventListener("input", onChange);
+      aOut.addEventListener("change", onChange);
+      aQ.value = prompt; aAsk.click();
+      setTimeout(()=>{ finish((getAIText()||"").trim()); }, 12000);
+    });
+  }
+  function sanitizeList(text){ return (text||"").match(/#[A-Za-z0-9_]+/g)||[]; }
+  function mergeToCap(base,ai,cap){
+    const out = base.slice();
+    const seen = new Set(out.map(x=>x.toLowerCase()));
+    for(const t of ai){
+      if(out.length>=cap) break;
+      const k = t.toLowerCase();
+      if(seen.has(k)) continue;
+      if(out.some(x=>isNearDup(x,t))) continue;
+      seen.add(k); out.push(t);
+    }
+    return dropNearDup(out).slice(0,cap);
+  }
+
+  async function unifiedGenerateBoost(){
+    // base
+    makeTags();
+    const plat=(platEl?.value||"Instagram"); const bias=(biasEl?.value||"balanced").toLowerCase();
+    const cap=Math.min(parseInt(maxEl?.value||"25",10)||25, PLATFORM_CAP[plat]||25);
+    const desc=(descEl?.value||"").trim();
+    if(!desc){ expEl&&(expEl.style.display="block",expEl.textContent="Describe your post first."); return; }
+    const prompt=`Return ONLY space-separated hashtags (no extra text). Mix reach/medium/niche. Platform:${plat}. Bias:${bias}. Max:${cap}. Post:"${desc}"`;
+    const aiText = await callAskAI(prompt);
+    const aiTags = sanitizeList(aiText);
+    const cur=(outEl.value.match(/#[A-Za-z0-9_]+/g)||[]);
+    const merged = mergeToCap(cur, aiTags, cap);
+    outEl.value = merged.join(" ");
+    countEl && (countEl.textContent = String(merged.length));
+    expEl && (expEl.style.display="block", expEl.textContent = aiTags.length ? "AI Boost applied." : "AI didn't return hashtags.");
+  }
+
+  // Wire up clicks and hotkeys to unified flow
+  gen.addEventListener("click", async()=>{
+    const prev=gen.textContent; gen.textContent="Generating…"; gen.disabled=true;
+    try{ await unifiedGenerateBoost(); } finally { gen.textContent=prev; gen.disabled=false; }
+  });
+  // Ctrl/Cmd+Enter
+  descEl?.addEventListener("keydown", (e)=>{
+    if((e.ctrlKey||e.metaKey) && e.key==="Enter"){
+      e.preventDefault();
+      (async()=>{ try{ await unifiedGenerateBoost(); } catch(e){} })();
+    }
+  });
+
+  // Keep a separate AI Boost button (if present) pointing to same flow
+  const boost=document.getElementById("g-ai-boost");
+  if(boost){
+    boost.textContent="AI Boost (re-run)";
+    boost.addEventListener("click", async()=>{
+      const prev=boost.textContent; boost.textContent="Boosting…"; boost.disabled=true;
+      try{ await unifiedGenerateBoost(); } finally { boost.textContent="AI Boost (re-run)"; boost.disabled=false; }
+    }, {once:false});
+  }
+})();
+</script>
+
+
+<script id="timer-singing-bowl-v2">
+(function(){
+  const timerCard = document.querySelector("#timer .card");
+  const beepEl = document.getElementById("t-beep");
+  if (!timerCard || !beepEl) return;
+
+  // --- Inject compact UI (Alert Sound + Volume + Auto-Advance + Preview) ---
+  if (!document.getElementById("t-sound")) {
+    const bar = document.createElement("div");
+    bar.className = "row soundbar";
+    bar.innerHTML = `
+      <div class="col">
+        <label class="lbl">Alert Sound</label>
+        <select id="t-sound" class="select">
+          <option value="bowl" selected>Singing Bowl</option>
+          <option value="beep">Beep</option>
+          <option value="off">Off</option>
+        </select>
+      </div>
+      <div class="col">
+        <label class="lbl">Volume</label>
+        <input id="t-vol" class="input" type="range" min="0" max="1" step="0.01" value="0.8" />
+      </div>
+      <div class="col">
+        <label class="lbl">Auto-Advance (next phase)</label>
+        <select id="t-auto" class="select">
+          <option value="off" selected>Off</option>
+          <option value="on">On</option>
+        </select>
+      </div>
+      <div class="col" style="max-width:160px">
+        <label class="lbl" style="visibility:hidden">Preview</label>
+        <button id="t-preview" class="btn btn-ghost">Preview</button>
+      </div>
+    `;
+    const hint = timerCard.querySelector("p.hint");
+    (hint ? hint : beepEl).before(bar);
+  }
+
+  const soundSel = document.getElementById("t-sound");
+  const volEl = document.getElementById("t-vol");
+  const autoSel = document.getElementById("t-auto");
+  const previewBtn = document.getElementById("t-preview");
+
+  // --- WebAudio Singing Bowl synth ---
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  const ctx = AudioCtx ? new AudioCtx() : null;
+  const master = ctx ? ctx.createGain() : null;
+  if (ctx && master) { master.connect(ctx.destination); master.gain.value = parseFloat(volEl.value || "0.8"); }
+
+  function ensureAudioReady(){
+    if (!ctx) return;
+    if (ctx.state === "suspended") ctx.resume();
+  }
+  function setVolumeUI(v){
+    v = Math.max(0, Math.min(1, parseFloat(v||"0.8")));
+    if (master) master.gain.value = v;
+    if (beepEl) beepEl.volume = v;
+  }
+  volEl?.addEventListener("input", e => setVolumeUI(e.target.value));
+
+  function bowl(){
+    if (!ctx || !master) return;
+    const t0 = ctx.currentTime;
+    const dur = 6.0;
+    const partials = [196, 294, 392, 512, 660, 784]; // G-based stack
+
+    const g = ctx.createGain();
+    g.connect(master);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, master.gain.value), t0 + 0.03);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+
+    partials.forEach((f,i)=>{
+      const o = ctx.createOscillator();
+      const og = ctx.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(f, t0);
+      o.detune.setValueAtTime((i%2? -5: +5), t0); // subtle detune
+      og.gain.setValueAtTime(0.6/(i+1), t0+0.01);
+      og.gain.exponentialRampToValueAtTime(0.0001, t0 + dur*(0.7 + i*0.04));
+      o.connect(og); og.connect(g);
+      o.start(t0); o.stop(t0 + dur);
+    });
+  }
+
+  // To distinguish Preview from real phase-end chime
+  let previewing = false;
+  previewBtn?.addEventListener("click", () => {
+    const mode = (soundSel && soundSel.value) || "bowl";
+    if (mode === "off") return;
+    ensureAudioReady();
+    previewing = true;
+    if (mode === "bowl") bowl(); else { setVolumeUI(volEl.value); nativePlay && nativePlay(); }
+    setTimeout(()=>{ previewing=false; }, 50);
+  });
+
+  // --- Monkey‑patch the timer's beep so app.js keeps working ---
+  const nativePlay = beepEl.play ? beepEl.play.bind(beepEl) : null;
+  if (nativePlay) {
+    beepEl.play = function(...args){
+      const mode = (soundSel && soundSel.value) || "bowl";
+      if (mode === "off") {
+        // Still prevent auto-advance if requested
+        if (!previewing && autoSel && autoSel.value === "off") {
+          setTimeout(()=>{ (document.getElementById("t-stop")||document.getElementById("t-reset"))?.click(); }, 0);
+        }
+        return Promise.resolve();
+      }
+      if (mode === "bowl") {
+        ensureAudioReady();
+        bowl();
+      } else {
+        setVolumeUI(volEl.value);
+        nativePlay(...args);
+      }
+      // Stop auto-advance unless explicitly turned on
+      if (!previewing && autoSel && autoSel.value === "off") {
+        setTimeout(()=>{ (document.getElementById("t-stop")||document.getElementById("t-reset"))?.click(); }, 0);
+      }
+      return Promise.resolve();
+    };
+  }
+
+  // Resume audio on first user interaction (mobile)
+  const startBtn = document.getElementById("t-start");
+  const stopBtn  = document.getElementById("t-stop");
+  const resetBtn = document.getElementById("t-reset");
+  [startBtn, stopBtn, resetBtn, previewBtn].forEach(b=> b && b.addEventListener("click", ensureAudioReady, { once:true }));
+
+})();
+</script>
+
+
+<!-- Minimal Timer Patch: bowl mp3 + stop after final cycle (no UI changes) -->
+<script id="timer-bowl-minimal-v1">
+(function () {
+  const beepEl  = document.getElementById('t-beep');
+  const startEl = document.getElementById('t-start');
+  const stopEl  = document.getElementById('t-stop') || document.getElementById('t-reset');
+  if (!beepEl) return;
+
+  // Prefer auto-advance inside cycles, then we stop after last
+  const autoSel = document.getElementById('t-auto');
+  if (autoSel && autoSel.value !== 'on') autoSel.value = 'on';
+
+  // Use your hosted bowl audio
+  const bowl = new Audio('assets/audio/singing_bowl.mp3');
+  bowl.preload = 'auto';
+
+  // Helpers to read numbers
+  function val(el, d) {
+    const n = parseInt(el && el.value, 10);
+    return isNaN(n) ? d : n;
+  }
+  function byId(id){ return document.getElementById(id); }
+
+  const workIn   = byId('t-work');
+  const breakIn  = byId('t-break');
+  const cyclesIn = byId('t-cycles');
+
+  // Count phase-end beeps and stop after final
+  let beeps = 0;
+  let totalBeeps = Infinity;
+
+  function recomputeTargets() {
+    const work   = Math.max(0, val(workIn, 20));
+    const brk    = Math.max(0, val(breakIn, 5));
+    const cycles = Math.max(1,  val(cyclesIn, 1));
+    const phasesPerCycle = (work > 0 ? 1 : 0) + (brk > 0 ? 1 : 0);
+    totalBeeps = Math.max(1, phasesPerCycle) * cycles;
+    beeps = 0;
+  }
+
+  startEl && startEl.addEventListener('click', recomputeTargets);
+  [workIn, breakIn, cyclesIn].forEach(el => el && el.addEventListener('input', recomputeTargets));
+
+  const nativePlay = beepEl.play && beepEl.play.bind(beepEl);
+  if (!nativePlay) return;
+
+  beepEl.play = function (...args) {
+    beeps += 1;
+    let p;
+    try { bowl.currentTime = 0; p = bowl.play(); }
+    catch (e) { p = nativePlay(...args); }
+    if (beeps >= totalBeeps) {
+      setTimeout(() => { stopEl && stopEl.click(); }, 0); // hard stop after last cycle
+    }
+    return p;
+  };
+})();
+</script>
+
 </body>
 </html>
