@@ -833,15 +833,7 @@ function sanitizeList(text){ return (text||"").match(/#[\p{L}\p{N}_]+/gu)||[]; }
     const aiText = await callAskAI(prompt);
     const aiTags = sanitizeList(aiText);
     const cur=(outEl.value.match(/#[\p{L}\p{N}_]+/gu)||[]);
-    let finalAiTags = aiTags;
-    const score = scriptScore(lang, aiTags);
-    if (score < 0.6 && (lang in SCRIPT_REGEX)) {
-      const strictPrompt = `Regenerate STRICTLY in ${LANG_NAME[lang] || "the selected language"} native script only.\nReturn ONLY space-separated hashtags (no extra text). No English/Latin script.\nPlatform:${plat}. Bias:${bias}. Max:${cap}. Post:"${desc}"`;
-      const retryText = await callAskAI(strictPrompt);
-      const retryTags = sanitizeList(retryText);
-      if (scriptScore(lang, retryTags) >= score) { finalAiTags = retryTags; }
-    }
-    const merged = mergeToCap(cur, finalAiTags, cap);
+    const merged = mergeToCap(cur, aiTags, cap);
     outEl.value = merged.join(" ");
     countEl && (countEl.textContent = String(merged.length));
     expEl && (expEl.style.display="block", expEl.textContent = aiTags.length ? "AI Boost applied." : "AI didn't return hashtags.");
@@ -1067,98 +1059,68 @@ function sanitizeList(text){ return (text||"").match(/#[\p{L}\p{N}_]+/gu)||[]; }
 </script>
 
 
-<script id="generator-button-harness-v1">
+<script id="generator-language-output-filter-v1">
 (function(){
-  function setLabel(){
-    const btn = document.getElementById('g-generate');
-    if(!btn) return;
-    const desired = "Generate + AI (recommended)";
-    if ((btn.textContent||"").trim() !== desired){
-      btn.textContent = desired;
-      btn.title = "Generates smart seeds, then boosts via Ask AI and merges to your cap.";
-    }
-  }
-  function observeLabel(){
-    const btn = document.getElementById('g-generate');
-    if(!btn || !window.MutationObserver) return;
-    const desired = "Generate + AI (recommended)";
-    const mo = new MutationObserver(()=> {
-      if ((btn.textContent||"").trim() !== desired){
-        btn.textContent = desired;
-        btn.title = "Generates smart seeds, then boosts via Ask AI and merges to your cap.";
-      }
-    });
-    mo.observe(btn, {childList:true, subtree:true, characterData:true});
-  }
-  if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', function(){ setLabel(); observeLabel(); }, {once:true});
-  } else {
-    setLabel(); observeLabel();
-  }
-})();
-</script>
-
-<script id="lang-sync-askai-autodetect-v1">
-(function(){
+  const outEl = document.getElementById("g-out");
+  const genBtn = document.getElementById("g-generate");
   const langSel = document.getElementById("g-lang");
-  const aAsk = document.getElementById("a-ask");
-  const aQ = document.getElementById("a-q");
-  const descEl = document.getElementById("g-desc");
-  if (!langSel) return;
-
-  const LANG_NAME = { en:"English", hi:"Hindi", zh:"Chinese", es:"Spanish", ar:"Arabic", pt:"Portuguese", fr:"French", de:"German", ja:"Japanese", ko:"Korean", ru:"Russian", id:"Indonesian", tr:"Turkish", ta:"Tamil", bn:"Bengali", vi:"Vietnamese", th:"Thai" };
+  if (!outEl || !genBtn || !langSel) return;
 
   const SCRIPT_REGEX = {
-    ar: /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/u,
     hi: /[\u0900-\u097F]/u,
+    ar: /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/u,
+    ru: /[\u0400-\u04FF]/u,
     ta: /[\u0B80-\u0BFF]/u,
     bn: /[\u0980-\u09FF]/u,
     th: /[\u0E00-\u0E7F]/u,
-    ru: /[\u0400-\u04FF]/u,
     ja: /[\u3040-\u30FF\u31F0-\u31FF\u4E00-\u9FFF]/u,
     ko: /[\uAC00-\uD7AF\u1100-\u11FF]/u,
     zh: /[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF]/u
   };
 
-  let userTouchedLang = false;
-  langSel.addEventListener("change", ()=>{ userTouchedLang = true; }, { passive:true });
+  const EN_EXTRAS = new Set(["#reels","#instareels","#igers","#explorepage","#instagood","#contentcreator","#creator","#instagram","#viral","#trending","#shorts"]);
 
-  function detectLangFromText(t){
-    if (!t) return null;
-    const order = ["ar","hi","ta","bn","th","ru","ja","ko","zh"];
-    for (const code of order){ if (SCRIPT_REGEX[code] && SCRIPT_REGEX[code].test(t)) return code; }
-    const lower = t.toLowerCase();
-    if (/[áéíóúñ¡¿]/.test(t) || /\b(hola|gracias|porque|estoy|quiero)\b/.test(lower)) return "es";
-    if (/[ãõçáéíóú]/.test(t) || /\b(olá|obrigado|você|português)\b/.test(lower)) return "pt";
-    if (/[àâçéèêëîïôûùüÿœ]/.test(t) || /\b(bonjour|merci|pourquoi)\b/.test(lower)) return "fr";
-    if (/[äöüß]/.test(t) || /\b(hallo|danke|warum)\b/.test(lower)) return "de";
-    if (/\b(merhaba|teşekkür|neden)\b/.test(lower)) return "tr";
-    if (/\b(selamat|terima kasih|kenapa|apa)\b/.test(lower)) return "id";
-    if (/[ăâđêôơư]/.test(t) || /\b(xin chào|cảm ơn|tại sao)\b/.test(lower)) return "vi";
-    return null;
+  function parseTags(text){ return (text||"").match(/#[\p{L}\p{N}_]+/gu) || []; }
+  function dedupe(arr){
+    const seen = new Set(); const out = [];
+    for (const t of arr){ const k = t.normalize("NFC").toLowerCase(); if (!seen.has(k)){ seen.add(k); out.push(t); } }
+    return out;
+  }
+  function visibleLen(tag){ return Array.from(tag.slice(1)).length; }
+
+  function filterForLanguage(tags, lang){
+    const nonLatin = (lang in SCRIPT_REGEX);
+    if (!nonLatin) return tags;
+    const rx = SCRIPT_REGEX[lang];
+    const minLen = (lang === "zh" || lang === "ja" || lang === "ko") ? 2 : 3;
+    const filtered = [];
+    for (const t of tags){
+      if (EN_EXTRAS.has(t.toLowerCase())) continue;
+      if (!rx.test(t)) continue;
+      if (/[A-Za-z]/.test(t)) continue;
+      if (visibleLen(t) < minLen) continue;
+      filtered.push(t);
+    }
+    return filtered;
   }
 
-  function maybeAutoSelect(inputEl){
-    if (userTouchedLang) return;
-    const t = (inputEl && inputEl.value) || "";
-    const detected = detectLangFromText(t);
-    if (detected && langSel.value !== detected){ langSel.value = detected; }
+  function runFilter(){
+    try{
+      const lang = langSel.value || "en";
+      const tags = parseTags(outEl.value);
+      const cleaned = filterForLanguage(dedupe(tags), lang);
+      if (cleaned.length){
+        outEl.value = cleaned.join(" ");
+        const countEl = document.getElementById("g-count");
+        if (countEl) countEl.textContent = String(cleaned.length);
+      }
+    }catch(e){}
   }
 
-  if (descEl) descEl.addEventListener("input", ()=> maybeAutoSelect(descEl), { passive:true });
-  if (aQ) aQ.addEventListener("input", ()=> maybeAutoSelect(aQ), { passive:true });
-
-  if (aAsk && aQ){
-    aAsk.addEventListener("click", function(){
-      const val = aQ.value || "";
-      const looksLikeGeneratorPrompt = /Return ONLY space-separated hashtags/i.test(val);
-      if (looksLikeGeneratorPrompt) return;
-      const code = langSel.value || "en";
-      const name = LANG_NAME[code] || "English";
-      const prefix = `Answer in ${name} using native script. Be concise.\n`;
-      if (!val.startsWith(prefix)){ aQ.value = prefix + val; }
-    }, true);
-  }
+  function scheduleFilter(){ setTimeout(runFilter, 250); setTimeout(runFilter, 800); }
+  genBtn.addEventListener("click", scheduleFilter);
+  const descEl = document.getElementById("g-desc");
+  if (descEl){ descEl.addEventListener("keydown", (e)=>{ if((e.ctrlKey||e.metaKey) && e.key==="Enter"){ scheduleFilter(); } }); }
 })();
 </script>
 </body>
