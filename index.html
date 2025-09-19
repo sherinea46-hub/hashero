@@ -830,10 +830,26 @@ function sanitizeList(text){ return (text||"").match(/#[\p{L}\p{N}_]+/gu)||[]; }
     const langSel = document.getElementById("g-lang");
     const lang = (langSel && langSel.value) || "en";
     const LANG_NAME = { en:"English", hi:"Hindi", zh:"Chinese", es:"Spanish", ar:"Arabic", pt:"Portuguese", fr:"French", de:"German", ja:"Japanese", ko:"Korean", ru:"Russian", id:"Indonesian", tr:"Turkish", ta:"Tamil", bn:"Bengali", vi:"Vietnamese", th:"Thai" };
-    const prompt = `Return ONLY space-separated hashtags (no extra text). \nLanguage: ${LANG_NAME[lang] || "English"}.\nUse the native script of that language (no translation). \nMix reach/medium/niche. Platform:${plat}. Bias:${bias}. Max:${cap}. \nPost:"${desc}"`;
+        
+    
+    if (NON_LATIN_LANGS.has(lang) && asciiOnly) {
+      /* seedPrompt removed by direct-language prompt */ const _skipSeedPrompt = `In ${LANG_NAME[lang]||"the selected language"}, return ONLY a comma-separated list of 8-14 native-language keywords (nouns/proper nouns) for: "${desc}". Use common native names for places (e.g., Egypt→मिस्र/مصر, Cairo→काहिरा/القاهرة). No English or transliteration.`;
+      try {
+        const seedText = await callAskAI(seedPrompt);
+        const parts = (seedText||"").split(/[，,،]+/).map(s=>s.trim()).filter(Boolean);
+        if (parts.length) seedHints = parts.slice(0,14).join(", ");
+      } catch(e){}
+    }
+let prompt;
+    if (lang !== "en") {
+      prompt = `Return ONLY space-separated hashtags in ${LANG_NAME[lang]||"the selected language"} using native script (no English). Max:${cap}. Topic: "${desc}"`;
+    } else {
+      prompt = `Return ONLY space-separated hashtags (no extra text). Mix reach/medium/niche. Platform:${plat}. Bias:${bias}. Max:${cap}. Post:"${desc}"`;
+    }
     const aiText = await callAskAI(prompt);
     const aiTags = sanitizeList(aiText);
     let cur=(outEl.value.match(/#[\p{L}\p{N}_]+/gu)||[]);
+    if (NON_LATIN_LANGS.has(lang)) cur = [];
     if (NON_LATIN_LANGS.has(lang)) { cur = []; }
     let finalAiTags = aiTags;
     const score = scriptScore(lang, aiTags);
